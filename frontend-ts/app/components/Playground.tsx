@@ -97,7 +97,7 @@ const Playground: React.FC<PlaygroundProps> = ({
                             chatGroupId={chatGroupId}
                             selectedUser={userState}
                             selectedToy={selectedToy}
-                            disabled={creditsRemaining === 0}
+                            disabled={creditsRemaining <= 0}
                         />
                     </div>
                     <p className="text-sm text-gray-600">

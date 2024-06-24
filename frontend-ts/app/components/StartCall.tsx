@@ -28,11 +28,11 @@ const StartCall: React.FC<StartCallProps> = ({
         connect,
         lastVoiceMessage,
         lastUserMessage,
-        sendUserInput,
-        sendAssistantInput,
-        sendPauseAssistantMessage,
-        sendSessionSettings,
-        callDurationTimestamp,
+        // sendUserInput,
+        // sendAssistantInput,
+        // sendPauseAssistantMessage,
+        // sendSessionSettings,
+        // callDurationTimestamp,
     } = useVoice();
     const supabase = createClientComponentClient();
 
