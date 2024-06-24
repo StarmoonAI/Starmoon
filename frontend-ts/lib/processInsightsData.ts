@@ -60,19 +60,13 @@ export const neutralEmotions = [
 export const processData = (rawData: any[], filter: string) => {
     // Perform your heavy computations here
 
-    console.log("A");
-
     let currentPeriod = new Date();
-    console.log("B");
 
     let previousPeriod = subDays(currentPeriod, 1);
-    console.log("C");
 
     const previousPeriodData = filterDataByDate(rawData, previousPeriod);
-    console.log("D");
 
     const currentPeriodData = filterDataByDate(rawData, currentPeriod);
-    console.log("E");
 
     // console.log(previousPeriodData);
 
@@ -81,23 +75,17 @@ export const processData = (rawData: any[], filter: string) => {
         currentPeriodData,
         2
     );
-    console.log("F");
 
     // console.log(curAvgSorted);
     // console.log(prevAvgSorted);
 
     const cardData = getCardsData(prevAvgSorted, curAvgSorted);
-    console.log("G");
     const barData = getBarData(prevAvgSorted, curAvgSorted, 10, filter);
-    console.log("H");
 
     const { lineData, pieData } = getLinePinedata(rawData);
-    console.log("I");
     // print lineData to json
     console.log(JSON.stringify(lineData));
-    console.log("J");
     console.log(JSON.stringify(pieData));
-    console.log("K");
 
     return {
         cardData,
@@ -373,6 +361,7 @@ export const getLinePinedata = (data: any) => {
 
     return { lineData, pieData };
 };
+
 function elif(arg0: boolean) {
     throw new Error("Function not implemented.");
 }
