@@ -1,6 +1,10 @@
 import os
 
+from app.core.config import settings
+from dotenv import load_dotenv
 from openai import AsyncAzureOpenAI, AsyncOpenAI, AzureOpenAI, OpenAI
+
+load_dotenv()
 
 
 class Clients:
