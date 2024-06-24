@@ -60,29 +60,44 @@ export const neutralEmotions = [
 export const processData = (rawData: any[], filter: string) => {
     // Perform your heavy computations here
 
+    console.log("A");
+
     let currentPeriod = new Date();
+    console.log("B");
+
     let previousPeriod = subDays(currentPeriod, 1);
+    console.log("C");
 
     const previousPeriodData = filterDataByDate(rawData, previousPeriod);
+    console.log("D");
+
     const currentPeriodData = filterDataByDate(rawData, currentPeriod);
+    console.log("E");
+
     // console.log(previousPeriodData);
 
     const { prevAvgSorted, curAvgSorted } = getSortedAvgData(
         previousPeriodData,
         currentPeriodData,
-        2,
+        2
     );
+    console.log("F");
 
     // console.log(curAvgSorted);
     // console.log(prevAvgSorted);
 
     const cardData = getCardsData(prevAvgSorted, curAvgSorted);
+    console.log("G");
     const barData = getBarData(prevAvgSorted, curAvgSorted, 10, filter);
+    console.log("H");
 
     const { lineData, pieData } = getLinePinedata(rawData);
+    console.log("I");
     // print lineData to json
     console.log(JSON.stringify(lineData));
+    console.log("J");
     console.log(JSON.stringify(pieData));
+    console.log("K");
 
     return {
         cardData,
@@ -145,7 +160,7 @@ const getCardsData = (prevAvg: any, curAvg: any) => {
     }
 
     const changesSorted = Object.fromEntries(
-        Object.entries(changes).sort(([, a], [, b]) => b - a),
+        Object.entries(changes).sort(([, a], [, b]) => b - a)
     );
 
     const curAvgEntries = Object.entries(curAvg);
@@ -203,7 +218,7 @@ const getBarData = (
     prevAvg: { [key: string]: number },
     curAvg: { [key: string]: number },
     topN: number,
-    filter: string,
+    filter: string
 ) => {
     // Get first N of curAvg data
     const curAvgEntries = Object.entries(curAvg);
@@ -240,11 +255,11 @@ const getSortedAvgData = (prevData: any, curData: any, topN: number) => {
     const curAvg = averages(curData);
 
     const prevAvgSorted = Object.fromEntries(
-        Object.entries(prevAvg).sort(([, a], [, b]) => b - a),
+        Object.entries(prevAvg).sort(([, a], [, b]) => b - a)
     );
 
     const curAvgSorted = Object.fromEntries(
-        Object.entries(curAvg).sort(([, a], [, b]) => b - a),
+        Object.entries(curAvg).sort(([, a], [, b]) => b - a)
     );
 
     return { prevAvgSorted, curAvgSorted };
