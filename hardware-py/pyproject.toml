@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "hardware-py"
+version = "0.1.0"
+description = "python app running on hardware"
+authors = ["akdeb <deb2@illinois.edu>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+supabase = "^2.5.1"
+hume = "^0.6.0"
+python-dotenv = "^1.0.1"
+asyncio = "^3.4.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
