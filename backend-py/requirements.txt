@@ -4,3 +4,4 @@ openai
 anthropic
 litellm
 pydantic-settings
+supabase==2.5.1

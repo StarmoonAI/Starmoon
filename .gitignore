@@ -5,3 +5,5 @@ __pycache__
 .pylintrc
 .flake8
 .prettierrc.json
+backend-py-deprecated
+.github

@@ -1,0 +1,64 @@
+"""
+-*- coding: utf-8 -*-
+@Organization : SupaVision
+@Author       : 18317
+@Date Created : 05/01/2024
+@Description  :
+"""
+
+import logging
+import os
+from typing import ClassVar
+
+from dotenv import load_dotenv
+from pydantic import AnyHttpUrl, ConfigDict, Field
+from pydantic_settings import BaseSettings
+
+log_format = logging.Formatter("%(asctime)s : %(levelname)s - %(message)s")
+
+# root logger
+root_logger = logging.getLogger()
+root_logger.setLevel(logging.INFO)
+
+# standard stream handler
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(log_format)
+root_logger.addHandler(stream_handler)
+
+logger = logging.getLogger(__name__)
+load_dotenv()
+
+
+class Settings(BaseSettings):
+    API_V1_STR: str = "/api/v1"
+
+    MODEL_NAME: str = Field(default_factory=lambda: os.getenv("MODEL_NAME"))
+
+    AZURE_OPENAI_ENDPOINT: str = Field(
+        default_factory=lambda: os.getenv("AZURE_OPENAI_ENDPOINT")
+    )
+    AZURE_OPENAI_API_KEY: str = Field(
+        default_factory=lambda: os.getenv("AZURE_OPENAI_API_KEY")
+    )
+    DEEPGRAM_API_KEY: str = Field(default_factory=lambda: os.getenv("DEEPGRAM_API_KEY"))
+
+    MS_SPEECH_ENDPOINTY: str = Field(
+        default_factory=lambda: os.getenv("MS_SPEECH_ENDPOINTY")
+    )
+    SPEECH_KEY: str = Field(default_factory=lambda: os.getenv("SPEECH_KEY"))
+    SPEECH_REGION: str = Field(default_factory=lambda: os.getenv("SPEECH_REGION"))
+
+    SUPABASE_URL: str = Field(default_factory=lambda: os.getenv("SUPABASE_URL"))
+    SUPABASE_KEY: str = Field(default_factory=lambda: os.getenv("SUPABASE_KEY"))
+    SERVICE_ROLE: str = Field(default=lambda: os.getenv("SERVICE_ROLE"))
+
+    SERVER_HOST: AnyHttpUrl = "https://localhost"
+    SERVER_PORT: int = 8000
+    BACKEND_CORS_ORIGINS: list[AnyHttpUrl] = []
+
+    PROJECT_NAME: str = "fastapi supabase"
+
+    Config: ClassVar[ConfigDict] = ConfigDict(arbitrary_types_allowed=True)
+
+
+settings = Settings()

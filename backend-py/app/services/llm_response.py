@@ -1,7 +1,9 @@
-# from app.core.config import settings
+from app.core.config import settings
 from litellm import completion
 from litellm import acompletion
 from app.services.clients import Clients
+from app.core.config import settings
+
 
 import os
 
@@ -18,7 +20,7 @@ async def openai_response(input_text: str):
 
     client = Clients()
     return await client.aclient_azure_4o.chat.completions.create(
-        model=os.getenv("MODEL_NAME"),
+        model=settings.MODEL_NAME,
         temperature=0.5,
         messages=[{"role": "user", "content": input_text}],
         stream=True,
