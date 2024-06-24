@@ -1,0 +1,7 @@
+.DS_Store
+.history
+.vscode
+__pycache__
+.pylintrc
+.flake8
+.prettierrc.json

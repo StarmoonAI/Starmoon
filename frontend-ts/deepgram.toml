@@ -1,0 +1,17 @@
+[meta]
+  title = "Live Transcription Next.js Starter"
+  description = "Basic demo for using Deepgram to transcribe microphone audio in Next.js"
+  author = "Deepgram DX Team <devrel@deepgram.com> (https://developers.deepgram.com)"
+  useCase = "Live"
+  language = "JavaScript"
+  framework = "Next"
+
+[build]
+  command = "npm install"
+
+[config]
+  sample = "sample.env.local"
+  output = ".env.local"
+
+[post-build]
+  message = "Run `npm run dev` to get up and running locally."
