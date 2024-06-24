@@ -198,10 +198,9 @@ const Charts: React.FC<ChartsProps> = async ({ user, filter }) => {
         const data = await dbGetConversation(supabase, user.user_id);
         // console.log("++++++", user);
         // console.log("+++++", data_.length, data_);
-        const { cardData, barData, lineData, pieData } = processData(
-            data,
-            filter
-        );
+        const processedData = processData(data, filter);
+        console.log("foobaz", processedData);
+        const { cardData, barData, lineData, pieData } = processedData;
 
         return (
             <div>
