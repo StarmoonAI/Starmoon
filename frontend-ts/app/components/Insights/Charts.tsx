@@ -189,18 +189,16 @@ interface ChartsProps {
     filter: string;
 }
 
-const Charts: React.FC<ChartsProps> = async ({ user, toy, filter }) => {
+const Charts: React.FC<ChartsProps> = async ({ user, filter }) => {
     // get the user data from the selected user and period
+    const supabase = supabaseServerClient();
 
     if (user) {
-        const supabase = supabaseServerClient();
         const data = await dbGetConversation(supabase, user.user_id);
         // console.log("++++++", user);
         // console.log("+++++", data_.length, data_);
-        const { cardData, barData, lineData, pieData } = processData(
-            data,
-            filter
-        );
+        const processedData = processData(data, filter);
+        const { cardData, barData, lineData, pieData } = processedData;
 
         return (
             <div>

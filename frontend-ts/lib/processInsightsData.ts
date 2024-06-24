@@ -357,6 +357,7 @@ export const getLineLinedata = (data: any) => {
 
   return { lineData, pieData };
 };
+
 function elif(arg0: boolean) {
   throw new Error("Function not implemented.");
 }
