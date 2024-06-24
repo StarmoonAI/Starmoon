@@ -189,8 +189,9 @@ interface ChartsProps {
     filter: string;
 }
 
-const Charts: React.FC<ChartsProps> = async ({ user, toy, filter }) => {
+const Charts: React.FC<ChartsProps> = async ({ user, filter }) => {
     // get the user data from the selected user and period
+    console.log("++++++", user, filter);
 
     if (user) {
         const supabase = supabaseServerClient();

@@ -13,7 +13,6 @@ export default async function Home() {
     } = await supabase.auth.getUser();
 
     const dbUser = user ? await getUserById(supabase, user.id) : undefined;
-    const toy = await getToyById(supabase, dbUser?.toy_id ?? defaultToyId);
 
     return (
         <div className="flex flex-col gap-2 font-baloo2">
@@ -23,7 +22,7 @@ export default async function Home() {
             </div>
 
             <div className="">
-                <Charts user={dbUser!} toy={toy!} filter="days" />
+                <Charts user={dbUser!} toy={dbUser?.toy!} filter="days" />
                 {/* <Charts user={dbUser} selectedToy={null} filter="days" /> */}
             </div>
         </div>
