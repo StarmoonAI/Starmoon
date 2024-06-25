@@ -36,7 +36,7 @@ const Products: React.FC<ProductsProps> = ({ allToys, toy, user }) => {
             currentToy={toy}
             imageSize={IMAGE_SIZE}
             buttonText={"Get started"}
-            showCurrent={false}
+            showHelpText={true}
         />
     );
 };

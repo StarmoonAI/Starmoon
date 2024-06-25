@@ -55,7 +55,7 @@ export default async function Home() {
                     <h1 className="text-4xl font-bold text-center ">
                         Welcome to Starmoon AI :)
                     </h1>
-                    <p className="text-center text-lg font-quicksand">
+                    <p className="text-center text-xl font-quicksand">
                         We make AI-enabled toys for children that foster
                         learning & growth.
                     </p>

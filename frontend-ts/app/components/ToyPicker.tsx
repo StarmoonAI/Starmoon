@@ -9,7 +9,7 @@ interface ToyPickerProps {
     allToys: IToy[];
     imageSize: number;
     buttonText: string;
-    showCurrent: boolean;
+    showHelpText: boolean;
 }
 
 const ToyPicker: React.FC<ToyPickerProps> = ({
@@ -18,7 +18,7 @@ const ToyPicker: React.FC<ToyPickerProps> = ({
     chooseToy,
     imageSize,
     buttonText,
-    showCurrent,
+    showHelpText,
 }) => {
     const [selectedToy, setSelectedToy] = useState<IToy | undefined>(
         currentToy
@@ -29,7 +29,7 @@ const ToyPicker: React.FC<ToyPickerProps> = ({
     };
 
     return (
-        <div className="flex md:flex-col flex-col-reverse gap-8 pb-6">
+        <div className="flex flex-col-reverse gap-8 pb-6">
             <div className="flex md:mt-7 md:flex-row flex-col gap-8 items-center justify-center">
                 {allToys.map((toy) => {
                     const chosen = selectedToy?.toy_id === toy.toy_id;
@@ -78,8 +78,8 @@ const ToyPicker: React.FC<ToyPickerProps> = ({
                     );
                 })}
             </div>
-            {!selectedToy && (
-                <p className="flex self-center">
+            {showHelpText && (
+                <p className="flex self-center text-sm">
                     (pick your favorite plushie to get started!)
                 </p>
             )}

@@ -281,7 +281,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
                 buttonText={"Pick"}
                 imageSize={200}
                 chooseToy={pickToy}
-                showCurrent={true}
+                showHelpText={false}
             />
         </div>
     );
