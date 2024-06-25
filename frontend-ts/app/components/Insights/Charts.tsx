@@ -33,7 +33,7 @@ const Charts: React.FC<ChartsProps> = async ({ user, filter }) => {
   if (user) {
     const data = await dbGetConversation(supabase, user.user_id);
     const processedData = processData(data, filter);
-    const { cardData, barData, lineData, pieData } = processedData;
+    const { cardData, barData, lineData, pieData } = await processedData;
 
     return (
       <div>
@@ -46,18 +46,18 @@ const Charts: React.FC<ChartsProps> = async ({ user, filter }) => {
             <div className="flex space-x-3">
               <div className="flex-grow">
                 <TopCard
-                  title={cardData.get("main_1")?.title ?? null}
-                  value={`${cardData.get("main_1")?.value ?? ""}%`}
-                  delta={cardData.get("main_1")?.change ?? 0}
+                  title={cardData["main_emotion_1"]?.title ?? null}
+                  value={`${cardData["main_emotion_1"]?.value ?? ""}%`}
+                  delta={cardData["main_emotion_1"]?.change ?? 0}
                   filter={filter}
                   type="top"
                 />
               </div>
               <div className="flex-grow">
                 <TopCard
-                  title={cardData.get("main_2")?.title ?? null}
-                  value={`${cardData.get("main_2")?.value ?? ""}%`}
-                  delta={cardData.get("main_2")?.change ?? 0}
+                  title={cardData["main_emotion_2"]?.title ?? null}
+                  value={`${cardData["main_emotion_2"]?.value ?? ""}%`}
+                  delta={cardData["main_emotion_2"]?.change ?? 0}
                   filter={filter}
                   type="top"
                 />
@@ -72,18 +72,18 @@ const Charts: React.FC<ChartsProps> = async ({ user, filter }) => {
             <div className="flex space-x-3">
               <div className="flex-grow">
                 <TopCard
-                  title={cardData.get("change_1")?.title ?? null}
-                  value={`${cardData.get("change_1")?.value ?? ""}%`}
-                  delta={cardData.get("change_1")?.change ?? 0}
+                  title={cardData["change_1"]?.title ?? null}
+                  value={`${cardData["change_1"]?.value ?? ""}%`}
+                  delta={cardData["change_1"]?.change ?? 0}
                   filter={filter}
                   type="shift"
                 />
               </div>
               <div className="flex-grow">
                 <TopCard
-                  title={cardData.get("change_2")?.title ?? null}
-                  value={`${cardData.get("change_2")?.value ?? ""}%`}
-                  delta={cardData.get("change_2")?.change ?? 0}
+                  title={cardData["change_2"]?.title ?? null}
+                  value={`${cardData["change_2"]?.value ?? ""}%`}
+                  delta={cardData["change_2"]?.change ?? 0}
                   filter={filter}
                   type="shift"
                 />
