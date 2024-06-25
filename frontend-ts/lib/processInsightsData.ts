@@ -360,6 +360,5 @@ export const getPieLinedata = (data: any) => {
     },
   ];
 
-  // return { lineData, pieData };
-  return { lineData: [], pieData: [] };
+  return { lineData, pieData };
 };
