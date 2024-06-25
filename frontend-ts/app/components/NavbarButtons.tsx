@@ -59,7 +59,7 @@ const NavbarButtons: React.FC<NavbarButtonsProps> = ({ user }) => {
                     className="font-bold flex flex-row items-center gap-2"
                 >
                     <LogIn size={ICON_SIZE} strokeWidth={STROKE_WIDTH} />
-                    Login
+                    Signup
                 </Button>
             ) : (
                 <Button variant="primary" size="icon">
