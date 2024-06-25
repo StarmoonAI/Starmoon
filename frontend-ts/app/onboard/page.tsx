@@ -1,15 +1,19 @@
+import supabaseServerClient from "@/db/supabaseServerClient";
+import Onboard from "../components/Onboard";
+import { getUserById } from "@/db/users";
+
 export default async function Home() {
+    const supabase = supabaseServerClient();
+
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
+
+    const dbUser = user ? await getUserById(supabase, user.id) : undefined;
+
     return (
-        <div className="flex sm:flex-row flex-col gap-2 sm:h-[70%] h-full">
-            <p>
-                To get started, enter supervision information to get your toy
-                set up.
-            </p>
-            <p>
-                Parenting can be hard. It can be even harder when you&apos;re
-                trying to balance work, life, and your child&apos;s development.
-                Starmoon AI is here to help.
-            </p>
+        <div className="flex flex-col gap-2 font-quicksand">
+            {dbUser && <Onboard selectedUser={dbUser} />}
         </div>
     );
 }
