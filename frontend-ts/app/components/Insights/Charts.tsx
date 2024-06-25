@@ -5,183 +5,7 @@ import { MyResponsiveBar } from "./BarChart";
 import { MyResponsivePie } from "./PieChart";
 import { MyResponsiveLine } from "./LineChart";
 import { processData } from "@/lib/processInsightsData";
-
-// export const pieData: PieChartData[] = [
-//     {
-//         id: "Positive",
-//         label: "Positive",
-//         value: 60.0,
-//     },
-//     {
-//         id: "Neutral",
-//         label: "Neutral",
-//         value: 15.5,
-//     },
-//     {
-//         id: "Negative",
-//         label: "Negative",
-//         value: 24.5,
-//     },
-// ];
-
-// const lineData = [
-//     {
-//         id: "Negative",
-//         name: "Negative",
-//         data: [
-//             {
-//                 x: 0,
-//                 y: 8,
-//             },
-//             {
-//                 x: 1,
-//                 y: 10,
-//             },
-//             {
-//                 x: 2,
-//                 y: 11,
-//             },
-//             {
-//                 x: 3,
-//                 y: 9,
-//             },
-//             {
-//                 x: 4,
-//                 y: 6,
-//             },
-//             {
-//                 x: 5,
-//                 y: 10,
-//             },
-//             {
-//                 x: 6,
-//                 y: 12,
-//             },
-//         ],
-//     },
-//     {
-//         id: "Neg-P",
-//         name: "Negative-Prediction",
-//         data: [
-//             {
-//                 x: 6,
-//                 y: 12,
-//             },
-//             {
-//                 x: 7,
-//                 y: 13,
-//             },
-//             {
-//                 x: 8,
-//                 y: 9,
-//             },
-//         ],
-//     },
-//     {
-//         id: "Neutral",
-//         name: "Neutral",
-//         data: [
-//             {
-//                 x: 0,
-//                 y: 9,
-//             },
-//             {
-//                 x: 1,
-//                 y: 10,
-//             },
-//             {
-//                 x: 2,
-//                 y: 12,
-//             },
-//             {
-//                 x: 3,
-//                 y: 10,
-//             },
-//             {
-//                 x: 4,
-//                 y: 12,
-//             },
-//             {
-//                 x: 5,
-//                 y: 15,
-//             },
-//             {
-//                 x: 6,
-//                 y: 13,
-//             },
-//         ],
-//     },
-//     {
-//         id: "Neu-P",
-//         name: "Neutral-Prediction",
-//         data: [
-//             {
-//                 x: 6,
-//                 y: 13,
-//             },
-//             {
-//                 x: 7,
-//                 y: 9,
-//             },
-//             {
-//                 x: 8,
-//                 y: 12,
-//             },
-//         ],
-//     },
-//     {
-//         id: "Postive",
-//         name: "Postive",
-//         data: [
-//             {
-//                 x: 0,
-//                 y: 10,
-//             },
-//             {
-//                 x: 1,
-//                 y: 12,
-//             },
-//             {
-//                 x: 2,
-//                 y: 13,
-//             },
-//             {
-//                 x: 3,
-//                 y: 12,
-//             },
-//             {
-//                 x: 4,
-//                 y: 16,
-//             },
-//             {
-//                 x: 5,
-//                 y: 14,
-//             },
-//             {
-//                 x: 6,
-//                 y: 17,
-//             },
-//         ],
-//     },
-//     {
-//         id: "Pos-P",
-//         name: "Postive-Prediction",
-//         data: [
-//             {
-//                 x: 6,
-//                 y: 17,
-//             },
-//             {
-//                 x: 7,
-//                 y: 16,
-//             },
-//             {
-//                 x: 8,
-//                 y: 17,
-//             },
-//         ],
-//     },
-// ];
+import { generateSuggestion } from "@/lib/azureOpenai";
 
 interface ChartsProps {
   user: IUser;
@@ -207,7 +31,7 @@ const Charts: React.FC<ChartsProps> = async ({ user, filter }) => {
   if (user) {
     const data = await dbGetConversation(supabase, user.user_id);
     const processedData = processData(data, filter);
-    const { cardData, barData, lineData, pieData } = processedData;
+    const { cardData, barData, lineData, pieData } = await processedData;
 
     return (
       <div>
@@ -220,18 +44,18 @@ const Charts: React.FC<ChartsProps> = async ({ user, filter }) => {
             <div className="flex space-x-3">
               <div className="flex-grow">
                 <TopCard
-                  title={cardData.get("main_1")?.title ?? null}
-                  value={`${cardData.get("main_1")?.value ?? ""}%`}
-                  delta={cardData.get("main_1")?.change ?? 0}
+                  title={cardData["main_emotion_1"]?.title ?? null}
+                  value={`${cardData["main_emotion_1"]?.value ?? ""}%`}
+                  delta={cardData["main_emotion_1"]?.change ?? 0}
                   filter={filter}
                   type="top"
                 />
               </div>
               <div className="flex-grow">
                 <TopCard
-                  title={cardData.get("main_2")?.title ?? null}
-                  value={`${cardData.get("main_2")?.value ?? ""}%`}
-                  delta={cardData.get("main_2")?.change ?? 0}
+                  title={cardData["main_emotion_2"]?.title ?? null}
+                  value={`${cardData["main_emotion_2"]?.value ?? ""}%`}
+                  delta={cardData["main_emotion_2"]?.change ?? 0}
                   filter={filter}
                   type="top"
                 />
@@ -246,18 +70,18 @@ const Charts: React.FC<ChartsProps> = async ({ user, filter }) => {
             <div className="flex space-x-3">
               <div className="flex-grow">
                 <TopCard
-                  title={cardData.get("change_1")?.title ?? null}
-                  value={`${cardData.get("change_1")?.value ?? ""}%`}
-                  delta={cardData.get("change_1")?.change ?? 0}
+                  title={cardData["change_1"]?.title ?? null}
+                  value={`${cardData["change_1"]?.value ?? ""}%`}
+                  delta={cardData["change_1"]?.change ?? 0}
                   filter={filter}
                   type="shift"
                 />
               </div>
               <div className="flex-grow">
                 <TopCard
-                  title={cardData.get("change_2")?.title ?? null}
-                  value={`${cardData.get("change_2")?.value ?? ""}%`}
-                  delta={cardData.get("change_2")?.change ?? 0}
+                  title={cardData["change_2"]?.title ?? null}
+                  value={`${cardData["change_2"]?.value ?? ""}%`}
+                  delta={cardData["change_2"]?.change ?? 0}
                   filter={filter}
                   type="shift"
                 />

@@ -1,4 +1,5 @@
 import { startOfDay, subDays, endOfDay } from "date-fns";
+import { generateSuggestion } from "./azureOpenai";
 
 export const positiveEmotions = [
   "Admiration",
@@ -57,7 +58,7 @@ export const neutralEmotions = [
   "Sympathy",
 ];
 
-export const processData = (rawData: any[], filter: string) => {
+export const processData = async (rawData: any[], filter: string) => {
   // Perform your heavy computations here
 
   let currentPeriod = new Date();
@@ -78,12 +79,22 @@ export const processData = (rawData: any[], filter: string) => {
 
   const cardData = getCardsData(prevAvgSorted, curAvgSorted);
   const barData = getBarData(prevAvgSorted, curAvgSorted, 10, filter);
+  // convert cardData Map to JSON
+  console.log("cardData+++", JSON.stringify(cardData));
   console.log("barData+++", JSON.stringify(barData));
 
   const { lineData, pieData } = getPieLinedata(rawData);
   // print lineData to json
   console.log("lineData+++", JSON.stringify(lineData));
   console.log("pieData+++", JSON.stringify(pieData));
+
+  // const suggestions = await generateSuggestion(
+  //   cardData,
+  //   barData,
+  //   lineData,
+  //   pieData
+  // );
+  // console.log("suggestions+++", suggestions);
 
   return {
     cardData,
@@ -132,10 +143,7 @@ const averages = (data: any[]) => {
 const getCardsData = (prevAvg: any, curAvg: any) => {
   const changes: { [key: string]: number } = {};
 
-  const cardData = new Map<
-    string,
-    { title: string; value: number; change: number }
-  >();
+  const cardData: { [key: string]: any } = {};
 
   for (const key of Object.keys(curAvg)) {
     if (prevAvg[key] !== undefined) {
@@ -155,7 +163,7 @@ const getCardsData = (prevAvg: any, curAvg: any) => {
   const changesEntries = Object.entries(changesSorted);
 
   if (changesEntries.length === 0) {
-    return new Map();
+    return {};
   }
 
   let firstChange: [string, number];
@@ -172,29 +180,29 @@ const getCardsData = (prevAvg: any, curAvg: any) => {
     lastChange = changesEntries[changesEntries.length - 1];
   }
 
-  cardData.set("main_1", {
+  cardData["main_emotion_1"] = {
     title: firstCurAvg[0],
     value: roundDecimal(firstCurAvg[1] as number),
     change: roundDecimal(changesSorted[firstCurAvg[0]]),
-  });
+  };
 
-  cardData.set("main_2", {
+  cardData["main_emotion_2"] = {
     title: secondCurAvg[0],
     value: roundDecimal(secondCurAvg[1] as number),
     change: roundDecimal(changesSorted[secondCurAvg[0]]),
-  });
+  };
 
-  cardData.set("change_1", {
+  cardData["change_1"] = {
     title: firstChange[0],
     value: roundDecimal(curAvg[firstChange[0]]),
     change: roundDecimal(firstChange[1]),
-  });
+  };
 
-  cardData.set("change_2", {
+  cardData["change_2"] = {
     title: lastChange[0],
     value: roundDecimal(curAvg[lastChange[0]]),
     change: roundDecimal(lastChange[1]),
-  });
+  };
 
   return cardData;
 };
