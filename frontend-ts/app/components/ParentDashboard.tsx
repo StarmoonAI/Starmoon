@@ -130,7 +130,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
                         render={({ field }) => (
                             <FormItem className="w-full rounded-md">
                                 <FormLabel className="flex flex-row gap-4 items-center">
-                                    Child name
+                                    {"Your child's name"}
                                 </FormLabel>
                                 {/* <FormDescription>
                             Give your newsletter a name that describes its

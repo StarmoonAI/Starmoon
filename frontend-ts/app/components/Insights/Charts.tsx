@@ -202,7 +202,7 @@ const Charts: React.FC<ChartsProps> = async ({ user, filter }) => {
 
         return (
             <div>
-                <div className="mt-2 mb-4 text-gray-800">
+                {/* <div className="mt-2 mb-4 text-gray-800">
                     What you should do: (placeholder) This is a fairly simple
                     process to generate the the composable charts. We have to
                     create a main component like Bar chart and layers attribute
@@ -211,7 +211,7 @@ const Charts: React.FC<ChartsProps> = async ({ user, filter }) => {
                     the scaling and placement of elements on the chart canvas
                     explicitly. No default tooltips for the generated SVG
                     components.
-                </div>
+                </div> */}
 
                 {/* <div className="flex justify-center w-full mb-2">
                     <button className="w-[72px] mr-[1px] py-1 px-2 bg-amber-400 text-white rounded-l-[15px]">

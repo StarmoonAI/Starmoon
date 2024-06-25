@@ -18,7 +18,7 @@ export default async function Home() {
         <div className="flex flex-col gap-2 font-baloo2">
             <div className="flex flex-row items-center gap-4">
                 <h1 className="text-4xl font-semibold">Insights</h1>
-                {/* <Badge variant="default">Coming soon</Badge> */}
+                <Badge variant="default">Coming soon</Badge>
             </div>
 
             <div className="">
