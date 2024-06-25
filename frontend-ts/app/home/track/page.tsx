@@ -4,27 +4,32 @@ import { getUserById } from "@/db/users";
 import { defaultToyId } from "@/lib/data";
 import { getAllToys, getToyById } from "@/db/toys";
 import supabaseServerClient from "@/db/supabaseServerClient";
+import { getCreditsRemaining } from "@/lib/utils";
 
 export default async function Home() {
-  const supabase = supabaseServerClient();
+    const supabase = supabaseServerClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
 
-  const dbUser = user ? await getUserById(supabase, user.id) : undefined;
+    const dbUser = user ? await getUserById(supabase, user.id) : undefined;
 
-  return (
-    <div className="flex flex-col gap-2 font-baloo2">
-      <div className="flex flex-row items-center gap-4">
-        <h1 className="text-4xl font-semibold">Insights</h1>
-        {/* <Badge variant="default">Coming soon</Badge> */}
-      </div>
+    return (
+        <div className="flex flex-col gap-2 font-baloo2">
+            <div className="flex flex-row items-center gap-4">
+                <h1 className="text-4xl font-semibold">Insights</h1>
+            </div>
+            {dbUser && (
+                <p className="text-sm text-gray-600">
+                    {getCreditsRemaining(dbUser)} credits remaining
+                </p>
+            )}
 
-      <div className="">
-        <Charts user={dbUser!} toy={dbUser?.toy!} filter="days" />
-        {/* <Charts user={dbUser} selectedToy={null} filter="days" /> */}
-      </div>
-    </div>
-  );
+            <div className="">
+                <Charts user={dbUser!} toy={dbUser?.toy!} filter="days" />
+                {/* <Charts user={dbUser} selectedToy={null} filter="days" /> */}
+            </div>
+        </div>
+    );
 }

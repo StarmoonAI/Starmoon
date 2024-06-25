@@ -23,13 +23,13 @@ import { updateUser } from "@/db/users";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useEffect } from "react";
 import { getCreditsRemaining } from "@/lib/utils";
+import { ArrowRight } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import React from "react";
+import { useRouter } from "next/navigation";
 
-interface ParentDashboardProps {
+interface OnboardProps {
     selectedUser: IUser;
-    // chooseUser: (user: IUser) => void;
-    selectedToy: IToy;
-    // chooseToy: (toy: IToy) => void;
-    allToys: IToy[];
 }
 
 export const parentDashboardSchema = z.object({
@@ -63,13 +63,11 @@ const learningModules = [
 
 export type ParentFormInput = z.infer<typeof parentDashboardSchema>;
 
-const ParentDashboard: React.FC<ParentDashboardProps> = ({
-    selectedUser,
-    selectedToy,
-    allToys,
-}) => {
+const Onboard: React.FC<OnboardProps> = ({ selectedUser }) => {
+    const [progress, setProgress] = React.useState(40);
     const supabase = createClientComponentClient();
     const { toast } = useToast();
+    const router = useRouter();
     const form = useForm<ParentFormInput>({
         defaultValues: {
             child_name: selectedUser?.child_name ?? "",
@@ -80,50 +78,30 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
 
     async function onSubmit(values: z.infer<typeof parentDashboardSchema>) {
         await updateUser(supabase, values, selectedUser!.user_id);
+        setProgress(100);
         toast({
             description: "Your prefereces have been saved.",
         });
+        router.push("/home");
     }
-
-    const pickToy = async (toy: IToy) => {
-        // chooseToy(toy);
-        await updateUser(
-            supabase,
-            { toy_id: toy.toy_id },
-            selectedUser!.user_id
-        );
-        toast({
-            description: "Your plushie has been saved.",
-        });
-    };
 
     return (
         <div className="overflow-hidden w-full flex-auto flex flex-col font-quicksand pl-1">
+            <Progress value={progress} />
+            <p className="text-3xl font-bold mt-5">
+                To get started, enter supervision details to get your
+                child&apos;s companion set up
+            </p>
+            <p className="text-md text-gray-500 font-medium">
+                Parenting can be hard. It can be even harder when you&apos;re
+                trying to balance work, life, and your child&apos;s development.
+                Starmoon AI is here to help
+            </p>
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="flex flex-col gap-8 mb-4"
+                    className="flex flex-col gap-8 mb-4 mt-4"
                 >
-                    <div className="flex flex-col gap-2 font-baloo2">
-                        <div className="flex flex-row gap-4 items-center">
-                            <h1 className="text-4xl font-semibold">
-                                Parent controls
-                            </h1>
-                            <div className="flex flex-row gap-2 justify-between items-center">
-                                <Button
-                                    variant="default"
-                                    size="sm"
-                                    type="submit"
-                                >
-                                    Save
-                                </Button>
-                            </div>
-                        </div>
-                        <p className="text-sm text-gray-600">
-                            {getCreditsRemaining(selectedUser)} credits
-                            remaining
-                        </p>
-                    </div>
                     <FormField
                         control={form.control}
                         name="child_name"
@@ -241,50 +219,16 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
                             </FormItem>
                         )}
                     />
-                    <FormField
-                        control={form.control}
-                        name="child_name"
-                        render={({ field }) => (
-                            <FormItem className="w-full rounded-md">
-                                <FormLabel className="flex flex-row gap-4 items-center">
-                                    Logged in as
-                                </FormLabel>
-                                {/* <FormDescription>
-                            Give your newsletter a name that describes its
-                            content.
-                        </FormDescription> */}
-                                <FormControl>
-                                    <Input
-                                        // autoFocus
-                                        disabled
-                                        value={selectedUser?.email}
-                                        className="max-w-screen-sm h-10 bg-white"
-                                        autoComplete="on"
-                                        style={{
-                                            fontSize: 16,
-                                        }}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                    <Button
+                        variant="primary"
+                        className="w-fit flex flex-row items-center gap-4 font-semibold"
+                    >
+                        Next <ArrowRight size={20} />
+                    </Button>
                 </form>
             </Form>
-            <Separator />
-            <Label className="text-md mt-4 font-semibold">
-                Pick your plushie
-            </Label>
-            <ToyPicker
-                allToys={allToys}
-                currentToy={selectedToy}
-                buttonText={"Pick"}
-                imageSize={200}
-                chooseToy={pickToy}
-                showCurrent={true}
-            />
         </div>
     );
 };
 
-export default ParentDashboard;
+export default Onboard;
