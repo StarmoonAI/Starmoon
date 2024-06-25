@@ -101,11 +101,11 @@ export default async function RootLayout({
                 <div className="bg-amber-50 h-[4rem] flex items-center">
                     <header className="mx-auto w-full max-w-7xl px-4 md:px-6 lg:px-8 flex items-center justify-between">
                         <div className="flex flex-row gap-1">
-                            <Cat
+                            {/* <Cat
                                 size={32}
                                 strokeWidth={2}
                                 className="text-amber-600 self-center mr-1"
-                            />
+                            /> */}
                             <a
                                 className="flex items-center font-extrabold font-quicksand text-4xl text-amber-600"
                                 href="/"
