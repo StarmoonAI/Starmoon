@@ -17,6 +17,7 @@ import { getToyById } from "@/db/toys";
 import { defaultToyId } from "@/lib/data";
 import { Separator } from "@/components/ui/separator";
 import GoogleOAuth from "@/app/components/GoogleOAuth";
+import _ from "lodash";
 
 export const dynamic = "force-dynamic";
 
@@ -28,8 +29,10 @@ export default async function Login({
     searchParams?: { [key: string]: string | string[] | undefined };
 }) {
     const supabase = supabaseServerClient();
-    const toy_id = searchParams?.toy_id;
-    const toy = await getToyById(supabase, (toy_id ?? defaultToyId) as string);
+    const toy_id = searchParams?.toy_id as string;
+    const toy = _.isEmpty(toy_id)
+        ? undefined
+        : await getToyById(supabase, toy_id as string);
 
     return (
         <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">

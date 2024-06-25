@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
             data: { user },
         } = await supabase.auth.getUser();
 
-        console.log("fooblar", user);
+        // console.log("fooblar", user);
 
         if (user) {
             const userExists = await doesUserExist(supabase, user);
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
                 // user.email && (await sendWelcomeEmail(user.email));
 
                 // Redirect to home page after user is created
-                return NextResponse.redirect(`${requestUrl.origin}/home`);
+                return NextResponse.redirect(`${requestUrl.origin}/onboard`);
             }
         }
     }
