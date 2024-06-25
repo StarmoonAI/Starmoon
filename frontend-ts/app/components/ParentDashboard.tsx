@@ -185,7 +185,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
                             <FormItem>
                                 <div className="mb-4">
                                     <FormLabel className="text-base">
-                                        Learning modules
+                                        Sidebar
                                     </FormLabel>
                                     <FormDescription>
                                         Select your learning modules
