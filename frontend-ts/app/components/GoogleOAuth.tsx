@@ -24,8 +24,8 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({ toy_id }) => {
                 //     access_type: "offline",
                 //     prompt: "consent",
                 // },
-                redirectTo: new URL(getBaseUrl() + "/auth/callback").href,
-                // redirectTo: `${location.origin}/auth/callback`,
+                // redirectTo: new URL(getBaseUrl() + "/auth/callback").href,
+                redirectTo: `${location.origin}/auth/callback`,
                 queryParams: {
                     toy_id: toy_id ?? defaultToyId,
                 },
