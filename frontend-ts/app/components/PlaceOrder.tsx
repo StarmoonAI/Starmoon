@@ -68,7 +68,7 @@ function ProfileForm({
                 <Label htmlFor="name">Name</Label>
                 <Input
                     id="name"
-                    placeholder="Mr. Para Keats"
+                    placeholder="Mr. So Kyoh"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     style={{ fontSize: 16 }}
@@ -80,7 +80,7 @@ function ProfileForm({
                 <Input
                     type="email"
                     id="email"
-                    placeholder={"parakeats@gmail.com"}
+                    placeholder={"sookeeoh@gmail.com"}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     style={{ fontSize: 16 }}

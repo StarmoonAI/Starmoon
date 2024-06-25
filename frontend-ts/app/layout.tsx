@@ -20,6 +20,7 @@ import supabaseServerClient from "@/db/supabaseServerClient";
 import NavbarButtons from "./components/NavbarButtons";
 import { Toaster } from "@/components/ui/toaster";
 import Footer from "./components/Footer";
+import { Cat } from "lucide-react";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -74,7 +75,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-    metadataBase: new URL("https://Sokyoai.vercel.app"),
+    metadataBase: new URL("https://sokyo.vercel.app"),
     title: "Sokyo AI",
     description: `We make toys you can grow and learn with.`,
     robots: {
@@ -100,6 +101,11 @@ export default async function RootLayout({
                 <div className="bg-amber-50 h-[4rem] flex items-center">
                     <header className="mx-auto w-full max-w-7xl px-4 md:px-6 lg:px-8 flex items-center justify-between">
                         <div className="flex flex-row gap-1">
+                            <Cat
+                                size={32}
+                                strokeWidth={2}
+                                className="text-amber-600 self-center mr-1"
+                            />
                             <a
                                 className="flex items-center font-extrabold font-quicksand text-4xl text-amber-600"
                                 href="/"
