@@ -15,7 +15,7 @@ export const getCreditsRemaining = (user: IUser) => {
     // starts with 50 credits
     // max session time is 10 minutes or 600 seconds
 
-    return Math.round(50 - (5 * user.session_time) / 60);
+    return Math.max(Math.round(50 - (5 * user.session_time) / 60), 0);
 };
 
 export const constructUserPrompt = (user: IUser, toy: IToy) => {
