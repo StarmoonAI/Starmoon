@@ -163,8 +163,6 @@ const getCardsData = (prevAvg: any, curAvg: any) => {
   const changesEntries = Object.entries(changesSorted);
   console.log("changesEntries", changesEntries, changesEntries.length);
 
-  // if changesEntries is empty
-
   if (changesEntries.length === 0) {
     if (firstCurAvg) {
       console.log("firstCurAvg", firstCurAvg);
