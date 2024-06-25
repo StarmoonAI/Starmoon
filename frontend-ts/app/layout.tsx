@@ -20,6 +20,8 @@ import supabaseServerClient from "@/db/supabaseServerClient";
 import NavbarButtons from "./components/NavbarButtons";
 import { Toaster } from "@/components/ui/toaster";
 import Footer from "./components/Footer";
+import { Analytics } from "@vercel/analytics/react";
+
 import { Cat } from "lucide-react";
 
 const inter = Inter({
@@ -124,6 +126,7 @@ export default async function RootLayout({
                         </DeepgramContextProvider>
                     </MicrophoneContextProvider>
                 </div>
+                <Analytics />
                 <Toaster />
                 <Footer />
             </body>
