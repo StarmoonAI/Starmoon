@@ -15,9 +15,7 @@ const Preorder = () => {
             </div>
 
             <div className="flex flex-col gap-4">
-                <h2 className="text-2xl font-semibold">
-                    Preorder a Parakeet Toy
-                </h2>
+                <h2 className="text-2xl font-semibold">Preorder a Sokyo Toy</h2>
                 <p className="text-sm text-gray-500">
                     We are excited to accept preorders. Get a personalized,
                     AI-enabled plushie that fosters a growth-mindset and

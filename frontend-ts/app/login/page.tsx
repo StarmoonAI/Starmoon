@@ -36,11 +36,11 @@ export default async function Login({
             <Card>
                 <CardHeader>
                     <CardTitle className="flex flex-row gap-1 items-center">
-                        Log In / Sign Up to Parakeet AI
+                        Log In / Sign Up to Sokyo AI
                         <Sparkles size={20} fill="black" />
                     </CardTitle>
                     <CardDescription>
-                        Log into your Parakeet AI account to continue.
+                        Log into your Sokyo AI account to continue.
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-4">
