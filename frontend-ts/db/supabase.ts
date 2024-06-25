@@ -11,6 +11,7 @@ export type Database = {
     Tables: {
       conversations: {
         Row: {
+          chat_group_id: string | null
           content: string
           conversation_id: string
           created_at: string
@@ -20,6 +21,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          chat_group_id?: string | null
           content: string
           conversation_id?: string
           created_at?: string
@@ -29,6 +31,7 @@ export type Database = {
           user_id?: string
         }
         Update: {
+          chat_group_id?: string | null
           content?: string
           conversation_id?: string
           created_at?: string
@@ -54,62 +57,150 @@ export type Database = {
           },
         ]
       }
+      inbound: {
+        Row: {
+          created_at: string
+          email: string | null
+          inbound_id: string
+          name: string | null
+          type: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          inbound_id?: string
+          name?: string | null
+          type?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          inbound_id?: string
+          name?: string | null
+          type?: string | null
+        }
+        Relationships: []
+      }
+      insights: {
+        Row: {
+          created_at: string
+          date: string
+          insight_id: string
+          metadata: Json
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          insight_id?: string
+          metadata: Json
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          insight_id?: string
+          metadata?: Json
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "insights_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       toys: {
         Row: {
           created_at: string
+          expanded_prompt: string
           hume_ai_config_id: string
+          image_src: string
           name: string
           prompt: string
+          third_person_prompt: string
           toy_id: string
         }
         Insert: {
           created_at?: string
+          expanded_prompt?: string
           hume_ai_config_id?: string
+          image_src?: string
           name: string
           prompt: string
+          third_person_prompt?: string
           toy_id?: string
         }
         Update: {
           created_at?: string
+          expanded_prompt?: string
           hume_ai_config_id?: string
+          image_src?: string
           name?: string
           prompt?: string
+          third_person_prompt?: string
           toy_id?: string
         }
         Relationships: []
       }
       users: {
         Row: {
+          avatar_url: string
           child_age: number
           child_name: string
           child_persona: string
           created_at: string
+          email: string
+          modules: string[] | null
+          most_recent_chat_group_id: string | null
           parent_name: string
+          session_time: number
           toy_id: string | null
           toy_name: string | null
           user_id: string
         }
         Insert: {
+          avatar_url?: string
           child_age?: number
           child_name: string
           child_persona: string
           created_at?: string
+          email?: string
+          modules?: string[] | null
+          most_recent_chat_group_id?: string | null
           parent_name: string
+          session_time?: number
           toy_id?: string | null
           toy_name?: string | null
           user_id?: string
         }
         Update: {
+          avatar_url?: string
           child_age?: number
           child_name?: string
           child_persona?: string
           created_at?: string
+          email?: string
+          modules?: string[] | null
+          most_recent_chat_group_id?: string | null
           parent_name?: string
+          session_time?: number
           toy_id?: string | null
           toy_name?: string | null
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "users_toy_id_fkey"
+            columns: ["toy_id"]
+            isOneToOne: false
+            referencedRelation: "toys"
+            referencedColumns: ["toy_id"]
+          },
+        ]
       }
     }
     Views: {

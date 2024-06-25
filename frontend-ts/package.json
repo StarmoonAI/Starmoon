@@ -7,7 +7,7 @@
         "build": "next build",
         "start": "next start",
         "lint": "next lint",
-        "update-types": "npx supabase gen types typescript --project-id \"hzcgbsakzagvgfuektjb\" > types/supabase.ts"
+        "update-types": "npx supabase gen types typescript --project-id \"xygbupeczfhwamhqnucy\" > db/supabase.ts"
     },
     "dependencies": {
         "@deepgram/sdk": "^3.3.0",
