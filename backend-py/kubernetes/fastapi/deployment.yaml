@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+        - name: app
+          image: incarnaregistry.azurecr.io/django:latest
+          ports:
+            - containerPort: 8000
+          envFrom:
+            - secretRef:
+                name: django-prod-env
+      #     volumeMounts:
+      #       - name: gcp-service-account
+      #         mountPath: /var/secrets/google/
+      #         readOnly: true
+      # volumes:
+      #   - name: gcp-service-account
+      #     secret:
+      #       secretName: gcp-service-account-key
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: "app"
+                    operator: In
+                    values:
+                      - app
+              topologyKey: "kubernetes.io/hostname"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service
+spec:
+  type: LoadBalancer
+  # type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  selector:
+    app: app
+
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: app
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: app
+  minReplicas: 1
+  maxReplicas: 20
+  targetCPUUtilizationPercentage: 90
