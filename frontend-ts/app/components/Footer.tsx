@@ -17,7 +17,7 @@ export default function Footer() {
                 </Button>
             </a>
             <Label className="font-normal text-xs text-gray-500">
-                Sokyo AI (a project of HeyHaddock Inc.) ©{" "}
+                Starmoon AI (a project of HeyHaddock Inc.) ©{" "}
                 {new Date().getFullYear()} All rights reserved.
             </Label>
         </footer>

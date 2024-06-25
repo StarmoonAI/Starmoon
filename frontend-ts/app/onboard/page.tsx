@@ -8,7 +8,7 @@ export default async function Home() {
             <p>
                 Parenting can be hard. It can be even harder when you&apos;re
                 trying to balance work, life, and your child&apos;s development.
-                Sokyo AI is here to help.
+                Starmoon AI is here to help.
             </p>
         </div>
     );

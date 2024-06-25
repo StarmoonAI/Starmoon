@@ -77,8 +77,8 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-    metadataBase: new URL("https://sokyo.vercel.app"),
-    title: "Sokyo AI",
+    metadataBase: new URL("https://starmoon.vercel.app"),
+    title: "Starmoon AI",
     description: `We make toys you can grow and learn with.`,
     robots: {
         index: false,
@@ -112,7 +112,7 @@ export default async function RootLayout({
                                 className="flex items-center font-extrabold font-quicksand text-4xl text-amber-600"
                                 href="/"
                             >
-                                Sokyo AI
+                                Starmoon AI
                             </a>
                             <p className="text-sm text-gray-600">beta</p>
                         </div>

@@ -91,7 +91,7 @@ function ProfileForm({
 
             <Button type="submit" variant="primary">
                 <Sparkles className="mr-2" size={16} fill="white" />
-                Request Sokyo Toy Demo
+                Request Starmoon Toy Demo
             </Button>
         </form>
     );
@@ -104,7 +104,7 @@ const PlaceOrder: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const closeModal = () => setOpen(false);
     const subText = (
         <>
-            {"You can now preorder a Sokyo toy for your child. Get "}
+            {"You can now preorder a Starmoon toy for your child. Get "}
             <span className="font-bold">25% off</span>
             {" when you order now. See a demo first →"}
         </>
