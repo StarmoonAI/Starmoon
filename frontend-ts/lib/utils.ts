@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export const getBaseUrl = () => {
     return process.env.NEXT_PUBLIC_VERCEL_ENV === "production"
-        ? "https://starmoon.vercel.app"
+        ? "https://starmoon.app"
         : "http://localhost:3000";
 };
 
