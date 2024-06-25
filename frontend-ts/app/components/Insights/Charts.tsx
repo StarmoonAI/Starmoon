@@ -184,163 +184,138 @@ import { processData } from "@/lib/processInsightsData";
 // ];
 
 interface ChartsProps {
-    user: IUser;
-    toy: IToy;
-    filter: string;
+  user: IUser;
+  toy: IToy;
+  filter: string;
 }
 
 const Charts: React.FC<ChartsProps> = async ({ user, filter }) => {
-    // get the user data from the selected user and period
-    const supabase = supabaseServerClient();
+  const isEmpty = (data: any) => {
+    return !data || data.length === 0;
+  };
 
-    if (user) {
-        const data = await dbGetConversation(supabase, user.user_id);
-        // console.log("++++++", user);
-        // console.log("+++++", data_.length, data_);
-        const processedData = processData(data, filter);
-        const { cardData, barData, lineData, pieData } = processedData;
+  const placeholder = (
+    <div className="my-4 bg-gray-50 text-center w-full h-full rounded-lg flex items-center justify-center">
+      <p className="text-lg font-medium text-gray-500">No data showing</p>
+    </div>
+  );
 
-        return (
-            <div>
-                {/* <div className="mt-2 mb-4 text-gray-800">
-                    What you should do: (placeholder) This is a fairly simple
-                    process to generate the the composable charts. We have to
-                    create a main component like Bar chart and layers attribute
-                    provides the composable structure to add elements to the
-                    Chart. This approach has some limitations as well: Manage
-                    the scaling and placement of elements on the chart canvas
-                    explicitly. No default tooltips for the generated SVG
-                    components.
-                </div> */}
+  // get the user data from the selected user and period
 
-                {/* <div className="flex justify-center w-full mb-2">
-                    <button className="w-[72px] mr-[1px] py-1 px-2 bg-amber-400 text-white rounded-l-[15px]">
-                        Days
-                    </button>
-                    <button className="w-[72px] mr-[1px] py-1 px-2 bg-amber-50 text-amber-500 hover:bg-amber-100">
-                        Weeks
-                    </button>
-                    <button className="w-[72px] mr-[1px] py-1 px-2 bg-amber-50 text-amber-500 hover:bg-amber-100">
-                        Months
-                    </button>
-                    <button className="w-[72px] py-1 px-2 bg-amber-50 text-amber-500 rounded-r-[15px] hover:bg-amber-100">
-                        All
-                    </button>
-                </div> */}
+  const supabase = supabaseServerClient();
 
-                <div className="flex flex-col md:flex-row md:space-x-3">
-                    <div className="w-full">
-                        <h2 className="my-4 text-lg font-bold text-gray-700">
-                            Main Emotions
-                        </h2>
+  if (user) {
+    const data = await dbGetConversation(supabase, user.user_id);
+    const processedData = processData(data, filter);
+    const { cardData, barData, lineData, pieData } = processedData;
 
-                        <div className="flex space-x-3">
-                            <div className="flex-grow">
-                                <TopCard
-                                    title={
-                                        cardData.get("main_1")?.title ?? null
-                                    }
-                                    value={`${
-                                        cardData.get("main_1")?.value ?? ""
-                                    }%`}
-                                    delta={cardData.get("main_1")?.change ?? 0}
-                                    filter={filter}
-                                    type="top"
-                                />
-                            </div>
-                            <div className="flex-grow">
-                                <TopCard
-                                    title={
-                                        cardData.get("main_2")?.title ?? null
-                                    }
-                                    value={`${
-                                        cardData.get("main_2")?.value ?? ""
-                                    }%`}
-                                    delta={cardData.get("main_2")?.change ?? 0}
-                                    filter={filter}
-                                    type="top"
-                                />
-                            </div>
-                        </div>
-                    </div>
+    return (
+      <div>
+        <div className="flex flex-col md:flex-row md:space-x-3">
+          <div className="w-full">
+            <h2 className="my-4 text-lg font-bold text-gray-700">
+              Main Emotions
+            </h2>
 
-                    <div className="w-full mt-2 md:mt-0">
-                        <h2 className="my-4 text-lg font-bold text-gray-700">
-                            Significant Emotional Shifts
-                        </h2>
-                        <div className="flex space-x-3">
-                            <div className="flex-grow">
-                                <TopCard
-                                    title={
-                                        cardData.get("change_1")?.title ?? null
-                                    }
-                                    value={`${
-                                        cardData.get("change_1")?.value ?? ""
-                                    }%`}
-                                    delta={
-                                        cardData.get("change_1")?.change ?? 0
-                                    }
-                                    filter={filter}
-                                    type="shift"
-                                />
-                            </div>
-                            <div className="flex-grow">
-                                <TopCard
-                                    title={
-                                        cardData.get("change_2")?.title ?? null
-                                    }
-                                    value={`${
-                                        cardData.get("change_2")?.value ?? ""
-                                    }%`}
-                                    delta={
-                                        cardData.get("change_2")?.change ?? 0
-                                    }
-                                    filter={filter}
-                                    type="shift"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="flex flex-col md:flex-row md:space-x-8 mx-6-">
-                    <div className="w-full order-2 md:order-1  md:flex-grow">
-                        <h2 className="mt-6 text-lg font-bold text-gray-700">
-                            {/* Sentiment Over Time and Forecast */}
-                            Sentiment Over Time
-                        </h2>
-                        <div className="h-[300px] lg:h-96">
-                            <MyResponsiveLine data={lineData} />
-                        </div>
-                    </div>
-
-                    <div className="w-full order-1 md:order-2 md:w-72 md:flex-shrink-0">
-                        <h2 className="mt-6 text-lg font-bold text-gray-700">
-                            Current Sentiment Proportions
-                        </h2>
-                        <div className="h-[300px] lg:h-96">
-                            <MyResponsivePie data={pieData} />
-                        </div>
-                    </div>
-                </div>
-                <div className="w-full">
-                    <h2 className="mt-6 text-lg font-bold text-gray-700">
-                        Top 10 Emotions Breakdown (sheet)
-                    </h2>
-                    <div className="h-[350px] lg:h-[450px]">
-                        <MyResponsiveBar data={barData} filter={filter} />
-                    </div>
-                </div>
+            <div className="flex space-x-3">
+              <div className="flex-grow">
+                <TopCard
+                  title={cardData.get("main_1")?.title ?? null}
+                  value={`${cardData.get("main_1")?.value ?? ""}%`}
+                  delta={cardData.get("main_1")?.change ?? 0}
+                  filter={filter}
+                  type="top"
+                />
+              </div>
+              <div className="flex-grow">
+                <TopCard
+                  title={cardData.get("main_2")?.title ?? null}
+                  value={`${cardData.get("main_2")?.value ?? ""}%`}
+                  delta={cardData.get("main_2")?.change ?? 0}
+                  filter={filter}
+                  type="top"
+                />
+              </div>
             </div>
-        );
-    } else {
-        console.error("User is undefined");
+          </div>
 
-        return (
-            <div>
-                <h1>No user data is aviliable</h1>
+          <div className="w-full mt-2 md:mt-0">
+            <h2 className="my-4 text-lg font-bold text-gray-700">
+              Significant Emotional Shifts
+            </h2>
+            <div className="flex space-x-3">
+              <div className="flex-grow">
+                <TopCard
+                  title={cardData.get("change_1")?.title ?? null}
+                  value={`${cardData.get("change_1")?.value ?? ""}%`}
+                  delta={cardData.get("change_1")?.change ?? 0}
+                  filter={filter}
+                  type="shift"
+                />
+              </div>
+              <div className="flex-grow">
+                <TopCard
+                  title={cardData.get("change_2")?.title ?? null}
+                  value={`${cardData.get("change_2")?.value ?? ""}%`}
+                  delta={cardData.get("change_2")?.change ?? 0}
+                  filter={filter}
+                  type="shift"
+                />
+              </div>
             </div>
-        );
-    }
+          </div>
+        </div>
+        <div className="flex flex-col md:flex-row md:space-x-8 mx-6-">
+          <div className="w-full order-2 md:order-1  md:flex-grow">
+            <h2 className="mt-6 text-lg font-bold text-gray-700">
+              {/* Sentiment Over Time and Forecast */}
+              Sentiment Over Time
+            </h2>
+            <div className="h-[300px] lg:h-96">
+              {isEmpty(lineData) ? (
+                placeholder
+              ) : (
+                <MyResponsiveLine data={lineData} />
+              )}
+            </div>
+          </div>
+
+          <div className="w-full order-1 md:order-2 md:w-72 md:flex-shrink-0">
+            <h2 className="mt-6 text-lg font-bold text-gray-700">
+              Current Sentiment Proportions
+            </h2>
+            <div className="h-[300px] lg:h-96">
+              {isEmpty(pieData) ? (
+                placeholder
+              ) : (
+                <MyResponsivePie data={pieData} />
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="w-full">
+          <h2 className="mt-6 text-lg font-bold text-gray-700">
+            Top 10 Emotions Breakdown (sheet)
+          </h2>
+          <div className="h-[350px] lg:h-[450px]">
+            {isEmpty(barData) ? (
+              placeholder
+            ) : (
+              <MyResponsiveBar data={barData} filter={filter} />
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  } else {
+    console.error("User is undefined");
+
+    return (
+      <div>
+        <h1>No user data is aviliable</h1>
+      </div>
+    );
+  }
 };
 
 export default Charts;
