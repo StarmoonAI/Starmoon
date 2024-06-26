@@ -35,7 +35,7 @@ export const generateSuggestion = async (
         role: "user",
         content: `Please provide a 50-word of suggestion of the below data:
 
-        Main Emotions & Significant Emotional Shifts:\n
+        Main Emotions & Significant Emotional Shifts with today and yesterday data:\n
         ${cardData}
 
         Sentiment Over Time:
@@ -44,7 +44,7 @@ export const generateSuggestion = async (
         Current Sentiment Proportions
         ${pieData}
         
-        Top 10 Emotions Breakdown 
+        Current top 10 Emotions Breakdown 
         ${barData}`,
       },
     ],
