@@ -1,108 +1,138 @@
+import Link from "next/link";
+import { headers } from "next/headers";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
+import { SubmitButton } from "./submit-button";
+import { loginWithGoogle } from "@/app/components/GoogleAuth";
+import { FaGoogle } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
-import Messages from "./messages";
-import { Label } from "@/components/ui/label";
-import Image from "next/image";
+import { Separator } from "@/components/ui/separator";
+import _ from "lodash";
+import { getToyById } from "@/db/toys";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import { Sparkles } from "lucide-react";
-import ToyPreview from "../components/ToyPreview";
-import supabaseServerClient from "@/db/supabaseServerClient";
-import { getToyById } from "@/db/toys";
-import { defaultToyId } from "@/lib/data";
-import { Separator } from "@/components/ui/separator";
-import GoogleOAuth from "@/app/components/GoogleOAuth";
-import _ from "lodash";
+import { Label } from "@/components/ui/label";
+import { createUser, doesUserExist } from "@/db/users";
+import GoogleLoginButton from "../components/GoogleLoginButton";
 
-export const dynamic = "force-dynamic";
+interface LoginProps {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}
 
-export default async function Login({
-    params,
-    searchParams,
-}: {
-    params: { slug: string };
-    searchParams?: { [key: string]: string | string[] | undefined };
-}) {
-    const supabase = supabaseServerClient();
-    const toy_id = searchParams?.toy_id as string;
-    const toy = _.isEmpty(toy_id)
-        ? undefined
-        : await getToyById(supabase, toy_id as string);
+export default async function Login({ searchParams }: LoginProps) {
+  const toy_id = searchParams?.toy_id as string | undefined;
+  console.log("+++++", toy_id);
 
-    return (
-        <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex flex-row gap-1 items-center">
-                        Log In / Sign Up to Starmoon AI
-                        <Sparkles size={20} fill="black" />
-                    </CardTitle>
-                    <CardDescription>
-                        Log into your Starmoon AI account to continue.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent className="grid gap-4">
-                    {/* <ToyPreview /> */}
-                    {toy && toy_id ? (
-                        <div className="flex flex-col items-center gap-2 mx-auto font-quicksand">
-                            <Image
-                                src={"/" + toy.image_src + ".png"}
-                                width={100}
-                                height={100}
-                                alt={toy.name}
-                            />
-                            <p className="font-medium">
-                                You picked{" "}
-                                <span className="font-semibold">
-                                    {toy.name}
-                                </span>
-                            </p>
-                        </div>
-                    ) : null}
-                    <GoogleOAuth />
-                    <Separator />
-                    <form
-                        className="flex-1 flex flex-col w-full justify-center gap-4"
-                        action="/auth/sign-in"
-                        method="post"
-                    >
-                        <Label className="text-md" htmlFor="email">
-                            Email
-                        </Label>
-                        <input
-                            className="rounded-md px-4 py-2 bg-inherit border"
-                            name="email"
-                            placeholder="you@example.com"
-                            required
-                        />
-                        <input
-                            type="hidden"
-                            name="toy_id"
-                            value={toy_id ?? ("" as string)}
-                        />
-                        <Button variant="secondary">Continue with email</Button>
-                        <Messages />
-                    </form>
-                </CardContent>
-                {/* <CardFooter>
-                    <p className="text-sm">
-                        By signing up, you agree to our{" "}
-                        <a href="/terms" className="underline">
-                            Terms of Service
-                        </a>{" "}
-                        and{" "}
-                        <a href="/privacy" className="underline">
-                            Privacy Policy
-                        </a>
-                        .
-                    </p>
-                </CardFooter> */}
-            </Card>
-        </div>
-    );
+  const signIn = async (formData: FormData) => {
+    "use server";
+
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const supabase = createClient();
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      return redirect("/login?message=Could not authenticate user");
+    }
+
+    return redirect("/home");
+  };
+
+  const signUp = async (formData: FormData) => {
+    "use server";
+
+    const origin = headers().get("origin");
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    const supabase = createClient();
+
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          toy_id: toy_id,
+        },
+        emailRedirectTo: `${origin}/auth/callback`,
+      },
+    });
+
+    if (error) {
+      return redirect("/login?message=Could not authenticate user");
+    }
+
+    return redirect("/login?message=Check email to continue sign in process");
+  };
+
+  return (
+    <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex flex-row gap-1 items-center">
+            Log In / Sign Up to Starmoon AI
+            <Sparkles size={20} fill="black" />
+          </CardTitle>
+          <CardDescription>
+            Log into your Starmoon AI account to continue.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4">
+          {/* <ToyPreview /> */}
+          <GoogleLoginButton toy_id={toy_id} />
+          <Separator className="mt-4" />
+          <form className="flex-1 flex flex-col w-full justify-center gap-4">
+            <Label className="text-md" htmlFor="email">
+              Email
+            </Label>
+            <input
+              className="rounded-md px-4 py-2 bg-inherit border"
+              name="email"
+              placeholder="you@example.com"
+              required
+            />
+            <Label className="text-md" htmlFor="email">
+              Password
+            </Label>
+
+            <input
+              className="rounded-md px-4 py-2 bg-inherit border"
+              type="password"
+              name="password"
+              placeholder="••••••••"
+              required
+            />
+            <SubmitButton
+              formAction={signIn}
+              className="text-sm font-medium  bg-gray-100 hover:bg-gray-50  border-[0.1px] rounded-md px-4 py-2 text-foreground mb-2"
+              pendingText="Signing In..."
+            >
+              Sign In
+            </SubmitButton>
+            <SubmitButton
+              formAction={signUp}
+              className="text-sm font-medium hover:bg-gray-50 border-[0.1px] rounded-md px-4 py-2 text-foreground mb-2"
+              pendingText="Signing Up..."
+            >
+              Sign Up
+            </SubmitButton>
+            {searchParams?.message && (
+              <p className="p-4 rounded-md border bg-green-50 border-green-400 text-gray-900 text-center text-sm">
+                {searchParams.message}
+              </p>
+            )}
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  );
 }
