@@ -166,7 +166,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
               </FormItem>
             )}
           />
-          <FormField
+          {/* <FormField
             control={form.control}
             name="child_persona"
             render={({ field }) => (
@@ -189,7 +189,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
           <FormField
             control={form.control}
             name="modules"
