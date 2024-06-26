@@ -141,8 +141,6 @@ const averages = (data: any[]) => {
 };
 
 const getCardsData = (prevAvg: any, curAvg: any) => {
-  console.log("getCardsData++++++++++++++++++++++++++++++");
-
   const changes: { [key: string]: number } = {};
 
   const cardData: { [key: string]: any } = {};
@@ -163,33 +161,61 @@ const getCardsData = (prevAvg: any, curAvg: any) => {
 
   // Get the first and last k,v in changesSorted
   const changesEntries = Object.entries(changesSorted);
+  console.log("changesEntries", changesEntries, changesEntries.length);
 
   if (changesEntries.length === 0) {
-    cardData["main_emotion_1"] = {
-      title: firstCurAvg[0],
-      value: roundDecimal(firstCurAvg[1] as number),
-      change: null,
-    };
+    if (firstCurAvg) {
+      console.log("firstCurAvg", firstCurAvg);
+      cardData["main_emotion_1"] = {
+        title: firstCurAvg[0],
+        value: roundDecimal(firstCurAvg[1] as number),
+        change: null,
+      };
 
-    cardData["main_emotion_2"] = {
-      title: secondCurAvg[0],
-      value: roundDecimal(secondCurAvg[1] as number),
-      change: null,
-    };
+      cardData["main_emotion_2"] = {
+        title: secondCurAvg[0],
+        value: roundDecimal(secondCurAvg[1] as number),
+        change: null,
+      };
 
-    cardData["change_1"] = {
-      title: "null",
-      value: 0,
-      change: 0,
-    };
+      cardData["change_1"] = {
+        title: "null",
+        value: 0,
+        change: 0,
+      };
 
-    cardData["change_2"] = {
-      title: "null",
-      value: 0,
-      change: 0,
-    };
+      cardData["change_2"] = {
+        title: "null",
+        value: 0,
+        change: 0,
+      };
+      return cardData;
+    } else {
+      cardData["main_emotion_1"] = {
+        title: "null",
+        value: 0,
+        change: 0,
+      };
 
-    return cardData;
+      cardData["main_emotion_2"] = {
+        title: "null",
+        value: 0,
+        change: 0,
+      };
+
+      cardData["change_1"] = {
+        title: "null",
+        value: 0,
+        change: 0,
+      };
+
+      cardData["change_2"] = {
+        title: "null",
+        value: 0,
+        change: 0,
+      };
+      return cardData;
+    }
   }
 
   let firstChange: [string, number];
