@@ -17,9 +17,8 @@ class Prompt:
         return cls(toy=toy, supabase=supabase, user=user, chat_group_id=chat_group_id)
 
     async def construct_prompt(self) -> str:
-        print(self.user)
         # Using .get() method to safely access 'modules' key with an empty list as default
-        modules = ", ".join(self.user.get('modules', []))
+        modules = ", ".join(self.user.get("modules", []))
 
         prompt_template = (
             "YOU ARE: {toy_expanded_prompt}\n\n"

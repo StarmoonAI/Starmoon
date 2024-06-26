@@ -8,7 +8,6 @@ import websockets
 import websockets.client
 
 from hume._common.protocol import Protocol
-from hume._voice.voice_socket import VoiceSocket
 from hume.error.hume_client_exception import HumeClientException
 
 from custom_hume.custom_voice_socket import CustomVoiceSocket
@@ -59,7 +58,7 @@ class CustomChatMixin(ChatMixin):
                 open_timeout=self._open_timeout,
                 max_size=max_size,
             ) as protocol:
-                yield VoiceSocket(protocol)
+                yield CustomVoiceSocket(protocol)
         except websockets.exceptions.InvalidStatusCode as exc:
             status_code: int = exc.status_code
             if status_code == 401:  # Unauthorized

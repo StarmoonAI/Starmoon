@@ -29,9 +29,8 @@ async def main() -> None:
     user = get_user_by_id(supabase, user_id)
     prompt = Prompt.new(supabase=supabase, toy=toy, user=user, chat_group_id=None);
     prompt_text = await prompt.construct_prompt()
-
     async with client.connect(
-           config_id=str(toy.hume_ai_config_id),
+           config_id=str(toy["hume_ai_config_id"]),
     ) as socket:
             with Microphone.context(device=Microphone.DEFAULT_DEVICE) as microphone:
                     sender = MicrophoneSender.new(microphone=microphone, allow_interrupt=True)

@@ -21,18 +21,18 @@ class CustomChatClient(ChatClient):
     """Async client for handling messages to and from an EVI connection."""
   
     supabase: Client
-    user_id: str
-    toy_id: str
+    user: dict
+    toy: dict
     chat_group_id: Optional[str] = None
 
     @classmethod
-    def new(cls, *, supabase: Client, toy_id: str, user_id: str, sender: Sender) -> "CustomChatClient":
+    def new(cls, *, supabase: Client, toy: dict, user: dict, sender: Sender) -> "CustomChatClient":
         """Create a new chat client.
 
         Args:
             sender (Sender): Sender for audio data.
         """
-        return cls(sender=sender, supabase=supabase, toy_id=toy_id, user_id=user_id, byte_strs=Stream.new())
+        return cls(sender=sender, supabase=supabase, toy=toy, user=user, byte_strs=Stream.new())
 
     async def _recv(self, *, socket: VoiceSocket) -> None:
         async for socket_message in socket:
@@ -42,8 +42,8 @@ class CustomChatClient(ChatClient):
                 message_text = message["message"]["content"]
                 text = f"{role}: {message_text}"
                 self.supabase.table("conversations").insert({
-                    "toy_id": self.toy_id,
-                    "user_id": self.user_id,
+                    "toy_id": self.toy["toy_id"],
+                    "user_id": self.user["user_id"],
                     "role": message["message"]["role"],
                     "content": message["message"]["content"],
                     "metadata": message["models"]["prosody"],
