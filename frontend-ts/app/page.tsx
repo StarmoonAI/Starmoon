@@ -24,10 +24,17 @@ const Sections = [
     isImageRight: true,
   },
   {
+    title: "Parents in Control: Ensuring Safety and Trust",
+    description:
+      "Parents can control the content of AI toys from different granules to ensure the safety and trust of their children and prevent learning inappropriate content.",
+    imageSrc: "/parentcontrol.png",
+  },
+  {
     title: "AI-driven insights for parents. Privacy first.",
     description:
       "We provide insights to parents on their child's learning and emotional growth. We take privacy seriously and all personal data is encrypted.",
     imageSrc: "/parents.png",
+    isImageRight: true,
   },
 ];
 
