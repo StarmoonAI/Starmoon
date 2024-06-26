@@ -128,7 +128,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
                   <Input
                     // autoFocus
                     required
-                    placeholder="e.g. Cosmo"
+                    placeholder="e.g. John Doe"
                     {...field}
                     className="max-w-screen-sm h-10 bg-white"
                     autoComplete="on"
@@ -149,6 +149,30 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
                 <FormLabel className="flex flex-row gap-4 items-center">
                   Briefly describe your child&apos;s interests, personality, and
                   learning style
+                </FormLabel>
+                <FormControl>
+                  <Textarea
+                    rows={4}
+                    placeholder="e.g. I would like the plushie to be friendly and encouraging, and to use positive reinforcement to help my child learn."
+                    {...field}
+                    className="max-w-screen-sm bg-white"
+                    autoComplete="on"
+                    style={{
+                      fontSize: 16,
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="child_persona"
+            render={({ field }) => (
+              <FormItem className="w-full rounded-md">
+                <FormLabel className="flex flex-row gap-4 items-center">
+                  Banned topics
                 </FormLabel>
                 <FormControl>
                   <Textarea

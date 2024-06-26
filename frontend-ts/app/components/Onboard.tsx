@@ -118,7 +118,7 @@ const Onboard: React.FC<OnboardProps> = ({ selectedUser }) => {
                   <Input
                     // autoFocus
                     required
-                    placeholder="e.g. Cosmo"
+                    placeholder="e.g. John Doe"
                     {...field}
                     className="max-w-screen-sm h-10 bg-white"
                     autoComplete="on"

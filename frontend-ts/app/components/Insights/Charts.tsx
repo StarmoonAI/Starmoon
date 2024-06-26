@@ -34,16 +34,32 @@ const Charts: React.FC<ChartsProps> = async ({ user, filter }) => {
   if (user) {
     const data = await dbGetConversation(supabase, user.user_id);
     const processedData = processData(data, filter);
-    const { cardData, barData, lineData, pieData } = await processedData;
+    const { cardData, barData, lineData, pieData, suggestions } =
+      await processedData;
 
     return (
       <div>
+        <div className="mt-2 mb-4 text-gray-800">{suggestions}</div>
+
+        {/* <div className="flex justify-center w-full mb-2">
+                    <button className="w-[72px] mr-[1px] py-1 px-2 bg-amber-400 text-white rounded-l-[15px]">
+                        Days
+                    </button>
+                    <button className="w-[72px] mr-[1px] py-1 px-2 bg-amber-50 text-amber-500 hover:bg-amber-100">
+                        Weeks
+                    </button>
+                    <button className="w-[72px] mr-[1px] py-1 px-2 bg-amber-50 text-amber-500 hover:bg-amber-100">
+                        Months
+                    </button>
+                    <button className="w-[72px] py-1 px-2 bg-amber-50 text-amber-500 rounded-r-[15px] hover:bg-amber-100">
+                        All
+                    </button>
+                </div> */}
         <div className="flex flex-col md:flex-row md:space-x-3">
           <div className="w-full">
             <h2 className="my-4 text-lg font-bold text-gray-700">
               Main Emotions
             </h2>
-
             <div className="flex space-x-3">
               <div className="flex-grow">
                 <TopCard
