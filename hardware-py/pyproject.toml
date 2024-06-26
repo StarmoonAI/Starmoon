@@ -9,7 +9,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 supabase = "^2.5.1"
-hume = "^0.6.0"
+hume = {extras = ["microphone"], version = "^0.6.0"}
 python-dotenv = "^1.0.1"
 asyncio = "^3.4.3"
 
