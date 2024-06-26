@@ -11,6 +11,14 @@ export const getBaseUrl = () => {
         : "http://localhost:3000";
 };
 
+export const getUserAvatar = (email: string) => {
+    return `/kidAvatar_boy_1.png`;
+};
+
+export const getAssistantAvatar = (imageSrc: string) => {
+    return "/" + imageSrc + "_avatar.png";
+};
+
 export const getCreditsRemaining = (user: IUser) => {
     // starts with 50 credits
     // max session time is 10 minutes or 600 seconds

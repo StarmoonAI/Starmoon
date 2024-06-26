@@ -30,7 +30,12 @@ export default function Expressions({
                             "flex items-center justify-between gap-1 font-mono pb-1"
                         }
                     >
-                        <div className={"font-medium truncate"}>{key}</div>
+                        <div
+                            className={"font-medium truncate"}
+                            // style={{ fontSize: 12 }}
+                        >
+                            {key}
+                        </div>
                         <div className={"tabular-nums opacity-50"}>
                             {value.toFixed(2)}
                         </div>

@@ -4,6 +4,7 @@ import { useVoice } from "@humeai/voice-react";
 import Expressions from "@/app/components/Expressions";
 import { AnimatePresence, motion } from "framer-motion";
 import { ComponentRef, forwardRef } from "react";
+import ChatAvatar from "./ChatAvatar";
 // import { JSONErrorMessage } from "@humeai/voice";
 
 interface MessagesProps {
@@ -15,7 +16,6 @@ const Messages = forwardRef<ComponentRef<typeof motion.div>, MessagesProps>(
     function Messages(props, ref) {
         const { selectedUser, selectedToy } = props;
         const { messages } = useVoice();
-
         return (
             messages.length > 1 && (
                 <motion.div
@@ -58,23 +58,35 @@ const Messages = forwardRef<ComponentRef<typeof motion.div>, MessagesProps>(
                                                 y: 0,
                                             }}
                                         >
-                                            <div
-                                                className={cn(
-                                                    "text-xs capitalize font-medium leading-none opacity-50 pt-4 px-3"
-                                                )}
-                                            >
-                                                {getMessageRoleName(
-                                                    msg.message.role,
-                                                    selectedUser,
-                                                    selectedToy
-                                                )}
+                                            <div className="flex flex-row gap-1 pt-3 pl-3">
+                                                <ChatAvatar
+                                                    role={msg.message!.role}
+                                                    user={selectedUser}
+                                                    toy={selectedToy}
+                                                />
+                                                <div>
+                                                    <div
+                                                        className={cn(
+                                                            "text-xs capitalize font-medium leading-none opacity-50 px-3"
+                                                        )}
+                                                    >
+                                                        {getMessageRoleName(
+                                                            msg.message!.role,
+                                                            selectedUser,
+                                                            selectedToy
+                                                        )}
+                                                    </div>
+                                                    <div
+                                                        className={"pb-3 px-3"}
+                                                    >
+                                                        {msg.message!.content}
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div className={"pb-3 px-3"}>
-                                                {msg.message.content}
-                                            </div>
+
                                             <Expressions
                                                 values={
-                                                    msg.models.prosody
+                                                    msg.models!.prosody
                                                         ?.scores ?? {}
                                                 }
                                             />
