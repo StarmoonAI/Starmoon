@@ -95,7 +95,7 @@ declare global {
 
     interface BarData {
         emotion: string;
-        [key: string]: number | string | null;
+        [key: string]: any;
     }
 
     interface LineData {

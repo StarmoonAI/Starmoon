@@ -141,7 +141,7 @@ const Charts: React.FC<ChartsProps> = async ({ user, filter }) => {
                 </div>
                 <div className="w-full">
                     <h2 className="mt-6 text-lg font-bold text-gray-700">
-                        Top 10 Emotions Breakdown (sheet)
+                        Top 10 Emotions Breakdown
                     </h2>
                     <div className="h-[350px] lg:h-[450px]">
                         {isEmpty(barData) ? (
