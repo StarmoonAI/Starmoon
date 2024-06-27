@@ -8,3 +8,4 @@ __pycache__
 backend-py-deprecated
 frontend-ts-deprecated
 .github
+.prettierrc
