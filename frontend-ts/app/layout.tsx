@@ -80,10 +80,14 @@ const defaultUrl = process.env.VERCEL_URL
     ? `https://${process.env.VERCEL_URL}`
     : "http://localhost:3000";
 
-export const metadata = {
-    metadataBase: new URL(defaultUrl),
-    title: "Next.js and Supabase Starter Kit",
-    description: "The fastest way to build apps with Next.js and Supabase",
+export const metadata: Metadata = {
+    metadataBase: new URL("https://starmoon.vercel.app"),
+    title: "Starmoon AI",
+    description: `We make emotionally intelligent children's toys'`,
+    robots: {
+        index: false,
+        follow: false,
+    },
 };
 
 export default async function RootLayout({
