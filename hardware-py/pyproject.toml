@@ -12,6 +12,10 @@ supabase = "^2.5.1"
 hume = {extras = ["microphone"], version = "^0.6.0"}
 python-dotenv = "^1.0.1"
 asyncio = "^3.4.3"
+openwakeword = "^0.6.0"
+numpy = "<2"
+pyaudio = "^0.2.14"
+onnxruntime = "^1.18.0"
 
 
 [build-system]
