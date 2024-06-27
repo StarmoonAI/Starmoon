@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     const { data, error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-            emailRedirectTo: `${origin}/auth/callback`,
+            emailRedirectTo: `${origin}`,
             data: {
                 toy_id: toy ? toy.toy_id : defaultToyId,
             },
