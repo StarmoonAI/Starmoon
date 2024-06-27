@@ -5,6 +5,7 @@ import { getToyById } from "@/db/toys";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { User } from "@supabase/supabase-js";
+import { dbGetRecentMessages } from "@/db/conversations";
 
 async function getData(user: User) {
   const supabase = createClient();
@@ -33,6 +34,8 @@ export default async function Home() {
 
   const dbUser = await getUserById(supabase, user!.id);
   const accessToken = await getHumeAccessToken();
+  // const dbConversation = await dbGetRecentMessages(supabase, user!.id);
+  // console.log("dbConversation", dbConversation);
 
   if (!accessToken) {
     throw new Error();

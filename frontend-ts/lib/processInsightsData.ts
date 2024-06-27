@@ -94,7 +94,7 @@ export const processData = async (rawData: any[], filter: string) => {
     JSON.stringify(lineData),
     JSON.stringify(pieData)
   );
-  console.log("suggestions+++", suggestions);
+  // console.log("suggestions+++", suggestions);
 
   return {
     cardData,
