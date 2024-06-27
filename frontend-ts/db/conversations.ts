@@ -33,3 +33,23 @@ export const dbGetConversation = async (
   }
   return data;
 };
+
+// Function to get conversations of the last 10 messages
+export const dbGetRecentMessages = async (
+  supabase: SupabaseClient,
+  userId: string,
+  toyId: string
+) => {
+  const { data, error } = await supabase
+    .from("conversations")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("toy_id", toyId)
+    .order("created_at", { ascending: false })
+    .limit(20);
+
+  if (error) {
+    throw error;
+  }
+  return data;
+};

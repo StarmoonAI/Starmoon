@@ -8,8 +8,9 @@ import Controls from "./Controls";
 import StartCall from "./StartCall";
 import { constructUserPrompt, getCreditsRemaining } from "@/lib/utils";
 import { updateUser } from "@/db/users";
-import _ from "lodash";
+import _, { conforms } from "lodash";
 import { createClient } from "@/utils/supabase/client";
+import { dbGetRecentMessages } from "@/db/conversations";
 
 interface PlaygroundProps {
   selectedUser: IUser;
@@ -23,10 +24,49 @@ const Playground: React.FC<PlaygroundProps> = ({
   accessToken,
 }) => {
   const [userState, setUserState] = useState<IUser>(selectedUser);
+  const [convState, setConvState] = useState<string | null>(null);
   const supabase = createClient();
   const [chatGroupId, setChatGroupId] = useState<string | null>(
     selectedUser.most_recent_chat_group_id
   );
+
+  // console.log("+++++convState", convState);
+
+  const getNewConvState = async (user: IUser, selectedToy: IToy) => {
+    const toyName = selectedToy.name;
+    const childName = user.child_name;
+    const dbConversation = await dbGetRecentMessages(
+      supabase,
+      user.user_id,
+      selectedToy.toy_id
+    );
+
+    // Convert the conversation to the desired format
+    let convString = "";
+    dbConversation.forEach((message) => {
+      if (
+        message.role === "assistant" &&
+        message.content.includes("I'm your friend")
+      ) {
+        convString += `${toyName}: "${message.content}"\n`;
+      } else if (message.role === "assistant") {
+        convString += `${toyName}: "${message.content}"\n`;
+      } else if (message.role === "user") {
+        convString += `${childName}: '${message.content}'\n`;
+      }
+    });
+
+    return convString.trim();
+  };
+
+  const updateConvState = async () => {
+    const newConvState = await getNewConvState(userState, selectedToy);
+    setConvState(newConvState);
+  };
+
+  React.useEffect(() => {
+    updateConvState();
+  }, [chatGroupId]);
 
   const updateUserState = async (user: IUser) => {
     setUserState(user);
@@ -62,7 +102,7 @@ const Playground: React.FC<PlaygroundProps> = ({
           // console.log(message);
           if (message.type === "chat_metadata") {
             setChatGroupId(message.chat_group_id);
-            // console.log("chatGroupId", message.chat_group_id);
+            updateConvState(); // Update convState when a new message is received
           }
           if (timeout.current) {
             window.clearTimeout(timeout.current);
@@ -84,7 +124,7 @@ const Playground: React.FC<PlaygroundProps> = ({
           "6947ac53-5f3b-4499-abc5-f8b368552cb6"
         }
         sessionSettings={{
-          systemPrompt: constructUserPrompt(userState, selectedToy),
+          systemPrompt: constructUserPrompt(userState, selectedToy, convState),
         }}
         // resumedChatGroupId={
         //     selectedUser.most_recent_chat_group_id ?? undefined
