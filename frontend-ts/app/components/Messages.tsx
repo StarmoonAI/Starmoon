@@ -8,8 +8,8 @@ import ChatAvatar from "./ChatAvatar";
 // import { JSONErrorMessage } from "@humeai/voice";
 
 interface MessagesProps {
-    selectedUser: IUser;
-    selectedToy: IToy;
+  selectedUser: IUser;
+  selectedToy: IToy;
 }
 
 const Messages = forwardRef<ComponentRef<typeof motion.div>, MessagesProps>(
@@ -24,9 +24,25 @@ const Messages = forwardRef<ComponentRef<typeof motion.div>, MessagesProps>(
                     ref={ref}
                 >
                     <motion.div
-                        className={
-                            "max-w-2xl mx-auto w-full flex flex-col gap-4 pb-24"
-                        }
+                      key={msg.type + index}
+                      className={cn(
+                        "w-[80%]",
+                        "bg-card",
+                        "border border-border rounded",
+                        msg.type === "user_message" ? "ml-auto" : ""
+                      )}
+                      initial={{
+                        opacity: 0,
+                        y: 10,
+                      }}
+                      animate={{
+                        opacity: 1,
+                        y: 0,
+                      }}
+                      exit={{
+                        opacity: 0,
+                        y: 0,
+                      }}
                     >
                         <AnimatePresence mode={"popLayout"}>
                             {messages.map((msg, index) => {
@@ -98,10 +114,17 @@ const Messages = forwardRef<ComponentRef<typeof motion.div>, MessagesProps>(
                             })}
                         </AnimatePresence>
                     </motion.div>
-                </motion.div>
-            )
-        );
-    }
+                  );
+                }
+
+                return null;
+              })}
+            </AnimatePresence>
+          </motion.div>
+        </motion.div>
+      )
+    );
+  }
 );
 
 export default Messages;

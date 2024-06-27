@@ -6,4 +6,5 @@ __pycache__
 .flake8
 .prettierrc.json
 backend-py-deprecated
+frontend-ts-deprecated
 .github

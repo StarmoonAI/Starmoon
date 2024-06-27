@@ -88,19 +88,20 @@ export const processData = async (rawData: any[], filter: string) => {
   console.log("lineData+++", JSON.stringify(lineData));
   console.log("pieData+++", JSON.stringify(pieData));
 
-  // const suggestions = await generateSuggestion(
-  //   cardData,
-  //   barData,
-  //   lineData,
-  //   pieData
-  // );
-  // console.log("suggestions+++", suggestions);
+  const suggestions = await generateSuggestion(
+    JSON.stringify(cardData),
+    JSON.stringify(barData),
+    JSON.stringify(lineData),
+    JSON.stringify(pieData)
+  );
+  console.log("suggestions+++", suggestions);
 
   return {
     cardData,
     barData,
     lineData,
     pieData,
+    suggestions,
   };
 };
 

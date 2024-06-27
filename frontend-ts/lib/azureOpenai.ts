@@ -5,7 +5,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 export const generateSuggestion = async (
-  cardData: any,
+  cardData: string,
   barData: any,
   lineData: any,
   pieData: any
@@ -17,6 +17,7 @@ export const generateSuggestion = async (
   const deployment = process.env["MODEL_NAME"] || "gpt-4o";
 
   // convert cardData to string
+  console.log("cardData", cardData);
 
   const client = new AzureOpenAI({
     endpoint,
@@ -26,10 +27,25 @@ export const generateSuggestion = async (
   });
   const result = await client.chat.completions.create({
     messages: [
-      { role: "system", content: `You are a helpful assistant.` },
+      {
+        role: "system",
+        content: `You are an assistant who helps parents provide insight based on children's emotional data.`,
+      },
       {
         role: "user",
-        content: `Please tell me a 50-word story of ${cardData}`,
+        content: `Please provide a 50-word of suggestion of the below data:
+
+        Main Emotions & Significant Emotional Shifts with today and yesterday data:\n
+        ${cardData}
+
+        Sentiment Over Time:
+        ${lineData}
+
+        Current Sentiment Proportions
+        ${pieData}
+        
+        Current top 10 Emotions Breakdown 
+        ${barData}`,
       },
     ],
     model: "",
