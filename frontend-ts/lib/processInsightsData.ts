@@ -390,6 +390,12 @@ export const getPieLinedata = (
         lineData[2].data.push({ x: date, y: normalizedPositive });
     });
 
+    lineData.forEach((data) => {
+        data.data.sort((a, b) => {
+            return new Date(a.x).getTime() - new Date(b.x).getTime();
+        });
+    });
+
     const idx = lineData[0].data.length - 1;
     if (idx >= 0) {
         pieData.push(
