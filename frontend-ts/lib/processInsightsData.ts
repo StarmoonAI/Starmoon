@@ -265,8 +265,8 @@ const getBarData = (
             prevAvg[emotion] !== undefined ? prevAvg[emotion] : 0;
         return {
             emotion,
-            [currentPeriodLabel]: roundDecimal(currentPeriodValue), // Ensure this is a number
-            [previousPeriodLabel]: roundDecimal(prevPeriodValue), // Ensure this is a number
+            [currentPeriodLabel]: roundDecimal(currentPeriodValue) ?? 0, // Ensure this is a number
+            [previousPeriodLabel]: roundDecimal(prevPeriodValue) ?? 0, // Ensure this is a number
         };
     });
 
@@ -302,7 +302,6 @@ const roundDecimal = (num: number | null): number | null => {
     if (num === null) {
         return null;
     }
-
     if (num > 100 || num < -100) {
         return Math.round(num);
     } else if (num > 10 || num < -10) {
