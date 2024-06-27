@@ -28,7 +28,6 @@ interface LoginProps {
 
 export default async function Login({ searchParams }: LoginProps) {
     const toy_id = searchParams?.toy_id as string | undefined;
-    console.log("+++++", toy_id);
 
     const signIn = async (formData: FormData) => {
         "use server";

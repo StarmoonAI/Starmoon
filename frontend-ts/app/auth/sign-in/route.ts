@@ -11,7 +11,6 @@ import { headers } from "next/headers";
 export async function POST(request: Request) {
     // const headers = new Headers(request.headers);
     const origin = headers().get("origin");
-    console.log("foobar", origin);
     const requestUrl = new URL(request.url);
     const formData = await request.formData();
     const email = String(formData.get("email"));

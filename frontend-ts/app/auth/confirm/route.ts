@@ -9,10 +9,14 @@ export async function GET(req: NextRequest) {
     const type = searchParams.get("type") as EmailOtpType;
     const next = searchParams.get("next") ?? "/";
 
+    console.log("in confirm", token_hash, type, next);
+
     if (token_hash && type) {
         const supabase = createRouteHandlerClient({ cookies });
         const { error } = await supabase.auth.verifyOtp({ type, token_hash });
+        console.log(error);
         if (!error) {
+            console.log("redirecting to", next, "no error here");
             return NextResponse.redirect(new URL(`/${next.slice(1)}`, req.url));
         }
     }
