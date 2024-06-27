@@ -4,10 +4,14 @@ import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import _ from "lodash";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { headers } from "next/headers";
 
 // export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
+    // const headers = new Headers(request.headers);
+    const origin = headers().get("origin");
+    console.log("foobar", origin);
     const requestUrl = new URL(request.url);
     const formData = await request.formData();
     const email = String(formData.get("email"));
@@ -30,7 +34,7 @@ export async function POST(request: Request) {
     const { data, error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-            emailRedirectTo: `${requestUrl.origin}`,
+            emailRedirectTo: `${origin}/auth/callback`,
             data: {
                 toy_id: toy ? toy.toy_id : defaultToyId,
             },
@@ -48,7 +52,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.redirect(
-        `${requestUrl.origin}/login?&toy_id=${toy_id}&message=Check email to continue sign in process`,
+        `${requestUrl.origin}/login?message=Check email to continue sign in process&toy_id=${toy_id}`,
         {
             // a 301 status is required to redirect from a POST to a GET route
             status: 301,
