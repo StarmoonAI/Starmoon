@@ -49,7 +49,7 @@ export const constructUserPrompt = (
 
   Current time: ${new Date().toLocaleTimeString()}
 
-  This is a running summary of what you spoke of::
+  This is a running summary of what you spoke of in the previous session:
   ${convState ?? "No conversation history yet."}
 
   <voice_only_response_format>
