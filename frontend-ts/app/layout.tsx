@@ -14,8 +14,6 @@ import { MicrophoneContextProvider } from "./context/MicrophoneContextProvider";
 import "./globals.css";
 
 import type { Metadata, Viewport } from "next";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import NavbarButtons from "./components/NavbarButtons";
 import { Toaster } from "@/components/ui/toaster";
 import Footer from "./components/Footer";

@@ -107,34 +107,34 @@ const filterDataByDate = (
     return data.filter((item) => {
         const createdAt = new Date(item.created_at);
         const createdDate = startOfDay(createdAt);
-        return (
-            createdDate.getTime() === targetDate.getTime() &&
-            item.role === "user"
-        );
+        return createdDate.getTime() === targetDate.getTime();
     });
 };
 
 const averages = (data: InsightsConversation[]): { [key: string]: number } => {
     const scoresSum: { [key: string]: number } = {};
-    const averages: { [key: string]: number } = {};
+    const scoresCount: { [key: string]: number } = {};
 
     data.forEach((item) => {
         if (item.metadata && item.metadata.scores) {
             for (const [key, value] of Object.entries(item.metadata.scores)) {
                 if (scoresSum[key]) {
                     scoresSum[key] += value as number;
+                    scoresCount[key] += 1;
                 } else {
                     scoresSum[key] = value as number;
+                    scoresCount[key] = 1;
                 }
             }
         }
     });
 
+    const averages: { [key: string]: number } = {};
     for (const [key, value] of Object.entries(scoresSum)) {
-        averages[key] = value / data.length;
+        averages[key] = value / scoresCount[key];
     }
 
-    return scoresSum;
+    return averages;
 };
 
 const getCardsData = (
@@ -288,6 +288,12 @@ const getSortedAvgData = (
     const curAvgSorted = Object.fromEntries(
         Object.entries(curAvg).sort(([, a], [, b]) => b - a),
     );
+
+    console.log("prevAvg: ", prevAvgSorted);
+    console.log("curAvg: ", curAvgSorted);
+    // sum of all values in curAvgSorted
+    const sum = Object.values(curAvgSorted).reduce((a, b) => a + b, 0);
+    console.log("sum: ", sum);
 
     return { prevAvgSorted, curAvgSorted };
 };

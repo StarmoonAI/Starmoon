@@ -55,8 +55,6 @@ declare global {
 
     type Module = "math" | "science" | "spelling" | "general_trivia";
 
-    type BarChartData = Any;
-
     type PieChartData = {
         id: string;
         label: string;

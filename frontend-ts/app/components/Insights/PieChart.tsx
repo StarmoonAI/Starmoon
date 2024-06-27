@@ -19,7 +19,7 @@ import localFont from "next/font/local";
 // const fonts = `${favorit.variable}`;
 
 type MyResponsivePieProps = {
-    data: PieChartData[];
+    data: PieData[];
 };
 
 // Define the theme object
