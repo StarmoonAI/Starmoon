@@ -34,7 +34,7 @@ const Charts: React.FC<ChartsProps> = async ({ user, filter }) => {
 
     if (user) {
         const data = await dbGetConversation(supabase, user.user_id);
-        console.log("rawData+++", data);
+        // console.log("rawData+++", data);
         const processedData = processData(data, filter);
         const { cardData, barData, lineData, pieData, suggestions } =
             await processedData;

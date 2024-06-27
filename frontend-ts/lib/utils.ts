@@ -29,7 +29,7 @@ export const getCreditsRemaining = (user: IUser) => {
 export const constructUserPrompt = (
     user: IUser,
     toy: IToy,
-    convState: string | null
+    convState: string | null,
 ) => {
     const prompt = `<role>Your role is to serve as a conversational partner to the user,
   offering mental health support and engaging in light-hearted
@@ -70,14 +70,14 @@ export const constructUserPrompt = (
     ).join(", ")}.
     `;
 
-    console.log(prompt);
+    // console.log(prompt);
     return prompt;
 };
 
 export const getMessageRoleName = (
     role: string,
     selectedUser: IUser,
-    selectedToy: IToy
+    selectedToy: IToy,
 ) => {
     if (role === "user") {
         return selectedUser.child_name;
