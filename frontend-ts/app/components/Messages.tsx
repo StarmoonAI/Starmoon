@@ -20,7 +20,9 @@ const Messages = forwardRef<ComponentRef<typeof motion.div>, MessagesProps>(
             messages.length > 1 && (
                 <motion.div
                     layoutScroll
-                    className={"grow rounded-md overflow-auto p-4 w-full"}
+                    className={
+                        "grow rounded-md overflow-auto px-2 py-4 md:px-2 w-full"
+                    }
                     ref={ref}
                 >
                     <AnimatePresence mode={"popLayout"}>
