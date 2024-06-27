@@ -22,12 +22,14 @@ export const dbGetConversation = async (
     // Convert the date to ISO string for comparison
     const sevenDaysAgoISO = sevenDaysAgo.toISOString();
 
+    // csort by created_at
     const { data, error } = await supabase
         .from("conversations")
         .select("*")
         .eq("user_id", userId)
         .eq("role", "user")
-        .gte("created_at", sevenDaysAgoISO);
+        .gte("created_at", sevenDaysAgoISO)
+        .order("created_at", { ascending: true });
 
     if (error) {
         throw error;

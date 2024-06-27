@@ -129,6 +129,8 @@ const averages = (data: InsightsConversation[]): { [key: string]: number } => {
         }
     });
 
+    console.log("scoresSum: ", scoresSum);
+
     const averages: { [key: string]: number } = {};
     for (const [key, value] of Object.entries(scoresSum)) {
         averages[key] = value / scoresCount[key];
@@ -359,6 +361,8 @@ export const getPieLinedata = (
         }
     });
 
+    // console.log("dailyScores: ", dailyScores);
+
     const lineData: LineData[] = [
         { id: "Negative", name: "Negative", data: [] },
         { id: "Neutral", name: "Neutral", data: [] },
@@ -372,12 +376,19 @@ export const getPieLinedata = (
         const negativeScores = dailyScores[date].negative;
         const neutralScores = dailyScores[date].neutral;
 
-        const average = (arr: number[]) =>
-            arr.reduce((a, b) => a + b, 0) / arr.length || 0;
+        // calculate average for each emotion
+        const average = (scores: number[]) => {
+            if (scores.length === 0) {
+                return 0;
+            }
+            return scores.reduce((a, b) => a + b) / scores.length;
+        };
 
         const positiveAverage = average(positiveScores);
         const negativeAverage = average(negativeScores);
         const neutralAverage = average(neutralScores);
+
+        console.log(positiveAverage, negativeAverage, neutralAverage);
 
         const totalSum = positiveAverage + negativeAverage + neutralAverage;
 
@@ -390,11 +401,12 @@ export const getPieLinedata = (
         lineData[2].data.push({ x: date, y: normalizedPositive });
     });
 
-    lineData.forEach((data) => {
-        data.data.sort((a, b) => {
-            return new Date(a.x).getTime() - new Date(b.x).getTime();
-        });
-    });
+    // sort lineData by date
+    // lineData.forEach((data) => {
+    //     data.data.sort((a, b) => {
+    //         return new Date(a.x).getTime() - new Date(b.x).getTime();
+    //     });
+    // });
 
     const idx = lineData[0].data.length - 1;
     if (idx >= 0) {
