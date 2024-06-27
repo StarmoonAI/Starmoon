@@ -42,6 +42,17 @@ declare global {
     image_src?: string;
   }
 
+  interface InsightsConversation {
+    conversation_id?: string;
+    created_at: string;
+    toy_id: string;
+    user_id: string;
+    role: string;
+    content: string;
+    metadata: any;
+    chat_group_id: string;
+  }
+
   type Module = "math" | "science" | "spelling" | "general_trivia";
 
   type BarChartData = Any;
@@ -66,6 +77,39 @@ declare global {
     id: any;
     name: string;
     data: any;
+  }
+
+  interface ProcessedData {
+    cardData: CardData | null;
+    barData: BarData[];
+    lineData: LineData[];
+    pieData: PieData[];
+    suggestions: string | undefined;
+  }
+
+  interface CardData {
+    [key: string]: {
+      title: string;
+      value: number;
+      change: number | null;
+    };
+  }
+
+  interface BarData {
+    emotion: string;
+    [key: string]: number | string;
+  }
+
+  interface LineData {
+    id: string;
+    name: string;
+    data: { x: string; y: number | null }[];
+  }
+
+  interface PieData {
+    id: string;
+    label: string;
+    value: number | null;
   }
 }
 
