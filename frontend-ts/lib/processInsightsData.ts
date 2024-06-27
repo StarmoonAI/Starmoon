@@ -298,7 +298,11 @@ const getSortedAvgData = (
     return { prevAvgSorted, curAvgSorted };
 };
 
-const roundDecimal = (num: number): number => {
+const roundDecimal = (num: number | null): number | null => {
+    if (num === null) {
+        return null;
+    }
+
     if (num > 100 || num < -100) {
         return Math.round(num);
     } else if (num > 10 || num < -10) {
@@ -308,13 +312,20 @@ const roundDecimal = (num: number): number => {
     }
 };
 
-const safeGetY = (data: any, idx: number) => {
-    return data && data[idx] && data[idx].y !== undefined ? data[idx].y : 0;
+const safeGetY = (
+    data: { x: string; y: number | null }[],
+    idx: number,
+): number | null => {
+    return data[idx] ? data[idx].y : null;
 };
 
 export const getPieLinedata = (
     data: InsightsConversation[],
 ): { lineData: LineData[]; pieData: PieData[] } => {
+    if (data.length === 0) {
+        return { lineData: [], pieData: [] };
+    }
+
     const dailyScores: {
         [date: string]: {
             positive: number[];
@@ -323,23 +334,23 @@ export const getPieLinedata = (
         };
     } = {};
 
-    // Loop through each item in the data array
-    data.forEach((entry: any) => {
+    data.forEach((entry) => {
         const date = new Date(entry.created_at).toISOString().split("T")[0];
         if (!dailyScores[date]) {
             dailyScores[date] = { positive: [], negative: [], neutral: [] };
         }
 
-        // Check if metadata and scores are not null
         if (entry.metadata && entry.metadata.scores) {
             Object.keys(entry.metadata.scores).forEach((emotion) => {
-                const score = entry.metadata.scores![emotion];
-                if (positiveEmotions.includes(emotion)) {
-                    dailyScores[date].positive.push(score);
-                } else if (negativeEmotions.includes(emotion)) {
-                    dailyScores[date].negative.push(score);
-                } else if (neutralEmotions.includes(emotion)) {
-                    dailyScores[date].neutral.push(score);
+                const score = entry.metadata.scores[emotion];
+                if (typeof score === "number") {
+                    if (positiveEmotions.includes(emotion)) {
+                        dailyScores[date].positive.push(score);
+                    } else if (negativeEmotions.includes(emotion)) {
+                        dailyScores[date].negative.push(score);
+                    } else if (neutralEmotions.includes(emotion)) {
+                        dailyScores[date].neutral.push(score);
+                    }
                 }
             });
         } else {
@@ -349,52 +360,40 @@ export const getPieLinedata = (
         }
     });
 
-    if (Object.keys(dailyScores).length > 0) {
-        const lineData: {
-            id: string;
-            name: string;
-            data: { x: string; y: number | null }[];
-        }[] = [
-            { id: "Negative", name: "Negative", data: [] },
-            // { id: "Neg-P", name: "Negative-Prediction", data: [] },
-            { id: "Neutral", name: "Neutral", data: [] },
-            // { id: "Neu-P", name: "Neutral-Prediction", data: [] },
-            { id: "Positive", name: "Positive", data: [] },
-            // { id: "Pos-P", name: "Positive-Prediction", data: [] },
-        ];
+    const lineData: LineData[] = [
+        { id: "Negative", name: "Negative", data: [] },
+        { id: "Neutral", name: "Neutral", data: [] },
+        { id: "Positive", name: "Positive", data: [] },
+    ];
 
-        let pieData: {
-            id: string;
-            label: string;
-            value: number | null;
-        }[] = [];
+    const pieData: PieData[] = [];
 
-        Object.keys(dailyScores).forEach((date) => {
-            const positiveScores = dailyScores[date].positive;
-            const negativeScores = dailyScores[date].negative;
-            const neutralScores = dailyScores[date].neutral;
+    Object.keys(dailyScores).forEach((date) => {
+        const positiveScores = dailyScores[date].positive;
+        const negativeScores = dailyScores[date].negative;
+        const neutralScores = dailyScores[date].neutral;
 
-            const average = (arr: number[]) =>
-                arr.reduce((a, b) => a + b, 0) / arr.length || 0;
+        const average = (arr: number[]) =>
+            arr.reduce((a, b) => a + b, 0) / arr.length || 0;
 
-            const positiveAverage = average(positiveScores);
-            const negativeAverage = average(negativeScores);
-            const neutralAverage = average(neutralScores);
+        const positiveAverage = average(positiveScores);
+        const negativeAverage = average(negativeScores);
+        const neutralAverage = average(neutralScores);
 
-            const totalSum = positiveAverage + negativeAverage + neutralAverage;
+        const totalSum = positiveAverage + negativeAverage + neutralAverage;
 
-            const normalizedPositive = positiveAverage / totalSum || null;
-            const normalizedNegative = negativeAverage / totalSum || null;
-            const normalizedNeutral = neutralAverage / totalSum || null;
+        const normalizedPositive = positiveAverage / totalSum || null;
+        const normalizedNegative = negativeAverage / totalSum || null;
+        const normalizedNeutral = neutralAverage / totalSum || null;
 
-            lineData[0].data.push({ x: date, y: normalizedNegative });
-            lineData[1].data.push({ x: date, y: normalizedPositive });
-            lineData[2].data.push({ x: date, y: normalizedNeutral });
-        });
+        lineData[0].data.push({ x: date, y: normalizedNegative });
+        lineData[1].data.push({ x: date, y: normalizedNeutral });
+        lineData[2].data.push({ x: date, y: normalizedPositive });
+    });
 
-        const idx = lineData[0].data.length - 1;
-
-        pieData = [
+    const idx = lineData[0].data.length - 1;
+    if (idx >= 0) {
+        pieData.push(
             {
                 id: "Positive",
                 label: "Positive",
@@ -410,13 +409,8 @@ export const getPieLinedata = (
                 label: "Negative",
                 value: roundDecimal(safeGetY(lineData[0].data, idx)),
             },
-        ];
-
-        return { lineData, pieData };
+        );
     }
-
-    const lineData: any[] = [];
-    const pieData: any[] = [];
 
     return { lineData, pieData };
 };
