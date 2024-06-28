@@ -167,7 +167,7 @@ const ParentDashboard: React.FC<ParentDashboardProps> = ({
                                     <Input
                                         // autoFocus
                                         required
-                                        placeholder="e.g. 5"
+                                        placeholder="e.g. 8"
                                         {...field}
                                         className="max-w-screen-sm h-10 bg-white"
                                         autoComplete="on"
