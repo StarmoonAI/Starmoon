@@ -28,6 +28,7 @@ interface LoginProps {
 
 export default async function Login({ searchParams }: LoginProps) {
     const toy_id = searchParams?.toy_id as string | undefined;
+    console.log("+++++", toy_id);
 
     const signIn = async (formData: FormData) => {
         "use server";
@@ -56,6 +57,21 @@ export default async function Login({ searchParams }: LoginProps) {
         const password = formData.get("password") as string;
         const supabase = createClient();
 
+        // check if user already exists
+        const { data, error: userError } = await supabase
+            .from("users")
+            .select("*")
+            .eq("email", email);
+
+        if (userError) {
+            return redirect("/login?message=Could not sign up user");
+        }
+
+        // if user already exists, sign in
+        if (!_.isEmpty(data)) {
+            await signIn(formData);
+        }
+
         const { error } = await supabase.auth.signUp({
             email,
             password,
@@ -68,11 +84,12 @@ export default async function Login({ searchParams }: LoginProps) {
         });
 
         if (error) {
-            return redirect("/login?message=Could not authenticate user");
+            return redirect("/login?message=Could not sign up user");
+            // await signIn(formData);
         }
 
         return redirect(
-            "/login?message=Check email to continue sign in process"
+            "/login?message=Check email to continue sign in process",
         );
     };
 
@@ -92,11 +109,7 @@ export default async function Login({ searchParams }: LoginProps) {
                     {/* <ToyPreview /> */}
                     <GoogleLoginButton toy_id={toy_id} />
                     <Separator className="mt-4" />
-                    <form
-                        className="flex-1 flex flex-col w-full justify-center gap-4"
-                        action="/auth/sign-in"
-                        method="post"
-                    >
+                    <form className="flex-1 flex flex-col w-full justify-center gap-4">
                         <Label className="text-md" htmlFor="email">
                             Email
                         </Label>
@@ -106,13 +119,44 @@ export default async function Login({ searchParams }: LoginProps) {
                             placeholder="you@example.com"
                             required
                         />
+                        <Label className="text-md" htmlFor="email">
+                            Password
+                        </Label>
+
                         <input
-                            type="hidden"
-                            name="toy_id"
-                            value={toy_id ?? ("" as string)}
+                            className="rounded-md px-4 py-2 bg-inherit border"
+                            type="password"
+                            name="password"
+                            placeholder="••••••••"
+                            required
                         />
-                        <Button variant="secondary">Continue with email</Button>
-                        <Messages />
+                        {/* <SubmitButton
+                            formAction={signIn}
+                            className="text-sm font-medium  bg-gray-100 hover:bg-gray-50  border-[0.1px] rounded-md px-4 py-2 text-foreground mb-2"
+                            pendingText="Signing In..."
+                        >
+                            Sign In
+                        </SubmitButton> */}
+                        {/* <SubmitButton
+                            formAction={signUp}
+                            className="text-sm font-medium hover:bg-gray-50 border-[0.1px] rounded-md px-4 py-2 text-foreground mb-2"
+                            pendingText="Signing Up..."
+                        >
+                            signUp
+                        </SubmitButton> */}
+                        <SubmitButton
+                            formAction={signUp}
+                            className="text-sm font-medium  bg-gray-100 hover:bg-gray-50  border-[0.1px] rounded-md px-4 py-2 text-foreground mb-2"
+                            pendingText="Signing In..."
+                        >
+                            Get started
+                        </SubmitButton>
+                        {searchParams?.message && (
+                            <p className="p-4 rounded-md border bg-green-50 border-green-400 text-gray-900 text-center text-sm">
+                                {searchParams.message}
+                            </p>
+                        )}
+                        {/* <Messages /> */}
                     </form>
                 </CardContent>
             </Card>

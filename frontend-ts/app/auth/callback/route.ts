@@ -21,7 +21,13 @@ export async function GET(request: Request) {
         } = await supabase.auth.getUser();
 
         if (user) {
+            console.log("user+++++++++", user);
             const userExists = await doesUserExist(supabase, user);
+            console.log("userExists------", userExists);
+            console.log(
+                "toy_id++++",
+                user?.user_metadata?.toy_id ?? queryParamsToyId ?? defaultToyId,
+            );
             if (!userExists) {
                 // Create user if they don't exist
                 await createUser(supabase, user, {
