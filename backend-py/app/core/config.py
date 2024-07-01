@@ -32,6 +32,18 @@ load_dotenv()
 class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
 
+    CELERY_BROKER_URL: str = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
+    CELERY_RESULT_BACKEND: str = os.getenv(
+        "CELERY_RESULT_BACKEND", "redis://localhost:6379/0"
+    )
+    # CELERY_BEAT_SCHEDULE: dict = {
+    #     "example-task": {
+    #         "task": "app.celery_app.tasks.example_task",
+    #         "schedule": 60.0,  # Run every 60 seconds
+    #         "args": (16, 16),
+    #     },
+    # }
+
     MODEL_NAME: str = Field(default_factory=lambda: os.getenv("MODEL_NAME"))
 
     AZURE_OPENAI_ENDPOINT: str = Field(

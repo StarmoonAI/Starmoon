@@ -187,11 +187,11 @@ async def send_audio(uri):
 
         loop = asyncio.get_event_loop()
 
-        num_channels = len(sd.query_devices())
+        # num_channels = len(sd.query_devices())
 
         with sd.InputStream(
             samplerate=16000,
-            channels=num_channels,
+            # channels=1,
             dtype=np.int16,
             callback=callback,
         ):
