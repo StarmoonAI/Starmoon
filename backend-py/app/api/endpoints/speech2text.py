@@ -3,8 +3,8 @@ import json
 import os
 from signal import SIGINT, SIGTERM
 
+from app.celery.tasks import analyze_text_task
 from app.core.config import settings
-from app.tasks import analyze_text_task
 from celery.result import AsyncResult
 from deepgram import (
     AnalyzeOptions,

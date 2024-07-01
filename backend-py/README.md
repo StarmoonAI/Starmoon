@@ -1,6 +1,6 @@
 # Backend
 
-## Install
+## - Install
 
 replace the .env.copy to .env and replace the values with your own
 
@@ -16,14 +16,20 @@ poetry install
 brew install portaudio or conda install portaudio.
 ```
 
-## Run locally
+## - Run locally
+
+### Run redis in docker
+  
+```bash
+docker run -d -p 6379:6379 redis
+```
 
 ### Run server (in different terminal)
 
 ```bash
 uvicorn app.main:app --reload
-celery -A app.celery_app.celery_app worker --loglevel=info
-celery -A app.celery_app.celery_app flower --port=5555
+celery -A app.celery.worker.celery_app worker --loglevel=info
+celery -A app.celery.worker.celery_app flower --port=5555
 ```
 
 ### Run client

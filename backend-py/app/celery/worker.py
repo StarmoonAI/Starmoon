@@ -1,16 +1,13 @@
-# app/celery_app.py
-
-import os
-
 from app.core.config import settings
 from celery import Celery
 
 celery_app = Celery(
-    "tasks",
+    "celery_tasks",
     broker=settings.CELERY_BROKER_URL,
     backend=settings.CELERY_RESULT_BACKEND,
-    include=["app.tasks"],
+    include=["app.celery.tasks"],
 )
+
 
 celery_app.conf.update(
     task_serializer="json",
@@ -20,5 +17,5 @@ celery_app.conf.update(
     enable_utc=True,
 )
 
-# # Auto-discover tasks from the 'app.tasks' module
-# celery_app.autodiscover_tasks(["app.tasks"])
+# # Auto-discover celery_tasks from the 'app.celery_tasks' module
+# celery_worker.autodiscover_celery_tasks(["app.celery_tasks"])

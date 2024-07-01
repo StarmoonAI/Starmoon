@@ -1,6 +1,6 @@
 import os
 
-from app.celery_app import celery_app
+from app.celery.worker import celery_app
 from deepgram import AnalyzeOptions, DeepgramClient, TextSource
 from dotenv import load_dotenv
 
@@ -9,7 +9,7 @@ load_dotenv()
 deepgram = DeepgramClient(os.getenv("DG_API_KEY"))
 
 
-@celery_app.task(name="app.tasks.analyze_text_task")
+@celery_app.task(name="app.celery.tasks.analyze_text_task")
 def analyze_text_task(utterance: str):
     options_analyzer = AnalyzeOptions(
         language="en",

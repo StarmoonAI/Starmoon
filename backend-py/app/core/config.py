@@ -38,7 +38,7 @@ class Settings(BaseSettings):
     )
     # CELERY_BEAT_SCHEDULE: dict = {
     #     "example-task": {
-    #         "task": "app.celery_app.tasks.example_task",
+    #         "task": "app.celery_worker.celery_tasks.example_task",
     #         "schedule": 60.0,  # Run every 60 seconds
     #         "args": (16, 16),
     #     },

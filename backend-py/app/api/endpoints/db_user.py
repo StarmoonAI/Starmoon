@@ -1,13 +1,11 @@
-import asyncio
-import json
-import time
 from typing import Union
-from fastapi import APIRouter, HTTPException
-from app.models.text_input import TextInput
-from fastapi.responses import StreamingResponse
-from app.models.text_analysis_output import TextAnalysisOutput
-from app.services.llm_response import openai_response
+
 from app.db.supabase import create_supabase_client
+from app.models.text_analysis_output import TextAnalysisOutput
+from app.models.text_input import TextInput
+from app.services.llm_response import openai_response
+from fastapi import APIRouter, HTTPException
+from fastapi.responses import StreamingResponse
 
 router = APIRouter()
 
