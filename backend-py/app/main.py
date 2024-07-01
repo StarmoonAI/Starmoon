@@ -1,21 +1,22 @@
+import asyncio
+import logging
+import os
+from signal import SIGINT, SIGTERM
 from typing import Union
 
-from fastapi import FastAPI
-from app.api.endpoints import analyze_text, user
-from dotenv import load_dotenv
+from app.api.endpoints import analyze_text, db_user, speech2text
 from app.core.config import settings
+from deepgram.utils import verboselogs
+from dotenv import load_dotenv
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi.responses import HTMLResponse
 
-import os
-
+load_dotenv()
 app = FastAPI()
 
 app.include_router(analyze_text.router, prefix="/api", tags=["LLM response"])
-app.include_router(user.router, prefix="/api", tags=["User"])
-
-# Define the path to the .env file
-env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
-# Load the .env file
-load_dotenv(dotenv_path=env_path)
+app.include_router(db_user.router, prefix="/api", tags=["User"])
+app.include_router(speech2text.router, tags=["Audio WebSocket"])
 
 if __name__ == "__main__":
     import uvicorn

@@ -40,7 +40,7 @@ class Settings(BaseSettings):
     AZURE_OPENAI_API_KEY: str = Field(
         default_factory=lambda: os.getenv("AZURE_OPENAI_API_KEY")
     )
-    DEEPGRAM_API_KEY: str = Field(default_factory=lambda: os.getenv("DEEPGRAM_API_KEY"))
+    DEEPGRAM_API_KEY: str = Field(default_factory=lambda: os.getenv("DG_API_KEY"))
 
     MS_SPEECH_ENDPOINTY: str = Field(
         default_factory=lambda: os.getenv("MS_SPEECH_ENDPOINTY")
