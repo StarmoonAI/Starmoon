@@ -1,12 +1,8 @@
-name: Build Docker Container & Push to Registry
+name: FastAPI Test
 
 on:
     workflow_call:
     workflow_dispatch:
-    push:
-        branches: [main]
-    pull_request:
-        branches: [main]
 
 jobs:
     build:
@@ -20,7 +16,7 @@ jobs:
         strategy:
             max-parallel: 4
             matrix:
-                python-version: [3.10, 3.11]
+                python-version: ["3.10", "3.11"]
 
         steps:
             - uses: actions/checkout@v3
@@ -39,11 +35,6 @@ jobs:
             - name: Look for major issues with flake8
               run: |
                   flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-            - name: Build Docker Container
+            - name: Run FastAPI server
               run: |
-                  docker build -t backend-py .
-            - name: Push Docker Container to Registry
-              run: |
-                  echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-                  docker tag backend-py ${{ secrets.DOCKER_USERNAME }}/backend-py
-                  docker push ${{ secrets.DOCKER_USERNAME }}/backend-py
+                  poetry run uvicorn app.main:app --reload
