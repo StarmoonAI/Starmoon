@@ -14,7 +14,7 @@ export const generateSuggestion = async (
     const endpoint = process.env["AZURE_OPENAI_ENDPOINT"];
     const apiKey = process.env["AZURE_OPENAI_API_KEY"];
     const apiVersion = "2024-02-01"; //"2024-02-01"
-    const deployment = process.env["MODEL_NAME"] || "gpt-4o";
+    const deployment = process.env["LLM_MODEL_NAME"] || "gpt-4o";
 
     // convert cardData to string
     // console.log("cardData", cardData);

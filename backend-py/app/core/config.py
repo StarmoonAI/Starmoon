@@ -46,7 +46,7 @@ class Settings(BaseSettings):
         },
     }
 
-    MODEL_NAME: str = Field(default_factory=lambda: os.getenv("MODEL_NAME"))
+    LLM_MODEL_NAME: str = Field(default_factory=lambda: os.getenv("LLM_MODEL_NAME"))
 
     AZURE_OPENAI_ENDPOINT: str = Field(
         default_factory=lambda: os.getenv("AZURE_OPENAI_ENDPOINT")
