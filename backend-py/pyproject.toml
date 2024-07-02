@@ -26,6 +26,7 @@ python-jose = "^3.3.0"
 supabase = "^2.5.1"
 openai = "^1.35.8"
 anthropic = "^0.30.1"
+pytest = "^8.2.2"
 
 
 [build-system]
