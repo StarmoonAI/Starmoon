@@ -30,7 +30,7 @@ load_dotenv()
 
 
 class Settings(BaseSettings):
-    API_V1_STR: str = "/api/v1"
+    # API_V1_STR: str = "/api/v1"
 
     SECRET_KEY: str = os.getenv("SECRET_KEY")
 

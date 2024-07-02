@@ -174,7 +174,9 @@ import websockets
 
 USER_ID = "your_user_id_here"
 SESSION_ID = "your_session_id_here"
-API_ENDPOINT = "ws://57.151.67.244"  # wss://your-domain-name.com for https
+API_ENDPOINT = "wss://api.starmoon.app"
+# wss://api.starmoon.app for https
+# "ws://57.151.67.244" for http
 
 # mic_device_id = None
 # devices = sd.query_devices()

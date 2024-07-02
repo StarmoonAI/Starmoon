@@ -1,13 +1,13 @@
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-    name: flower
+    name: starmoon
 spec:
     routes:
         - kind: Rule
-          match: Host(`celery.starmoon.app`)
+          match: Host(`api.starmoon.app`)
           services:
-              - name: flower-service
+              - name: starmoon-service
                 port: 80
     tls:
         certResolver: default
