@@ -32,7 +32,7 @@ load_dotenv()
 class Settings(BaseSettings):
     # API_V1_STR: str = "/api/v1"
 
-    SECRET_KEY: str = os.getenv("SECRET_KEY")
+    SECRET_KEY: str = os.getenv("SECRET_KEY", "")
 
     CELERY_BROKER_URL: str = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
     CELERY_RESULT_BACKEND: str = os.getenv(
@@ -46,25 +46,25 @@ class Settings(BaseSettings):
         },
     }
 
-    LLM_MODEL_NAME: str = Field(default_factory=lambda: os.getenv("LLM_MODEL_NAME"))
+    LLM_MODEL_NAME: str = Field(default_factory=lambda: os.getenv("LLM_MODEL_NAME", ""))
 
     AZURE_OPENAI_ENDPOINT: str = Field(
-        default_factory=lambda: os.getenv("AZURE_OPENAI_ENDPOINT")
+        default_factory=lambda: os.getenv("AZURE_OPENAI_ENDPOINT", "")
     )
     AZURE_OPENAI_API_KEY: str = Field(
-        default_factory=lambda: os.getenv("AZURE_OPENAI_API_KEY")
+        default_factory=lambda: os.getenv("AZURE_OPENAI_API_KEY", "")
     )
-    DEEPGRAM_API_KEY: str = Field(default_factory=lambda: os.getenv("DG_API_KEY"))
+    DEEPGRAM_API_KEY: str = Field(default_factory=lambda: os.getenv("DG_API_KEY", ""))
 
     MS_SPEECH_ENDPOINTY: str = Field(
-        default_factory=lambda: os.getenv("MS_SPEECH_ENDPOINTY")
+        default_factory=lambda: os.getenv("MS_SPEECH_ENDPOINTY", "")
     )
-    SPEECH_KEY: str = Field(default_factory=lambda: os.getenv("SPEECH_KEY"))
-    SPEECH_REGION: str = Field(default_factory=lambda: os.getenv("SPEECH_REGION"))
+    SPEECH_KEY: str = Field(default_factory=lambda: os.getenv("SPEECH_KEY", ""))
+    SPEECH_REGION: str = Field(default_factory=lambda: os.getenv("SPEECH_REGION", ""))
 
-    SUPABASE_URL: str = Field(default_factory=lambda: os.getenv("SUPABASE_URL"))
-    SUPABASE_KEY: str = Field(default_factory=lambda: os.getenv("SUPABASE_KEY"))
-    SERVICE_ROLE: str = Field(default=lambda: os.getenv("SERVICE_ROLE"))
+    SUPABASE_URL: str = Field(default_factory=lambda: os.getenv("SUPABASE_URL", ""))
+    SUPABASE_KEY: str = Field(default_factory=lambda: os.getenv("SUPABASE_KEY", ""))
+    SERVICE_ROLE: str = Field(default_factory=lambda: os.getenv("SERVICE_ROLE", ""))
 
     SERVER_HOST: AnyHttpUrl = "https://localhost"
     SERVER_PORT: int = 8000
