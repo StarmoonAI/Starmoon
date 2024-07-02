@@ -27,10 +27,10 @@ docker run -d -p 6379:6379 redis
 ### Run server (in different terminal)
 
 ```bash
-uvicorn app.main:app --reload
-celery -A app.celery.worker.celery_app worker --loglevel=info
-celery -A app.celery.worker.celery_app flower --port=5555
-celery -A app.celery.worker.celery_app beat --loglevel=info
+poetry run uvicorn app.main:app --reload
+poetry run celery -A app.celery.worker.celery_app worker --loglevel=info
+poetry run celery -A app.celery.worker.celery_app flower --port=5555
+poetry run celery -A app.celery.worker.celery_app beat --loglevel=info
 ```
 
 ### Run client

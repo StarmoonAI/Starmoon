@@ -173,12 +173,24 @@ import sounddevice as sd
 import websockets
 
 USER_ID = "your_user_id_here"
+SESSION_ID = "your_session_id_here"
+API_ENDPOINT = "ws://57.151.67.244"  # wss://your-domain-name.com for https
+
+# mic_device_id = None
+# devices = sd.query_devices()
+# for i, device in enumerate(devices):
+#     if "mic" in device["name"].lower() or "microphone" in device["name"].lower():
+#         mic_device_id = i
+#         break
+
+# if mic_device_id is None:
+#     raise RuntimeError("Microphone not found. Please check your audio devices.")
 
 
 async def send_audio(uri):
     async with websockets.connect(uri) as websocket:
-        # Send user ID initially
-        await websocket.send(json.dumps({"user_id": USER_ID}))
+        # Send user ID and session ID initially
+        await websocket.send(json.dumps({"user_id": USER_ID, "session_id": SESSION_ID}))
 
         def callback(indata, frames, time, status):
             if status:
@@ -191,7 +203,8 @@ async def send_audio(uri):
 
         with sd.InputStream(
             samplerate=16000,
-            # channels=1,
+            # device=mic_device_id,
+            channels=1,
             dtype=np.int16,
             callback=callback,
         ):
@@ -209,9 +222,7 @@ async def send_audio(uri):
 
 
 async def query_task_status(task_id):
-    async with websockets.connect(
-        f"ws://localhost:8000/task_status/{task_id}"
-    ) as websocket:
+    async with websockets.connect(f"{API_ENDPOINT}/task_status/{task_id}") as websocket:
         try:
             while True:
                 result = await websocket.recv()
@@ -220,4 +231,4 @@ async def query_task_status(task_id):
             print("Connection closed")
 
 
-asyncio.run(send_audio("ws://localhost:8000/speech2text"))
+asyncio.run(send_audio(f"{API_ENDPOINT}/speech2text"))

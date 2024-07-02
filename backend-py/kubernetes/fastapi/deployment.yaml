@@ -1,139 +1,61 @@
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: app
-# spec:
-#   replicas: 1
-#   selector:
-#     matchLabels:
-#       app: app
-#   template:
-#     metadata:
-#       labels:
-#         app: app
-#     spec:
-#       containers:
-#         - name: app
-#           image: aitoyregistry.azurecr.io/aitoy:latest
-#           ports:
-#             - containerPort: 8000
-#           envFrom:
-#             - secretRef:
-#                 name: fastapi-prod-env
-#       #     volumeMounts:
-#       #       - name: gcp-service-account
-#       #         mountPath: /var/secrets/google/
-#       #         readOnly: true
-#       # volumes:
-#       #   - name: gcp-service-account
-#       #     secret:
-#       #       secretName: gcp-service-account-key
-#       affinity:
-#         podAntiAffinity:
-#           requiredDuringSchedulingIgnoredDuringExecution:
-#             - labelSelector:
-#                 matchExpressions:
-#                   - key: "app"
-#                     operator: In
-#                     values:
-#                       - app
-#               topologyKey: "kubernetes.io/hostname"
-
-# ---
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: service
-# spec:
-#   type: LoadBalancer
-#   # type: ClusterIP
-#   ports:
-#     - protocol: TCP
-#       port: 80
-#       targetPort: 8000
-#   selector:
-#     app: app
-
-# ---
-# apiVersion: autoscaling/v1
-# kind: HorizontalPodAutoscaler
-# metadata:
-#   name: app
-# spec:
-#   scaleTargetRef:
-#     apiVersion: apps/v1
-#     kind: Deployment
-#     name: app
-#   minReplicas: 1
-#   maxReplicas: 20
-#   targetCPUUtilizationPercentage: 90
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: incarna-app
+    name: starmoon-app
 spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: incarna-app
-  template:
-    metadata:
-      labels:
-        app: incarna-app
-    spec:
-      containers:
-        - name: incarna-app
-          image: aitoyregistry.azurecr.io/aitoy:latest
-          ports:
-            - containerPort: 8000
-          envFrom:
-            - secretRef:
-                name: django-prod-env
-          volumeMounts:
-            - name: gcp-service-account
-              mountPath: /var/secrets/google/
-              readOnly: true
-      volumes:
-        - name: gcp-service-account
-          secret:
-            secretName: gcp-service-account-key
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-            - labelSelector:
-                matchExpressions:
-                  - key: "app"
-                    operator: In
-                    values:
-                      - incarna-app
-              topologyKey: "kubernetes.io/hostname"
+    replicas: 1
+    selector:
+        matchLabels:
+            app: starmoon-app
+    template:
+        metadata:
+            labels:
+                app: starmoon-app
+        spec:
+            containers:
+                - name: starmoon-app
+                  image: aitoyregistry.azurecr.io/aitoy:latest
+                  ports:
+                      - containerPort: 8000
+                  envFrom:
+                      - secretRef:
+                            name: fastapi-prod-env
+            affinity:
+                podAntiAffinity:
+                    requiredDuringSchedulingIgnoredDuringExecution:
+                        - labelSelector:
+                              matchExpressions:
+                                  - key: "app"
+                                    operator: In
+                                    values:
+                                        - starmoon-app
+                          topologyKey: "kubernetes.io/hostname"
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: incarna-service
+    name: starmoon-service
 spec:
-  type: LoadBalancer
-  # type: ClusterIP
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 8000
-  selector:
-    app: incarna-app
+    type: LoadBalancer
+    # type: ClusterIP
+    ports:
+        - protocol: TCP
+          port: 80
+          targetPort: 8000
+    selector:
+        app: starmoon-app
 
 ---
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: incarna-app
+    name: starmoon-app
 spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: incarna-app
-  minReplicas: 1
-  maxReplicas: 20
-  targetCPUUtilizationPercentage: 90
+    scaleTargetRef:
+        apiVersion: apps/v1
+        kind: Deployment
+        name: starmoon-app
+    minReplicas: 1
+    maxReplicas: 20
+    targetCPUUtilizationPercentage: 90

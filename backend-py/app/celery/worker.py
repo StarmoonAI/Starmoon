@@ -15,7 +15,7 @@ celery_app.conf.update(
     result_serializer="json",
     timezone="UTC",
     enable_utc=True,
-    # beat_schedule=settings.CELERY_BEAT_SCHEDULE,
+    # beat_schedule=settings.CELERY_BEAT_SCHEDULE, # enable beat periodic task
 )
 
 # # Auto-discover celery_tasks from the 'app.celery_tasks' module

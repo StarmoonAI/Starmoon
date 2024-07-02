@@ -23,7 +23,7 @@ router = APIRouter()
 is_finals = []
 
 
-async def handle_transcription(websocket: WebSocket, user_id: str):
+async def handle_transcription(websocket: WebSocket, user_id: str, session_id: str):
     config = DeepgramClientOptions(options={"keepalive": "true"})
     deepgram = DeepgramClient(os.getenv("DG_API_KEY"), config)
     dg_connection = deepgram.listen.asynclive.v("1")
@@ -130,7 +130,8 @@ async def websocket_endpoint(websocket: WebSocket):
     data = await websocket.receive_text()
     user_info = json.loads(data)
     user_id = user_info.get("user_id")
-    await handle_transcription(websocket, user_id)
+    session_id = user_info.get("session_id")
+    await handle_transcription(websocket, user_id, session_id)
 
 
 @router.websocket("/task_status/{task_id}")

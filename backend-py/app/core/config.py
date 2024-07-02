@@ -32,6 +32,8 @@ load_dotenv()
 class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
 
+    SECRET_KEY: str = os.getenv("SECRET_KEY")
+
     CELERY_BROKER_URL: str = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
     CELERY_RESULT_BACKEND: str = os.getenv(
         "CELERY_RESULT_BACKEND", "redis://localhost:6379/0"
@@ -39,7 +41,7 @@ class Settings(BaseSettings):
     CELERY_BEAT_SCHEDULE: dict = {
         "print-current-time": {
             "task": "app.celery.tasks.print_current_time",
-            "schedule": 10.0,  # Run every 60 seconds
+            "schedule": 10.0,  # Run every 10 seconds
             # "args": (16, 16),
         },
     }
