@@ -7,5 +7,5 @@ __pycache__
 .prettierrc.json
 backend-py-deprecated
 frontend-ts-deprecated
-.github
 .prettierrc
+archive
