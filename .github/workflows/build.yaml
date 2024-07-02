@@ -16,3 +16,7 @@ jobs:
         needs: [test_fastapi_job]
         env:
             CLUSTER_NAME: AItoyK8s
+
+        steps:
+            - name: Checkout source code
+              uses: actions/checkout@v3
