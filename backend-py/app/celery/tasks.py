@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 from app.celery.worker import celery_app
 from deepgram import AnalyzeOptions, DeepgramClient, TextSource
@@ -23,3 +24,9 @@ def analyze_text_task(utterance: str):
     # Convert the AnalyzeResponse object to a dictionary
     response_dict = response.to_dict() if hasattr(response, "to_dict") else response
     return response_dict
+
+
+# This is the celery periodic task
+@celery_app.task
+def print_current_time():
+    print(f"Current time: {datetime.now()}")

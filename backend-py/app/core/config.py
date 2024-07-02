@@ -36,13 +36,13 @@ class Settings(BaseSettings):
     CELERY_RESULT_BACKEND: str = os.getenv(
         "CELERY_RESULT_BACKEND", "redis://localhost:6379/0"
     )
-    # CELERY_BEAT_SCHEDULE: dict = {
-    #     "example-task": {
-    #         "task": "app.celery_worker.celery_tasks.example_task",
-    #         "schedule": 60.0,  # Run every 60 seconds
-    #         "args": (16, 16),
-    #     },
-    # }
+    CELERY_BEAT_SCHEDULE: dict = {
+        "print-current-time": {
+            "task": "app.celery.tasks.print_current_time",
+            "schedule": 10.0,  # Run every 60 seconds
+            # "args": (16, 16),
+        },
+    }
 
     MODEL_NAME: str = Field(default_factory=lambda: os.getenv("MODEL_NAME"))
 
