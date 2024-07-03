@@ -11,7 +11,7 @@ deepgram = DeepgramClient(os.getenv("DG_API_KEY"))
 
 
 @celery_app.task(name="app.celery.tasks.analyze_text_task")
-def analyze_text_task(utterance: str):
+def analyze_text_task(utterance: str, transcription_id: str):
     options_analyzer = AnalyzeOptions(
         language="en",
         sentiment=True,
@@ -23,7 +23,7 @@ def analyze_text_task(utterance: str):
 
     # Convert the AnalyzeResponse object to a dictionary
     response_dict = response.to_dict() if hasattr(response, "to_dict") else response
-    return response_dict
+    return {"transcription_id": transcription_id, "analysis": response_dict}
 
 
 # This is the celery periodic task

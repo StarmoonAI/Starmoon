@@ -174,9 +174,11 @@ import websockets
 
 USER_ID = "your_user_id_here"
 SESSION_ID = "your_session_id_here"
-API_ENDPOINT = "wss://api.starmoon.app"
+API_ENDPOINT = "ws://localhost:8000"
 # wss://api.starmoon.app for https
-# "ws://57.151.67.244" for http
+# "ws://localhost:8000" for http
+
+AUTH_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjMifQ.EgLfxb-2VgFiFY9CJthPkZMba0zhR_DX7GXWnPxVOyA"
 
 # mic_device_id = None
 # devices = sd.query_devices()
@@ -191,26 +193,31 @@ API_ENDPOINT = "wss://api.starmoon.app"
 
 async def send_audio(uri):
     async with websockets.connect(uri) as websocket:
-        # Send user ID and session ID initially
-        await websocket.send(json.dumps({"user_id": USER_ID, "session_id": SESSION_ID}))
+        try:
+            # Send user ID, session ID, and token initially
+            await websocket.send(
+                json.dumps(
+                    {
+                        "user_id": USER_ID,
+                        "session_id": SESSION_ID,
+                        "token": AUTH_TOKEN,  # Add this line
+                    }
+                )
+            )
 
-        def callback(indata, frames, time, status):
-            if status:
-                print(status)
-            asyncio.run_coroutine_threadsafe(websocket.send(indata.tobytes()), loop)
+            def callback(indata, frames, time, status):
+                if status:
+                    print(status)
+                asyncio.run_coroutine_threadsafe(websocket.send(indata.tobytes()), loop)
 
-        loop = asyncio.get_event_loop()
+            loop = asyncio.get_event_loop()
 
-        # num_channels = len(sd.query_devices())
-
-        with sd.InputStream(
-            samplerate=16000,
-            # device=mic_device_id,
-            channels=1,
-            dtype=np.int16,
-            callback=callback,
-        ):
-            try:
+            with sd.InputStream(
+                samplerate=16000,
+                channels=1,
+                dtype=np.int16,
+                callback=callback,
+            ):
                 while True:
                     message = await websocket.recv()
                     print(message)
@@ -219,18 +226,25 @@ async def send_audio(uri):
                         asyncio.run_coroutine_threadsafe(
                             query_task_status(task_id), loop
                         )
-            except websockets.exceptions.ConnectionClosed:
-                print("Connection closed")
+        except websockets.exceptions.ConnectionClosed as e:
+            print(f"Connection closed with code: {e.code}, reason: {e.reason}")
+            if e.code == 4001:
+                print("Authentication failed. Please check your token.")
 
 
 async def query_task_status(task_id):
     async with websockets.connect(f"{API_ENDPOINT}/task_status/{task_id}") as websocket:
         try:
+            # Send token for authentication
+            await websocket.send(json.dumps({"token": AUTH_TOKEN}))
+
             while True:
                 result = await websocket.recv()
                 print(f"Analysis Result: {result}")
-        except websockets.exceptions.ConnectionClosed:
-            print("Connection closed")
+        except websockets.exceptions.ConnectionClosed as e:
+            print(f"Connection closed with code: {e.code}, reason: {e.reason}")
+            if e.code == 4001:
+                print("Authentication failed. Please check your token.")
 
 
 asyncio.run(send_audio(f"{API_ENDPOINT}/speech2text"))

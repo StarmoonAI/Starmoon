@@ -1,27 +1,58 @@
-from typing import Optional
+import os
 
 from app.core.config import settings
-from fastapi import Depends, HTTPException, WebSocket, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import Depends, FastAPI, HTTPException, WebSocket
+from fastapi.websockets import WebSocketDisconnect
 from jose import JWTError, jwt
-from pydantic import BaseModel
 
-SECRET_KEY = "your-secret-key"
+SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = "HS256"
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+async def get_token_from_query(websocket: WebSocket):
+    token = websocket.query_params.get("token")
+    if not token:
+        raise HTTPException(status_code=403, detail="No token provided")
+    return token
 
 
-class TokenData(BaseModel):
-    username: str | None = None
-
-
-def verify_token(token: str):
+async def authenticate_user(token: str = Depends(get_token_from_query)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
         if username is None:
-            raise HTTPException(status_code=401, detail="Invalid token")
-        return TokenData(username=username)
+            raise HTTPException(
+                status_code=401, detail="Invalid authentication credentials"
+            )
+        return {"username": username}
     except JWTError:
-        raise HTTPException(status_code=401, detail="Invalid token")
+        return None
+
+
+# import secrets
+
+# secret_key = secrets.token_urlsafe(32)
+# print(f"SECRET_KEY: {secret_key}")
+
+import datetime
+
+from jose import jwt
+
+ALGORITHM = "HS256"
+
+
+def create_access_token(data: dict, expires_delta: datetime.timedelta = None):
+    to_encode = data.copy()
+
+    if expires_delta:
+        expire = datetime.datetime.utcnow() + expires_delta
+        to_encode.update({"exp": expire})
+
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+
+# Usage:
+username = "123"  # This would typically come from your user authentication process
+token = create_access_token(data={"sub": username})
+print(f"AUTH_TOKEN: {token}")

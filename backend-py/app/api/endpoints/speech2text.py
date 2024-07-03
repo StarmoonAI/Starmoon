@@ -1,9 +1,11 @@
 import asyncio
 import json
 import os
+import uuid
 from signal import SIGINT, SIGTERM
 
 from app.celery.tasks import analyze_text_task
+from app.core.auth import authenticate_user
 from app.core.config import settings
 from celery.result import AsyncResult
 from deepgram import (
@@ -39,15 +41,23 @@ async def handle_transcription(websocket: WebSocket, user_id: str, session_id: s
         if result.is_final:
             is_finals.append(sentence)
             if result.speech_final:
-                print("result+++", result)
+                transcription_id = str(uuid.uuid4())
+
+                # print("result+++", result)
                 utterance = " ".join(is_finals)
-                await websocket.send_text(f"Speech Final: {utterance}")
+                await websocket.send_json(
+                    {
+                        "transcription_id": transcription_id,
+                        "speech_final": utterance,
+                    }
+                )
                 # await save_transcription_to_supabase(utterance)
                 print(f"User ID: {user_id}")
                 is_finals = []
 
                 # Analyze text in the background
-                task = analyze_text_task.delay(utterance)
+
+                task = analyze_text_task.delay(utterance, transcription_id)
                 await websocket.send_text(f"Analysis Task ID: {task.id}")
                 # add task.id to metadata
             # else:
@@ -64,13 +74,19 @@ async def handle_transcription(websocket: WebSocket, user_id: str, session_id: s
     async def on_utterance_end(self, utterance_end, **kwargs):
         global is_finals
         if len(is_finals) > 0:
+            transcription_id = str(uuid.uuid4())
             utterance = " ".join(is_finals)
-            await websocket.send_text(f"Utterance End: {utterance}")
+            await websocket.send_json(
+                {
+                    "transcription_id": transcription_id,
+                    "utterance_end": utterance,
+                }
+            )
             # await save_transcription_to_supabase(utterance)
             is_finals = []
 
             # Analyze text in the background
-            task = analyze_text_task.delay(utterance)
+            task = analyze_text_task.delay(utterance, transcription_id)
             await websocket.send_text(f"Analysis Task ID: {task.id}")
 
     async def on_close(self, close, **kwargs):
@@ -127,17 +143,43 @@ async def handle_transcription(websocket: WebSocket, user_id: str, session_id: s
 @router.websocket("/speech2text")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
-    data = await websocket.receive_text()
-    user_info = json.loads(data)
-    user_id = user_info.get("user_id")
-    session_id = user_info.get("session_id")
-    await handle_transcription(websocket, user_id, session_id)
+    try:
+        data = await websocket.receive_text()
+        user_info = json.loads(data)
+        token = user_info.get("token")
+
+        # Authenticate the user
+        username = await authenticate_user(token)
+        print("username1", username)
+        # if username not in the supabase
+        if not username:
+            await websocket.close(code=4001, reason="Authentication failed")
+            return
+
+        user_id = user_info.get("user_id")
+        session_id = user_info.get("session_id")
+        await handle_transcription(websocket, user_id, session_id)
+
+    except WebSocketDisconnect:
+        print("Client disconnected")
 
 
 @router.websocket("/task_status/{task_id}")
 async def task_status(websocket: WebSocket, task_id: str):
     await websocket.accept()
+
     try:
+        data = await websocket.receive_text()
+        user_info = json.loads(data)
+        token = user_info.get("token")
+
+        # Authenticate the user
+        username = await authenticate_user(token)
+        print("username2", username)
+        if not username:
+            await websocket.close(code=4001, reason="Authentication failed")
+            return
+
         while True:
             task_result = AsyncResult(task_id)
             if task_result.ready():
@@ -145,5 +187,6 @@ async def task_status(websocket: WebSocket, task_id: str):
                 await websocket.send_text(json.dumps(result))
                 break
             await asyncio.sleep(1)
+
     except WebSocketDisconnect:
         print("Client disconnected")

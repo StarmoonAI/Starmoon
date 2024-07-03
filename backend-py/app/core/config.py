@@ -65,6 +65,9 @@ class Settings(BaseSettings):
     SUPABASE_URL: str = Field(default_factory=lambda: os.getenv("SUPABASE_URL", ""))
     SUPABASE_KEY: str = Field(default_factory=lambda: os.getenv("SUPABASE_KEY", ""))
     SERVICE_ROLE: str = Field(default_factory=lambda: os.getenv("SERVICE_ROLE", ""))
+    SUPABASE_JWT_SECRET: str = Field(
+        default_factory=lambda: os.getenv("SUPABASE_JWT_SECRET", "")
+    )
 
     SERVER_HOST: AnyHttpUrl = "https://localhost"
     SERVER_PORT: int = 8000
