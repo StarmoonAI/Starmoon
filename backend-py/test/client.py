@@ -167,8 +167,10 @@
 
 import asyncio
 import json
+import threading
 
 import numpy as np
+import pyaudio
 import sounddevice as sd
 import websockets
 
@@ -180,15 +182,47 @@ API_ENDPOINT = "ws://localhost:8000"
 
 AUTH_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjMifQ.EgLfxb-2VgFiFY9CJthPkZMba0zhR_DX7GXWnPxVOyA"
 
-# mic_device_id = None
-# devices = sd.query_devices()
-# for i, device in enumerate(devices):
-#     if "mic" in device["name"].lower() or "microphone" in device["name"].lower():
-#         mic_device_id = i
-#         break
+mic_device_id = None
+devices = sd.query_devices()
+for i, device in enumerate(devices):
+    print(device, i)
+    # if "mic" in device["name"].lower() or "microphone" in device["name"].lower():
+    #     mic_device_id = i
+    #     break
 
 # if mic_device_id is None:
 #     raise RuntimeError("Microphone not found. Please check your audio devices.")
+
+# Buffer to store audio chunks
+audio_buffer = []
+
+# Lock for thread-safe access to the buffer
+buffer_lock = threading.Lock()
+
+
+FORMAT = pyaudio.paInt16
+CHANNELS = 1
+RATE = 16000
+CHUNK = 1024
+
+
+p = pyaudio.PyAudio()
+
+# Playback stream
+playback_stream = p.open(format=FORMAT, channels=CHANNELS, rate=RATE, output=True)
+
+
+def playback_audio():
+    while True:
+        with buffer_lock:
+            if len(audio_buffer) > 0:
+                playback_stream.write(audio_buffer.pop(0))
+
+
+# Start playback thread
+playback_thread = threading.Thread(target=playback_audio)
+playback_thread.daemon = True
+playback_thread.start()
 
 
 async def send_audio(uri):
@@ -200,32 +234,57 @@ async def send_audio(uri):
                     {
                         "user_id": USER_ID,
                         "session_id": SESSION_ID,
-                        "token": AUTH_TOKEN,  # Add this line
+                        "token": AUTH_TOKEN,
                     }
                 )
             )
 
-            def callback(indata, frames, time, status):
-                if status:
-                    print(status)
-                asyncio.run_coroutine_threadsafe(websocket.send(indata.tobytes()), loop)
+            def callback(in_data, frame_count, time_info, status):
+                asyncio.run_coroutine_threadsafe(websocket.send(in_data), loop)
+                return (None, pyaudio.paContinue)
 
             loop = asyncio.get_event_loop()
 
-            with sd.InputStream(
-                samplerate=16000,
-                channels=1,
-                dtype=np.int16,
-                callback=callback,
-            ):
-                while True:
+            stream = p.open(
+                format=FORMAT,
+                channels=CHANNELS,
+                rate=RATE,
+                input=True,
+                frames_per_buffer=CHUNK,
+                stream_callback=callback,
+            )
+
+            stream.start_stream()
+
+            try:
+                while stream.is_active():
                     message = await websocket.recv()
-                    print(message)
-                    if "Analysis Task ID" in message:
-                        task_id = message.split(": ")[1]
-                        asyncio.run_coroutine_threadsafe(
-                            query_task_status(task_id), loop
-                        )
+
+                    # Check if the message is in bytes or str
+                    if isinstance(message, str):
+                        # Handle text message
+                        print(message)
+                        if "Analysis Task ID" in message:
+                            task_id = message.split(": ")[1]
+                            asyncio.run_coroutine_threadsafe(
+                                query_task_status(task_id), loop
+                            )
+                    elif isinstance(message, bytes):
+                        # Handle binary data (e.g., audio data)
+                        print(f"Received binary data of length: {len(message)}")
+                        audio_data = np.frombuffer(message, dtype=np.int16).tobytes()
+                        with buffer_lock:
+                            audio_buffer.append(audio_data)
+
+            except websockets.exceptions.ConnectionClosed as e:
+                print(f"Connection closed with code: {e.code}, reason: {e.reason}")
+                if e.code == 4001:
+                    print("Authentication failed. Please check your token.")
+            finally:
+                stream.stop_stream()
+                stream.close()
+                p.terminate()
+
         except websockets.exceptions.ConnectionClosed as e:
             print(f"Connection closed with code: {e.code}, reason: {e.reason}")
             if e.code == 4001:

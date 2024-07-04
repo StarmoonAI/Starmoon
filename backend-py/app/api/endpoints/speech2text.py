@@ -4,9 +4,18 @@ import os
 import uuid
 from signal import SIGINT, SIGTERM
 
+import azure.cognitiveservices.speech as speechsdk
+import openai
 from app.celery.tasks import analyze_text_task
 from app.core.auth import authenticate_user
 from app.core.config import settings
+from app.services.clients import Clients
+from azure.cognitiveservices.speech import (
+    AudioDataStream,
+    SpeechConfig,
+    SpeechSynthesizer,
+)
+from azure.cognitiveservices.speech.audio import AudioOutputConfig
 from celery.result import AsyncResult
 from deepgram import (
     AnalyzeOptions,
@@ -23,6 +32,64 @@ load_dotenv()
 
 router = APIRouter()
 is_finals = []
+
+client = Clients()
+
+speech_config = SpeechConfig(
+    subscription="d9e1868008cf477eb9cad5ddca6e4994", region="eastus"
+)
+
+
+async def stream_tts(text: str, websocket: WebSocket):
+    synthesizer = SpeechSynthesizer(speech_config=speech_config, audio_config=None)
+    result = synthesizer.start_speaking_text_async(text)
+
+    audio_data_stream = AudioDataStream(result)
+
+    buffer = bytes(32000)
+    while True:
+        num_bytes = audio_data_stream.read_data(buffer)
+        if num_bytes == 0:
+            break
+        await websocket.send_text(buffer[:num_bytes])
+
+    synthesizer.stop_speaking_async()
+
+
+async def process_and_stream_response(utterance: str, websocket: WebSocket):
+    # Get streaming response from OpenAI
+    async for chunk in client.client_azure_4o.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": utterance},
+        ],
+        stream=True,
+    ):
+        if chunk.choices[0].delta.get("content"):
+            content = chunk.choices[0].delta.content
+            await websocket.send_json({"type": "text_response", "content": content})
+
+            # Stream TTS audio
+            await stream_tts(content, websocket)
+
+
+async def speech_stream_response(text: str, websocket: WebSocket):
+    speech_synthesizer = speechsdk.SpeechSynthesizer(
+        speech_config=speech_config, audio_config=None
+    )
+    result = speech_synthesizer.start_speaking_text_async(text).get()
+    audio_data_stream = speechsdk.AudioDataStream(result)
+    audio_buffer = bytes(32000)
+    filled_size = audio_data_stream.read_data(audio_buffer)
+    while filled_size > 0:
+        await websocket.send_bytes(audio_buffer[:filled_size])
+        filled_size = audio_data_stream.read_data(audio_buffer)
+    #     print("{} bytes received.".format(filled_size))
+    #     filled_size = audio_data_stream.read_data(audio_buffer)
+    #     # send audio data to the client
+    #     await websocket(audio_buffer[:filled_size])
+    # speech_synthesizer.stop_speaking_async()
 
 
 async def handle_transcription(websocket: WebSocket, user_id: str, session_id: str):
@@ -55,11 +122,12 @@ async def handle_transcription(websocket: WebSocket, user_id: str, session_id: s
                 print(f"User ID: {user_id}")
                 is_finals = []
 
-                # Analyze text in the background
+                await speech_stream_response(utterance, websocket)
 
+                # Analyze text in the background
                 task = analyze_text_task.delay(utterance, transcription_id)
                 await websocket.send_text(f"Analysis Task ID: {task.id}")
-                # add task.id to metadata
+
             # else:
             #     await websocket.send_text(f"Is Final: {sentence}")
         # else:
@@ -84,6 +152,8 @@ async def handle_transcription(websocket: WebSocket, user_id: str, session_id: s
             )
             # await save_transcription_to_supabase(utterance)
             is_finals = []
+
+            await speech_stream_response(utterance, websocket)
 
             # Analyze text in the background
             task = analyze_text_task.delay(utterance, transcription_id)
@@ -118,7 +188,7 @@ async def handle_transcription(websocket: WebSocket, user_id: str, session_id: s
         interim_results=True,
         utterance_end_ms="1500",
         vad_events=True,
-        endpointing=300,
+        endpointing=500,
         filler_words=True,
         numerals=True,
         diarize=True,
