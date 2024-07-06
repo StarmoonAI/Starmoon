@@ -20,22 +20,3 @@ jobs:
         steps:
             - name: Checkout source code
               uses: actions/checkout@v3
-            # - name: Azure login
-            #   id: login
-            #   uses: azure/login@v2
-            #   with:
-            #       client-id: ${{ secrets.AZURE_CLIENT_ID }}
-            #       tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-            #       subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-            # - name: Azure Container Registry login
-            #   run: |
-            #       az acr login --name ${{ secrets.REGISTRY }}
-            # - name: Set AKS context
-            #   id: set-context
-            #   uses: azure/aks-set-context@v3
-            #   with:
-            #       resource-group: "${{ secrets.resource_group }}"
-            #       cluster-name: "${{ secrets.cluster_name }}"
-            # - name: Setup kubectl
-            #   id: install-kubectl
-            #   uses: azure/setup-kubectl@v3
