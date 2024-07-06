@@ -10,7 +10,7 @@ on:
 
 jobs:
     test_fastapi_job:
-        uses: akdeb/parakeetai/.github/workflows/test-fastapi.yaml@main
+        uses: junruxiong/parakeetai/.github/workflows/test-fastapi.yaml@main
     docker_build:
         runs-on: ubuntu-latest
         needs: [test_fastapi_job]
