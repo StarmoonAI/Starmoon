@@ -1,6 +1,7 @@
 import asyncio
 import json
 import os
+import re
 import uuid
 from signal import SIGINT, SIGTERM
 
@@ -40,59 +41,59 @@ speech_config = SpeechConfig(
 )
 
 
-async def stream_tts(text: str, websocket: WebSocket):
-    synthesizer = SpeechSynthesizer(speech_config=speech_config, audio_config=None)
-    result = synthesizer.start_speaking_text_async(text)
-
-    audio_data_stream = AudioDataStream(result)
-
-    buffer = bytes(32000)
-    while True:
-        num_bytes = audio_data_stream.read_data(buffer)
-        if num_bytes == 0:
-            break
-        await websocket.send_text(buffer[:num_bytes])
-
-    synthesizer.stop_speaking_async()
-
-
-async def process_and_stream_response(utterance: str, websocket: WebSocket):
-    # Get streaming response from OpenAI
-    async for chunk in client.client_azure_4o.chat.completions.create(
-        model="gpt-4o",
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": utterance},
-        ],
-        stream=True,
-    ):
-        if chunk.choices[0].delta.get("content"):
-            content = chunk.choices[0].delta.content
-            await websocket.send_json({"type": "text_response", "content": content})
-
-            # Stream TTS audio
-            await stream_tts(content, websocket)
-
-
 async def speech_stream_response(text: str, websocket: WebSocket):
     speech_synthesizer = speechsdk.SpeechSynthesizer(
         speech_config=speech_config, audio_config=None
     )
+
     result = speech_synthesizer.start_speaking_text_async(text).get()
     audio_data_stream = speechsdk.AudioDataStream(result)
-    audio_buffer = bytes(32000)
+    audio_buffer = bytes(8000000)
     filled_size = audio_data_stream.read_data(audio_buffer)
     while filled_size > 0:
         await websocket.send_bytes(audio_buffer[:filled_size])
         filled_size = audio_data_stream.read_data(audio_buffer)
-    #     print("{} bytes received.".format(filled_size))
-    #     filled_size = audio_data_stream.read_data(audio_buffer)
-    #     # send audio data to the client
-    #     await websocket(audio_buffer[:filled_size])
-    # speech_synthesizer.stop_speaking_async()
+    speech_synthesizer.stop_speaking_async()
+
+
+async def speech_stream_response_azure(utterance: str, websocket: WebSocket):
+    completion = client.client_azure_4o.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {
+                "role": "system",
+                "content": "You are an emotional care assistant, please respond to users in a chat-like manner.",
+            },
+            {"role": "user", "content": utterance},
+        ],
+        stream=True,
+    )
+    accumulated_text = ""
+    for chunk in completion:
+        if len(chunk.choices) > 0:
+            chunk_text = chunk.choices[0].delta.content
+            if chunk_text:
+                accumulated_text += chunk_text
+                sentences = re.split("(?<=[.!?]) +", accumulated_text)
+
+                # If we have more than one sentence, send all but the last
+                if len(sentences) > 1:
+                    for sentence in sentences[:-1]:
+                        if sentence:
+                            await websocket.send_text(sentence.strip())
+                            asyncio.sleep(0.01)
+                            await speech_stream_response(sentence.strip(), websocket)
+                    # Keep the last (possibly incomplete) sentence
+                    accumulated_text = sentences[-1]
+    # Send any remaining text
+    if accumulated_text:
+        await websocket.send_text(accumulated_text.strip())
+        asyncio.sleep(0.01)
+        await speech_stream_response(accumulated_text.strip(), websocket)
 
 
 async def handle_transcription(websocket: WebSocket, user_id: str, session_id: str):
+
     config = DeepgramClientOptions(options={"keepalive": "true"})
     deepgram = DeepgramClient(os.getenv("DG_API_KEY"), config)
     dg_connection = deepgram.listen.asynclive.v("1")
@@ -122,7 +123,8 @@ async def handle_transcription(websocket: WebSocket, user_id: str, session_id: s
                 print(f"User ID: {user_id}")
                 is_finals = []
 
-                await speech_stream_response(utterance, websocket)
+                await speech_stream_response_azure(utterance, websocket)
+                # await speech_stream_response(utterance, websocket)
 
                 # Analyze text in the background
                 task = analyze_text_task.delay(utterance, transcription_id)
@@ -192,8 +194,6 @@ async def handle_transcription(websocket: WebSocket, user_id: str, session_id: s
         filler_words=True,
         numerals=True,
         diarize=True,
-        # diarize=True,
-        # dictation=True,
     )
 
     addons = {"no_delay": "true"}

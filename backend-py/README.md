@@ -10,10 +10,11 @@ replace the .env.copy to .env and replace the values with your own
 poetry install
 ```
 
-### Install STT in macOS
+### Install packages in macOS
 
 ```bash
-brew install portaudio or conda install portaudio.
+brew install portaudio
+brew install ffmpeg
 ```
 
 ## - Run locally
@@ -27,7 +28,7 @@ docker run -d -p 6379:6379 redis
 ### Run server (in different terminal)
 
 ```bash
-poetry run uvicorn app.main:app --reload
+poetry run uvicorn app.main:app --ws-ping-interval 600 --ws-ping-timeout 600 --reload
 poetry run celery -A app.celery.worker.celery_app worker --loglevel=info
 poetry run celery -A app.celery.worker.celery_app flower --port=5555
 poetry run celery -A app.celery.worker.celery_app beat --loglevel=info
