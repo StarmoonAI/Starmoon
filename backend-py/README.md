@@ -37,7 +37,7 @@ poetry run celery -A app.celery.worker.celery_app beat --loglevel=info
 ### Run client
 
 ```bash
-poetry run python test/client.py
+poetry run python test/main.py
 ```
 <!-- 
 the local endpoint for text2text is http://127.0.0.1:8000/api/analyze_text

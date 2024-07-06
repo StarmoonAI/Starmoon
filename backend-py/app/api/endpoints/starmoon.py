@@ -6,6 +6,7 @@ import uuid
 from signal import SIGINT, SIGTERM
 
 import azure.cognitiveservices.speech as speechsdk
+import emoji
 import openai
 from app.celery.tasks import analyze_text_task
 from app.core.auth import authenticate_user
@@ -74,8 +75,9 @@ async def speech_stream_response_azure(transcription: dict, websocket: WebSocket
         if len(chunk.choices) > 0:
             chunk_text = chunk.choices[0].delta.content
             if chunk_text:
+                chunk_text = emoji.replace_emoji(chunk_text, replace="")
                 accumulated_text += chunk_text
-                sentences = re.split("(?<=[.!?]) +", accumulated_text)
+                sentences = re.split("(?<=[.。!?]) +", accumulated_text)
                 # If we have more than one sentence, send all but the last
                 if len(sentences) > 1:
                     for sentence in sentences[:-1]:
