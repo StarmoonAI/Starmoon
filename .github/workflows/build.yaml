@@ -46,3 +46,50 @@ jobs:
             - name: Push all tagged images to the registry
               run: |
                   docker push aitoyregistry.azurecr.io/aitoy --all-tags
+            - name: Update deployment secrets
+              run: |
+                  if kubectl get secrets | grep -q fastapi-prod-env; then
+                  kubectl delete secret fastapi-prod-env
+                  fi
+                  cat << EOF >> ./.env.prod
+                  LLM_MODEL_NAME=${{ secrets.LLM_MODEL_NAME }}
+                  CELERY_BROKER_URL=${{ secrets.CELERY_BROKER_URL }}
+                  CELERY_RESULT_BACKEND=${{ secrets.CELERY_RESULT_BACKEND }}
+                  CELERY_FLOWER_USER=${{ secrets.CELERY_FLOWER_USER }}
+                  CELERY_FLOWER_PASSWORD=${{ secrets.CELERY_FLOWER_PASSWORD }}
+                  AZURE_OPENAI_ENDPOINT=${{ secrets.AZURE_OPENAI_ENDPOINT }}
+                  AZURE_OPENAI_API_KEY=${{ secrets.AZURE_OPENAI_API_KEY }}
+                  DEEPGRAM_API_KEY=${{ secrets.DEEPGRAM_API_KEY }}
+                  MS_SPEECH_ENDPOINTY=${{ secrets.MS_SPEECH_ENDPOINTY }}
+                  SPEECH_KEY=${{ secrets.SPEECH_KEY }}
+                  SPEECH_REGION=${{ secrets.SPEECH_REGION }}
+                  SUPABASE_URL=${{ secrets.SUPABASE_URL }}
+                  SUPABASE_KEY=${{ secrets.SUPABASE_KEY }}
+                  SERVICE_ROLE=${{ secrets.SERVICE_ROLE }}
+                  SUPABASE_JWT_SECRET=${{ secrets.SUPABASE_JWT_SECRET }}
+                  DG_API_KEY=${{ secrets.DG_API_KEY }}
+                  SECRET_KEY=${{ secrets.SECRET_KEY }}
+                  EOF
+                  kubectl create secret generic fastapi-prod-env --from-env-file=./.env.prod
+            - name: Refresh k8s deployment
+              run: |
+                  kubectl apply -f kubernetes/redis/deployment.yaml
+                  kubectl apply -f kubernetes/fastapi/deployment.yaml
+                  kubectl apply -f kubernetes/celery/beat-deployment.yaml
+                  kubectl apply -f kubernetes/celery/worker-deployment.yaml
+                  kubectl apply -f kubernetes/flower/deployment.yaml
+            - name: Update Deployment image
+              run: |
+                  kubectl set image deployment/starmoon-app starmoon-app=aitoyregistry.azurecr.io/aitoy:${GITHUB_SHA::7}-${GITHUB_RUN_ID::5}
+                  kubectl set image deployment/celery-beat celery-beat=aitoyregistry.azurecr.io/aitoy:${GITHUB_SHA::7}-${GITHUB_RUN_ID::5}
+                  kubectl set image deployment/celery-worker celery-worker=aitoyregistry.azurecr.io/aitoy:${GITHUB_SHA::7}-${GITHUB_RUN_ID::5}
+                  kubectl set image deployment/celery-flower celery-flower=aitoyregistry.azurecr.io/aitoy:${GITHUB_SHA::7}-${GITHUB_RUN_ID::5}
+            - name: Get Deployment status
+              run: |
+                  kubectl rollout status deployment/starmoon-app
+                  kubectl rollout status deployment/celery-beat
+                  kubectl rollout status deployment/celery-worker
+                  kubectl rollout status deployment/celery-flower
+            - name: Post-build Django Commands - Migrate / Collectstatic
+              run: |
+                  export SINGLE_POD_NAME=$(kubectl get pod -l app=starmoon-app -o jsonpath="{.items[0].metadata.name}")
