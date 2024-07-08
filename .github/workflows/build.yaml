@@ -34,9 +34,12 @@ jobs:
               with:
                   resource-group: "${{ secrets.resource_group }}"
                   cluster-name: "${{ secrets.cluster_name }}"
-            - name: Setup kubectl
-              id: install-kubectl
-              uses: azure/setup-kubectl@v3
             - name: Build container image
               run: |
-                  docker build --tag django:latest .
+                  docker build --tag aitoy:latest .
+            - name: Manually tag the built image with custom tags
+              run: |
+                  docker tag aitoy:latest aitoyregistry.azurecr.io/aitoy:${GITHUB_SHA::7}-${GITHUB_RUN_ID::5}
+            - name: Push all tagged images to the registry
+              run: |
+                  docker push aitoyregistry.azurecr.io/aitoy --all-tags
