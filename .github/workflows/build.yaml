@@ -13,6 +13,9 @@ jobs:
         uses: junruxiong/parakeetai/.github/workflows/test-fastapi.yaml@main
     docker_build:
         runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: backend-py
         needs: [test_fastapi_job]
         env:
             CLUSTER_NAME: AItoyK8s
