@@ -8,6 +8,7 @@ from signal import SIGINT, SIGTERM
 import azure.cognitiveservices.speech as speechsdk
 import emoji
 import openai
+import requests
 from app.celery.tasks import analyze_text_task
 from app.core.auth import authenticate_user
 from app.core.config import settings
@@ -44,6 +45,30 @@ speech_config.set_property(
     property_id=speechsdk.PropertyId.SpeechServiceResponse_RequestSentenceBoundary,
     value="true",
 )
+
+emotion_mapping = {
+    ("anger", "disgust"): "angry",
+    ("anger", "fear"): "terrified",
+    ("anger", "joy"): "shouting",
+    ("anger", "neutral"): "terrified",
+    ("anger", "sadness"): "terrified",
+    ("anger", "surprise"): "shouting",
+    ("disgust", "fear"): "terrified",
+    ("disgust", "joy"): "default",
+    ("disgust", "neutral"): "default",
+    ("disgust", "sadness"): "terrified",
+    ("disgust", "surprise"): "hopeful",
+    ("fear", "joy"): "hopeful",
+    ("fear", "neutral"): "whispering",
+    ("fear", "sadness"): "terrified",
+    ("fear", "surprise"): "terrified",
+    ("joy", "neutral"): "friendly",
+    ("joy", "sadness"): "default",
+    ("joy", "surprise"): "cheerful",
+    ("neutral", "sadness"): "hopeful",
+    ("neutral", "surprise"): "friendly",
+    ("sadness", "surprise"): "hopeful",
+}
 
 
 def voice_systhesizer(
@@ -86,6 +111,36 @@ async def speech_stream_response(ssml: str, websocket: WebSocket):
     speech_synthesizer.stop_speaking_async()
 
 
+def get_emotion(text):
+
+    API_URL = "https://api-inference.huggingface.co/models/j-hartmann/emotion-english-distilroberta-base"
+    headers = {"Authorization": "Bearer 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"}
+
+    def query(payload):
+        response = requests.post(API_URL, headers=headers, json=payload)
+        return response.json()
+
+    output = query(
+        {
+            "inputs": text,
+        }
+    )
+
+    print(output)
+    print("--------------------------------")
+    res0 = output[0][0]
+    res1 = output[0][1]
+    score = res0["score"] + res1["score"]
+
+    labels_tuple = (res0["label"], res1["label"])
+    sorted_labels = tuple(sorted(labels_tuple))
+
+    res = {"tone": emotion_mapping[sorted_labels], "score": score * 0.9}
+    print(res)
+
+    return res
+
+
 async def speech_stream_response_azure(transcription: dict, websocket: WebSocket):
     completion = client.client_azure_4o.chat.completions.create(
         model="gpt-4o",
@@ -100,6 +155,10 @@ async def speech_stream_response_azure(transcription: dict, websocket: WebSocket
     )
 
     accumulated_text = ""
+    previous_sentence = transcription[
+        "transcription"
+    ]  # Variable to store the previous sentence
+
     for chunk in completion:
         if len(chunk.choices) > 0:
             chunk_text = chunk.choices[0].delta.content
@@ -112,35 +171,49 @@ async def speech_stream_response_azure(transcription: dict, websocket: WebSocket
                     for sentence in sentences[:-1]:
                         if sentence:
                             print("++++", sentence)
+                            combined_sentences = (
+                                previous_sentence + "\n\n" + sentence
+                                if previous_sentence
+                                else sentence
+                            )
                             await websocket.send_json(
                                 {
                                     "response": sentence.strip(),
                                     "is_running": True,
                                 }
                             )
+                            emotion = get_emotion(combined_sentences.strip())
                             await asyncio.sleep(0)
                             text_tone = voice_systhesizer(
                                 text=sentence.strip(),
-                                voice_name="en-US-AriaNeural",
-                                emotion="whispering",
-                                emotion_degree=1,
-                                rate=-10,
+                                voice_name="en-US-AnaNeural",
+                                emotion=emotion["tone"],
+                                emotion_degree=emotion["score"],
+                                rate=0,
                             )
                             await speech_stream_response(text_tone, websocket)
+                            # Update the previous sentence
+                            previous_sentence = sentence
                     # Keep the last (possibly incomplete) sentence
                     accumulated_text = sentences[-1]
     # Send any remaining text
     if accumulated_text:
+        combined_sentences = (
+            previous_sentence + "\n\n" + accumulated_text
+            if previous_sentence
+            else accumulated_text
+        )
         await websocket.send_json(
             {"response": accumulated_text.strip(), "is_running": True}
         )
         await asyncio.sleep(0)
+        emotion = get_emotion(combined_sentences.strip())
         text_tone = voice_systhesizer(
             accumulated_text.strip(),
-            voice_name="en-US-AriaNeural",
-            emotion="whispering",
-            emotion_degree=1,
-            rate=-10,
+            voice_name="en-US-AnaNeural",
+            emotion=emotion["tone"],
+            emotion_degree=emotion["score"],
+            rate=0,
         )
         await speech_stream_response(text_tone, websocket)
         await asyncio.sleep(0)
