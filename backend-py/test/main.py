@@ -23,8 +23,8 @@ load_dotenv()
 
 # from record import play_audio, record_audio
 
-# URI = "wss://api.starmoon.app"
-URI = "ws://localhost:8000"
+URI = "wss://api.starmoon.app"
+# URI = "ws://localhost:8000"
 # wss://api.starmoon.app for https
 # "ws://localhost:8000" for http
 
