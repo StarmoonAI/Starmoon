@@ -182,13 +182,15 @@ async def speech_stream_response_azure(transcription: dict, websocket: WebSocket
                                     "is_running": True,
                                 }
                             )
-                            emotion = get_emotion(combined_sentences.strip())
+                            # emotion = get_emotion(combined_sentences.strip())
                             await asyncio.sleep(0)
                             text_tone = voice_systhesizer(
                                 text=sentence.strip(),
                                 voice_name="en-US-AnaNeural",
-                                emotion=emotion["tone"],
-                                emotion_degree=emotion["score"],
+                                # emotion=emotion["tone"],
+                                emotion="",
+                                # emotion_degree=emotion["score"],
+                                emotion_degree="",
                                 rate=0,
                             )
                             await speech_stream_response(text_tone, websocket)
@@ -207,12 +209,14 @@ async def speech_stream_response_azure(transcription: dict, websocket: WebSocket
             {"response": accumulated_text.strip(), "is_running": True}
         )
         await asyncio.sleep(0)
-        emotion = get_emotion(combined_sentences.strip())
+        # emotion = get_emotion(combined_sentences.strip())
         text_tone = voice_systhesizer(
             accumulated_text.strip(),
             voice_name="en-US-AnaNeural",
-            emotion=emotion["tone"],
-            emotion_degree=emotion["score"],
+            # emotion=emotion["tone"],
+            emotion="",
+            # emotion_degree=emotion["score"],
+            emotion_degree="",
             rate=0,
         )
         await speech_stream_response(text_tone, websocket)
