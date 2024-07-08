@@ -23,8 +23,8 @@ load_dotenv()
 
 # from record import play_audio, record_audio
 
-URI = "wss://api.starmoon.app"
-# URI = "ws://localhost:8000"
+# URI = "wss://api.starmoon.app"
+URI = "ws://localhost:8000"
 # wss://api.starmoon.app for https
 # "ws://localhost:8000" for http
 
@@ -125,7 +125,7 @@ async def get_transcript(callback):
 class ConversationManager:
     def __init__(self, token):
         self.transcription_response = ""
-        self.token = ""
+        self.token = token
         self.is_running = True
 
     async def main(self):
@@ -182,12 +182,16 @@ class ConversationManager:
 
                     # 🟢 Reset transcription_response for the next loop iteration
                     self.transcription_response = ""
-            except websockets.exceptions.ConnectionClosed:
-                print("Connection with server closed")
+            except websockets.exceptions.ConnectionClosed as e:
+                print(f"Connection closed with code: {e.code}, reason: {e.reason}")
+                if e.code == 4001:
+                    print("Authentication failed. Please check your token.")
 
 
 if __name__ == "__main__":
-    manager = ConversationManager(token="123")
+    manager = ConversationManager(
+        token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1bnJ1eGlvbmdAZ21haWwuY29tIiwidXNlcl9pZCI6IjAwNzljZWU5LTE4MjAtNDQ1Ni05MGE0LWU4YzI1MzcyZmUyOSIsImNyZWF0ZWRfdGltZSI6IjIwMjQtMDctMDhUMDA6MDA6MDAuMDAwWiJ9.tN8PhmPuiXAUKOagOlcfNtVzdZ1z--8H2HGd-zk6BGE"
+    )
     loop = asyncio.get_event_loop()
     loop.run_until_complete(manager.main())
     # asyncio.run(manager.main())

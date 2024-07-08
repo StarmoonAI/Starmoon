@@ -10,7 +10,7 @@ import emoji
 import openai
 import requests
 from app.celery.tasks import analyze_text_task
-from app.core.auth import authenticate_user
+from app.core.auth import authenticate_user, validate_db
 from app.core.config import settings
 from app.services.clients import Clients
 from azure.cognitiveservices.speech import (
@@ -141,87 +141,73 @@ def get_emotion(text):
     return res
 
 
-async def speech_stream_response_azure(transcription: dict, websocket: WebSocket):
-    completion = client.client_azure_4o.chat.completions.create(
-        model="gpt-4o",
-        messages=[
-            {
-                "role": "system",
-                "content": "You are an emotional care assistant, please respond to users in a chat-like manner.",
-            },
-            {"role": "user", "content": transcription["transcription"]},
-        ],
-        stream=True,
+async def send_response_and_speech(
+    sentence: str, previous_sentence: str, websocket: WebSocket
+):
+    print("sentence+++", sentence)
+    # combined_sentences = (
+    #     f"{previous_sentence}\n\n{sentence}" if previous_sentence else sentence
+    # )
+    await websocket.send_json({"response": sentence.strip(), "is_running": True})
+    # emotion = get_emotion(combined_sentences.strip())
+    text_tone = voice_systhesizer(
+        text=sentence.strip(),
+        voice_name="en-US-AnaNeural",
+        # emotion=emotion["tone"],
+        emotion="",
+        # emotion_degree=emotion["score"],
+        emotion_degree="",
+        rate=0,
     )
+    await speech_stream_response(text_tone, websocket)
+    await asyncio.sleep(0)
 
-    accumulated_text = ""
-    previous_sentence = transcription[
-        "transcription"
-    ]  # Variable to store the previous sentence
 
-    for chunk in completion:
-        if len(chunk.choices) > 0:
-            chunk_text = chunk.choices[0].delta.content
-            if chunk_text:
-                chunk_text = emoji.replace_emoji(chunk_text, replace="")
-                accumulated_text += chunk_text
-                sentences = re.split("(?<=[.。!?]) +", accumulated_text)
-                # If we have more than one sentence, send all but the last
-                if len(sentences) > 1:
-                    for sentence in sentences[:-1]:
-                        if sentence:
-                            print("++++", sentence)
-                            combined_sentences = (
-                                previous_sentence + "\n\n" + sentence
-                                if previous_sentence
-                                else sentence
-                            )
-                            await websocket.send_json(
-                                {
-                                    "response": sentence.strip(),
-                                    "is_running": True,
-                                }
-                            )
-                            # emotion = get_emotion(combined_sentences.strip())
-                            await asyncio.sleep(0)
-                            text_tone = voice_systhesizer(
-                                text=sentence.strip(),
-                                voice_name="en-US-AnaNeural",
-                                # emotion=emotion["tone"],
-                                emotion="",
-                                # emotion_degree=emotion["score"],
-                                emotion_degree="",
-                                rate=0,
-                            )
-                            await speech_stream_response(text_tone, websocket)
-                            # Update the previous sentence
-                            previous_sentence = sentence
-                    # Keep the last (possibly incomplete) sentence
-                    accumulated_text = sentences[-1]
-    # Send any remaining text
-    if accumulated_text:
-        combined_sentences = (
-            previous_sentence + "\n\n" + accumulated_text
-            if previous_sentence
-            else accumulated_text
+async def speech_stream_response_azure(
+    transcription: dict, websocket: WebSocket, messages: list
+):
+    try:
+        completion = client.client_azure_4o.chat.completions.create(
+            model="gpt-4o",
+            messages=messages,
+            stream=True,
         )
-        await websocket.send_json(
-            {"response": accumulated_text.strip(), "is_running": True}
-        )
-        await asyncio.sleep(0)
-        # emotion = get_emotion(combined_sentences.strip())
-        text_tone = voice_systhesizer(
-            accumulated_text.strip(),
-            voice_name="en-US-AnaNeural",
-            # emotion=emotion["tone"],
-            emotion="",
-            # emotion_degree=emotion["score"],
-            emotion_degree="",
-            rate=0,
-        )
-        await speech_stream_response(text_tone, websocket)
-        await asyncio.sleep(0)
-    await websocket.send_json({"response": "", "is_running": False})
+
+        accumulated_text = ""
+        response_text = ""
+        previous_sentence = transcription["transcription"]
+        for chunk in completion:
+            if len(chunk.choices) > 0:
+                chunk_text = chunk.choices[0].delta.content
+                if chunk_text:
+                    chunk_text = emoji.replace_emoji(chunk_text, replace="")
+                    accumulated_text += chunk_text
+                    response_text += chunk_text
+                    # TODO: store and update response_text in the database
+                    sentences = re.split("(?<=[.。!?]) +", accumulated_text)
+                    # If we have more than one sentence, send all but the last
+                    if len(sentences) > 1:
+                        for sentence in sentences[:-1]:
+                            if sentence:
+                                await send_response_and_speech(
+                                    sentence, previous_sentence, websocket
+                                )
+                                # Update the previous sentence
+                                previous_sentence = sentence
+                        # Keep the last (possibly incomplete) sentence
+                        accumulated_text = sentences[-1]
+        # Send any remaining text
+        if accumulated_text:
+            await send_response_and_speech(
+                accumulated_text, previous_sentence, websocket
+            )
+        await websocket.send_json({"response": "", "is_running": False})
+        return response_text
+    except Exception as e:
+        msg = "Oops, it looks like we encountered some sensitive content, so we've terminate the conversation for now. Thanks for understanding!"
+        await send_response_and_speech(msg, "", websocket)
+        await websocket.send_json({"response": "", "is_running": False})
+        return None
 
 
 @router.websocket("/starmoon")
@@ -229,14 +215,34 @@ async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     try:
         # authenticate
-        token = await websocket.receive_text()
-        # user = authenticate_user(token)
+        token = await websocket.receive_json()
+        print(token)
+        user = await authenticate_user(token["token"])
+        if not user:
+            await websocket.close(code=4001, reason="Authentication failed")
+            return
+
+        messages = [
+            {
+                "role": "system",
+                "content": "You are an emotional care assistant, please respond to users in a chat-like manner.",
+            },
+        ]
+
         while True:
             # Receive message from the client
             transcription = await websocket.receive_json()
+            # add to messages
+            messages.append({"role": "user", "content": transcription["transcription"]})
             print(transcription)
+            response_text = await speech_stream_response_azure(
+                transcription, websocket, messages
+            )
+            # add to messages
+            messages.append({"role": "assistant", "content": response_text})
+            print("return response_text+++", response_text)
 
-            await speech_stream_response_azure(transcription, websocket)
+            print(messages)
 
     except WebSocketDisconnect:
         print("Client disconnected")

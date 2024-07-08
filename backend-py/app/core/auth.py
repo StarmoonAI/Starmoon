@@ -1,6 +1,8 @@
 import os
+from venv import create
 
 from app.core.config import settings
+from app.db.supabase import create_supabase_client
 from fastapi import Depends, FastAPI, HTTPException, WebSocket
 from fastapi.websockets import WebSocketDisconnect
 from jose import JWTError, jwt
@@ -16,15 +18,22 @@ async def get_token_from_query(websocket: WebSocket):
     return token
 
 
+async def validate_db(payload: dict):
+    supabase = create_supabase_client()
+    user_id = payload.get("user_id")
+    user = supabase.table("users").select("*").eq("user_id", user_id).execute()
+    return user
+
+
 async def authenticate_user(token: str = Depends(get_token_from_query)):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
-        if username is None:
-            raise HTTPException(
-                status_code=401, detail="Invalid authentication credentials"
-            )
-        return {"username": username}
+        # return payload
+        print(f"payload: {payload}")
+        user = await validate_db(payload)
+        if user is None:
+            raise HTTPException(status_code=403, detail="Invalid user")
+        return user
     except JWTError:
         return None
 
@@ -53,6 +62,9 @@ async def authenticate_user(token: str = Depends(get_token_from_query)):
 
 
 # # Usage:
-# username = "123"  # This would typically come from your user authentication process
-# token = create_access_token(data={"sub": username})
+# email = "junruxiong@gmail.com"
+# user_id = "0079cee9-1820-4456-90a4-e8c25372fe29"
+# created_time = "2024-07-08T00:00:00.000Z"
+# data = {"email": email, "user_id": user_id, "created_time": created_time}
+# token = create_access_token(data=data)
 # print(f"AUTH_TOKEN: {token}")
