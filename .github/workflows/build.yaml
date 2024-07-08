@@ -20,3 +20,20 @@ jobs:
         steps:
             - name: Checkout source code
               uses: actions/checkout@v3
+            - name: Azure login
+              id: login
+              uses: azure/login@v1.4.3
+              with:
+                  creds: ${{ secrets.AZURE_CREDENTIALS }}
+            - name: Azure Container Registry login
+              run: |
+                  az acr login --name ${{ secrets.REGISTRY }}
+            - name: Set AKS context
+              id: set-context
+              uses: azure/aks-set-context@v3
+              with:
+                  resource-group: "${{ secrets.resource_group }}"
+                  cluster-name: "${{ secrets.cluster_name }}"
+            - name: Azure Container Registry login
+              run: |
+                  az acr login --name ${{ secrets.REGISTRY }}
