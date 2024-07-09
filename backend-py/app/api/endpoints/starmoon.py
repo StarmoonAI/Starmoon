@@ -213,7 +213,7 @@ async def get_synthetic_voice(
 ):
     print("sentence+++", text)
     start_time = time.time()
-    url = "https://6aorzjhtqs31o9-8000.proxy.runpod.net/synthesize_speech/"
+    url = "https://ibibpppwq111j8-8000.proxy.runpod.net/synthesize_speech/"
     params = {
         "text": text,
         "voice": reference_label,
