@@ -164,13 +164,9 @@ async def speech_stream_response(ssml: str, websocket: WebSocket):
     )
 
     result = speech_synthesizer.speak_ssml_async(ssml).get()
-    audio_data_stream = speechsdk.AudioDataStream(result)
-    audio_buffer = bytes(32000)
-    filled_size = audio_data_stream.read_data(audio_buffer)
-    while filled_size > 0:
-        await websocket.send_bytes(audio_buffer[:filled_size])
-        filled_size = audio_data_stream.read_data(audio_buffer)
-    speech_synthesizer.stop_speaking_async()
+    # send response back to the client
+    if result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
+        await websocket.send_bytes(result.audio_data)
 
 
 def get_emotion(text):
@@ -233,6 +229,33 @@ async def get_synthetic_voice(
     print("time+++", time.time() - start_time)
 
 
+async def get_deepgram_voice(
+    websocket: WebSocket,
+    text: str,
+):
+    # Define the API endpoint
+    url = "https://api.deepgram.com/v1/speak?model=aura-arcas-en&performance=some&encoding=linear16&sample_rate=24000"
+
+    # Set your Deepgram API key
+    api_key = os.getenv("DG_API_KEY")
+
+    # Define the headers
+    headers = {"Authorization": f"Token {api_key}", "Content-Type": "application/json"}
+
+    payload = {"text": text}
+
+    # Make the POST request
+    response = requests.post(url, headers=headers, json=payload)
+
+    # Check if the request was successful
+    if response.status_code == 200:
+        print("sent time-----:", time.time())
+        print("response.content size:", len(response.content) / 1024, "kb")
+        await websocket.send_bytes(response.content)
+    else:
+        await websocket.send_text("Error: failed to synthesize speech")
+
+
 async def send_response_and_speech(
     sentence: str, previous_sentence: str, websocket: WebSocket
 ):
@@ -284,13 +307,13 @@ async def speech_stream_response_azure(
                         start_time = time.time()
                         for sentence in sentences[:-1]:
                             if sentence:
-                                # await send_response_and_speech(
-                                #     sentence, previous_sentence, websocket
-                                # )
-                                await get_synthetic_voice(
-                                    websocket,
-                                    sentence,
+                                await send_response_and_speech(
+                                    sentence, previous_sentence, websocket
                                 )
+                                # await get_deepgram_voice(
+                                #     websocket,
+                                #     sentence,
+                                # )
                                 # Update the previous sentence
                                 previous_sentence = sentence
                         # Keep the last (possibly incomplete) sentence
@@ -298,15 +321,15 @@ async def speech_stream_response_azure(
                         print("time+++2222", time.time() - start_time)
         # Send any remaining text
         if accumulated_text:
-            # await send_response_and_speech(
-            #     accumulated_text, previous_sentence, websocket
-            # )
-            await get_synthetic_voice(websocket, accumulated_text)
+            await send_response_and_speech(
+                accumulated_text, previous_sentence, websocket
+            )
+            # await get_deepgram_voice(websocket, accumulated_text)
         await websocket.send_json({"response": "", "is_running": False})
         return response_text
     except Exception as e:
         msg = "Oops, it looks like we encountered some sensitive content, so we've removed this message. Thanks for understanding!"
-        await send_response_and_speech(msg, "", websocket)
+        # await send_response_and_speech(msg, "", websocket)
         await websocket.send_json({"response": "", "is_running": False})
         # delete the last message in messages
         messages.pop()
