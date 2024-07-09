@@ -213,7 +213,7 @@ async def send_response_and_speech(
     # emotion = get_emotion(combined_sentences.strip())
     text_tone = voice_systhesizer(
         text=sentence.strip(),
-        voice_name="en-US-AnaNeural",
+        voice_name="en-US-AvaMultilingualNeural",
         # emotion=emotion["tone"],
         emotion="",
         # emotion_degree=emotion["score"],
@@ -265,9 +265,14 @@ async def speech_stream_response_azure(
         await websocket.send_json({"response": "", "is_running": False})
         return response_text
     except Exception as e:
-        msg = "Oops, it looks like we encountered some sensitive content, so we've terminate the conversation for now. Thanks for understanding!"
+        msg = "Oops, it looks like we encountered some sensitive content, so we've removed this message. Thanks for understanding!"
         await send_response_and_speech(msg, "", websocket)
         await websocket.send_json({"response": "", "is_running": False})
+        # delete the last message in messages
+        messages.pop()
+        print(e)
+        print(messages)
+        # TODO: update the database
         return None
 
 
@@ -286,7 +291,7 @@ async def websocket_endpoint(websocket: WebSocket):
         messages = [
             {
                 "role": "system",
-                "content": f" {SYS_PROMPT}\n\nYou are a plushie acrobat, always ready to roll, flip, and somersault into fun. With your boundless energy and playful spirit, every day is a new adventure waiting to happen!",
+                "content": f" {SYS_PROMPT}\n\nYou are a plushie connoisseur of comfort named Coco, radiating warmth and coziness. Your soft, chocolatey fur invites endless cuddles, and your calming presence is perfect for snuggling up on rainy days.",
             },
         ]
 
@@ -300,8 +305,9 @@ async def websocket_endpoint(websocket: WebSocket):
                 transcription, websocket, messages
             )
             # add to messages
-            messages.append({"role": "assistant", "content": response_text})
-            print("return response_text+++", response_text)
+            if response_text:
+                messages.append({"role": "assistant", "content": response_text})
+                print("return response_text+++", response_text)
 
     except WebSocketDisconnect:
         print("Client disconnected")
