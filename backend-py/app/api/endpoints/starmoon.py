@@ -2,6 +2,7 @@ import asyncio
 import json
 import os
 import re
+import time
 import uuid
 from signal import SIGINT, SIGTERM
 
@@ -202,6 +203,36 @@ def get_emotion(text):
     return res
 
 
+async def get_synthetic_voice(
+    websocket: WebSocket,
+    text: str,
+    reference_label: str = "demo_speaker1",
+    accent: str = "en-newest",
+    language: str = "English",
+    speed: float = 0.80,
+):
+    print("sentence+++", text)
+    start_time = time.time()
+    url = "https://6aorzjhtqs31o9-8000.proxy.runpod.net/synthesize_speech/"
+    params = {
+        "text": text,
+        "voice": reference_label,
+        "accent": accent,
+        "language": language,
+        "speed": speed,
+    }
+    response = requests.get(url, params=params)
+
+    if response.status_code == 200:
+        print("sent time-----:", time.time())
+        # print the response.content size to kb
+        print("response.content size:", len(response.content) / 1024, "kb")
+        await websocket.send_bytes(response.content)
+    else:
+        await websocket.send_text("Error: failed to synthesize speech")
+    print("time+++", time.time() - start_time)
+
+
 async def send_response_and_speech(
     sentence: str, previous_sentence: str, websocket: WebSocket
 ):
@@ -220,6 +251,8 @@ async def send_response_and_speech(
         emotion_degree="",
         rate=0,
     )
+    # print finished time
+
     await speech_stream_response(text_tone, websocket)
     await asyncio.sleep(0)
 
@@ -248,20 +281,27 @@ async def speech_stream_response_azure(
                     sentences = re.split("(?<=[.。!?]) +", accumulated_text)
                     # If we have more than one sentence, send all but the last
                     if len(sentences) > 1:
+                        start_time = time.time()
                         for sentence in sentences[:-1]:
                             if sentence:
-                                await send_response_and_speech(
-                                    sentence, previous_sentence, websocket
+                                # await send_response_and_speech(
+                                #     sentence, previous_sentence, websocket
+                                # )
+                                await get_synthetic_voice(
+                                    websocket,
+                                    sentence,
                                 )
                                 # Update the previous sentence
                                 previous_sentence = sentence
                         # Keep the last (possibly incomplete) sentence
                         accumulated_text = sentences[-1]
+                        print("time+++2222", time.time() - start_time)
         # Send any remaining text
         if accumulated_text:
-            await send_response_and_speech(
-                accumulated_text, previous_sentence, websocket
-            )
+            # await send_response_and_speech(
+            #     accumulated_text, previous_sentence, websocket
+            # )
+            await get_synthetic_voice(websocket, accumulated_text)
         await websocket.send_json({"response": "", "is_running": False})
         return response_text
     except Exception as e:

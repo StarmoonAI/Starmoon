@@ -6,6 +6,7 @@ import time
 from signal import SIGINT, SIGTERM
 
 import pyaudio
+import pygame
 import sounddevice as sd
 import websockets
 from colorama import Fore, init
@@ -17,6 +18,7 @@ from deepgram import (
     Microphone,
 )
 from dotenv import load_dotenv
+from pygame import mixer
 
 load_dotenv()
 
@@ -28,9 +30,9 @@ URI = "ws://localhost:8000"
 # wss://api.starmoon.app for https
 # "ws://localhost:8000" for http
 
-# We will collect the is_final=true messages here so we can use them when the person finishes speaking
-is_finals = []
+
 audio_player = pyaudio.PyAudio()
+mixer.init()
 
 
 class TranscriptCollector:
@@ -133,7 +135,7 @@ class ConversationManager:
             self.transcription_response = full_sentence
 
         async with websockets.connect(
-            f"{URI}/starmoon", ping_interval=900, ping_timeout=900
+            f"{URI}/starmoon", ping_interval=2100, ping_timeout=2100
         ) as websocket:
             try:
                 # authenticate with the server
@@ -157,15 +159,24 @@ class ConversationManager:
                     )
 
                     # 🟢 Step 3: Receive audio response from server
-                    p = pyaudio.PyAudio()
-                    stream = p.open(
-                        format=pyaudio.paInt16, channels=1, rate=16000, output=True
-                    )
+                    # p = pyaudio.PyAudio()
+                    # stream = p.open(
+                    #     format=pyaudio.paInt16, channels=1, rate=16000, output=True
+                    # )
                     while self.is_running:
+                        start_time = time.time()
                         response = await websocket.recv()
+                        print("recived time-----:", time.time())
                         if isinstance(response, bytes):
                             print("Received audio response from server")
-                            stream.write(response)
+                            # stream.write(response)
+                            # save the audio response to a wav file
+                            with open("output.wav", "wb") as f:
+                                f.write(response)
+                            print("time++", time.time() - start_time)
+                            sound = mixer.Sound("output.wav")
+                            sound.play()
+                            pygame.time.wait(int(sound.get_length() * 1000))
                         else:
                             print(Fore.GREEN + response)
                             response = json.loads(response)
@@ -176,9 +187,9 @@ class ConversationManager:
                                 break
 
                     # Wait until all audio chunks are played
-                    stream.stop_stream()
-                    stream.close()
-                    p.terminate()
+                    # stream.stop_stream()
+                    # stream.close()
+                    # p.terminate()
 
                     # 🟢 Reset transcription_response for the next loop iteration
                     self.transcription_response = ""
