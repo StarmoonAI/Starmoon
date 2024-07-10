@@ -158,7 +158,7 @@ def voice_systhesizer(
     return ssml
 
 
-async def speech_stream_response(ssml: str, websocket: WebSocket):
+async def speech_response(ssml: str, websocket: WebSocket):
     speech_synthesizer = speechsdk.SpeechSynthesizer(
         speech_config=speech_config, audio_config=None
     )
@@ -167,6 +167,14 @@ async def speech_stream_response(ssml: str, websocket: WebSocket):
     # send response back to the client
     if result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
         await websocket.send_bytes(result.audio_data)
+
+    # audio_data_stream = speechsdk.AudioDataStream(result)
+    # audio_buffer = bytes(32000)
+    # filled_size = audio_data_stream.read_data(audio_buffer)
+    # while filled_size > 0:
+    #     await websocket.send_bytes(audio_buffer[:filled_size])
+    #     filled_size = audio_data_stream.read_data(audio_buffer)
+    # speech_synthesizer.stop_speaking_async()
 
 
 def get_emotion(text):
@@ -209,7 +217,7 @@ async def get_synthetic_voice(
 ):
     print("sentence+++", text)
     start_time = time.time()
-    url = "https://dvbsjcncbo7rxs-8000.proxy.runpod.net/synthesize_speech/"
+    url = "https://80qk3285stkcqd-8000.proxy.runpod.net/synthesize_speech/"
     params = {
         "text": text,
         "voice": reference_label,
@@ -225,7 +233,9 @@ async def get_synthetic_voice(
         print("response.content size:", len(response.content) / 1024, "kb")
         await websocket.send_bytes(response.content)
     else:
-        await websocket.send_text("Error: failed to synthesize speech")
+        await websocket.send_json(
+            {"response": "Error: failed to synthesize speech", "is_running": False}
+        )
     print("time+++", time.time() - start_time)
 
 
@@ -253,7 +263,9 @@ async def get_deepgram_voice(
         print("response.content size:", len(response.content) / 1024, "kb")
         await websocket.send_bytes(response.content)
     else:
-        await websocket.send_text("Error: failed to synthesize speech")
+        await websocket.send_json(
+            {"response": "Error: failed to synthesize speech", "is_running": False}
+        )
 
 
 async def send_response_and_speech(
@@ -276,11 +288,10 @@ async def send_response_and_speech(
     )
     # print finished time
 
-    await speech_stream_response(text_tone, websocket)
-    await asyncio.sleep(0)
+    await speech_response(text_tone, websocket)
 
 
-async def speech_stream_response_azure(
+async def speech_stream_response(
     transcription: dict, websocket: WebSocket, messages: list
 ):
     try:
@@ -289,52 +300,54 @@ async def speech_stream_response_azure(
             messages=messages,
             stream=True,
         )
-
-        accumulated_text = ""
+        accumulated_text = []
         response_text = ""
         previous_sentence = transcription["transcription"]
+
         for chunk in completion:
-            if len(chunk.choices) > 0:
-                chunk_text = chunk.choices[0].delta.content
-                if chunk_text:
-                    chunk_text = emoji.replace_emoji(chunk_text, replace="")
-                    accumulated_text += chunk_text
-                    response_text += chunk_text
-                    # TODO: store and update response_text in the database
-                    sentences = re.split("(?<=[.。!?]) +", accumulated_text)
-                    # If we have more than one sentence, send all but the last
-                    if len(sentences) > 1:
-                        start_time = time.time()
-                        for sentence in sentences[:-1]:
-                            if sentence:
-                                await send_response_and_speech(
-                                    sentence, previous_sentence, websocket
-                                )
-                                # await get_deepgram_voice(
-                                #     websocket,
-                                #     sentence,
-                                # )
-                                # Update the previous sentence
-                                previous_sentence = sentence
-                        # Keep the last (possibly incomplete) sentence
-                        accumulated_text = sentences[-1]
-                        print("time+++2222", time.time() - start_time)
-        # Send any remaining text
+            if chunk.choices and chunk.choices[0].delta.content:
+                chunk_text = emoji.replace_emoji(
+                    chunk.choices[0].delta.content, replace=""
+                )
+                accumulated_text.append(chunk_text)
+                response_text += chunk_text
+                # TODO: store and update response_text in the database
+                sentences = re.split("(?<=[.。!?]) +", "".join(accumulated_text))
+
+                # send the first sentence to the client
+                if len(sentences) > 1:
+                    for sentence in sentences[:-1]:
+                        # await get_synthetic_voice(
+                        #     websocket,
+                        #     sentence,
+                        # )
+                        await send_response_and_speech(
+                            sentence, previous_sentence, websocket
+                        )
+                        await asyncio.sleep(0)
+                    accumulated_text = [sentences[-1]]
+
         if accumulated_text:
+            accumulated_text_ = "".join(accumulated_text)
+            # await get_synthetic_voice(websocket,accumulated_text_)
             await send_response_and_speech(
-                accumulated_text, previous_sentence, websocket
+                accumulated_text_, previous_sentence, websocket
             )
-            # await get_deepgram_voice(websocket, accumulated_text)
+            await asyncio.sleep(0)
+
         await websocket.send_json({"response": "", "is_running": False})
+        await asyncio.sleep(0)
         return response_text
+
     except Exception as e:
-        msg = "Oops, it looks like we encountered some sensitive content, so we've removed this message. Thanks for understanding!"
-        # await send_response_and_speech(msg, "", websocket)
+        error_message = "Oops, it looks like we encountered some sensitive content, so we've removed this message. I'm sorry for that!"
+        # await get_synthetic_voice(websocket, error_message)
+
+        await asyncio.sleep(0)
         await websocket.send_json({"response": "", "is_running": False})
-        # delete the last message in messages
+        await asyncio.sleep(0)
         messages.pop()
-        print(e)
-        print(messages)
+        print(f"Error: {e}\nMessages: {messages}")
         # TODO: update the database
         return None
 
@@ -364,9 +377,11 @@ async def websocket_endpoint(websocket: WebSocket):
             # add to messages
             messages.append({"role": "user", "content": transcription["transcription"]})
             print(transcription)
-            response_text = await speech_stream_response_azure(
+            response_text = await speech_stream_response(
                 transcription, websocket, messages
             )
+            await asyncio.sleep(0)
+
             # add to messages
             if response_text:
                 messages.append({"role": "assistant", "content": response_text})

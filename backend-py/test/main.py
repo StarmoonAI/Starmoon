@@ -25,8 +25,8 @@ load_dotenv()
 
 # from record import play_audio, record_audio
 
-URI = "wss://api.starmoon.app"
-# URI = "ws://localhost:8000"
+# URI = "wss://api.starmoon.app"
+URI = "ws://localhost:8000"
 # wss://api.starmoon.app for https
 # "ws://localhost:8000" for http
 
@@ -135,7 +135,7 @@ class ConversationManager:
             self.transcription_response = full_sentence
 
         async with websockets.connect(
-            f"{URI}/starmoon", ping_interval=2100, ping_timeout=2100
+            f"{URI}/starmoon", ping_interval=1800, ping_timeout=1800
         ) as websocket:
             try:
                 # authenticate with the server
@@ -184,6 +184,8 @@ class ConversationManager:
                             # if response["is_running"] is True:
                             #     time.sleep(5)
                             if response["is_running"] is False:
+                                if response["response"]:
+                                    print(Fore.RED + response["response"])
                                 break
 
                     # Wait until all audio chunks are played
