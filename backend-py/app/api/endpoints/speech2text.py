@@ -130,10 +130,10 @@ async def handle_transcription(websocket: WebSocket, user_id: str, session_id: s
                 task = analyze_text_task.delay(utterance, transcription_id)
                 await websocket.send_text(f"Analysis Task ID: {task.id}")
 
-            # else:
-            #     await websocket.send_text(f"Is Final: {sentence}")
-        # else:
-        #     await websocket.send_text(f"Interim Results: {sentence}")
+            else:
+                await websocket.send_text(f"Is Final: {sentence}")
+        else:
+            await websocket.send_text(f"Interim Results: {sentence}")
 
     async def on_metadata(self, metadata, **kwargs):
         await websocket.send_text(f"Metadata: {metadata}")

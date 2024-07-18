@@ -1,73 +1,74 @@
+# import torch
+# from TTS.api import TTS
+
+# # Get device
+# device = "cuda" if torch.cuda.is_available() else "cpu"
+# device = "mps"
+
+# # List available 🐸TTS models
+# print(TTS().list_models())
+
+# # Init TTS
+# tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(device)
+
+# # Run TTS
+# # ❗ Since this model is multi-lingual voice cloning model, we must set the target speaker_wav and language
+# # Text to speech list of amplitude values as output
+# wav = tts.tts(text="Hello world!", speaker_wav="audio.wav", language="en")
+# # Text to speech to a file
+# tts.tts_to_file(
+#     text="Hello world!",
+#     speaker_wav="audio.wav",
+#     language="en",
+#     file_path="output.wav",
+# )
+
 import os
 
-import azure.cognitiveservices.speech as speechsdk
+from dotenv import load_dotenv
 
-speech_config = speechsdk.SpeechConfig(
-    subscription="d9e1868008cf477eb9cad5ddca6e4994", region="eastus"
-)
-audio_config = speechsdk.audio.AudioOutputConfig(use_default_speaker=True)
+load_dotenv()
 
-speech_config.set_property(
-    property_id=speechsdk.PropertyId.SpeechServiceResponse_RequestSentenceBoundary,
-    value="true",
-)
-audio_config = speechsdk.audio.AudioOutputConfig(use_default_speaker=True)
-speech_synthesizer = speechsdk.SpeechSynthesizer(
-    speech_config=speech_config, audio_config=audio_config
-)
+os.getenv("REPLICATE_API_TOKEN")
+# input = {
+#     "speaker": "source.ma4a",
+#     "text": "Nailing those challenges feels amazing, right?",
+#     "language": "en",
+#     "cleanup_voice": True,
+# }
 
-# The language of the voice that speaks.
-speech_synthesis_voice_name = "en-US-GuyNeural"
-
-ssml = """<speak version='1.0' xml:lang='en-US' xmlns='http://www.w3.org/2001/10/synthesis' xmlns:mstts='http://www.w3.org/2001/mstts'>
-    <voice name='{}'>
-        <mstts:express-as style="cheerful" styledegree="1">
-            wow, you are so hard working
-        </mstts:express-as>
-        <mstts:express-as style="whispering" styledegree="1">
-           Oh, I don't think so.
-        </mstts:express-as>
-        <mstts:express-as style="cheerful" styledegree="1">
-           Oh, I'm glad you're feeling a bit calmer now.
-        </mstts:express-as>
-        <mstts:express-as style="cheerful" styledegree="1">
-           You know, sometimes when we're not sure what to talk about, it can help to think of something fun or interesting.
-        </mstts:express-as>
-         <mstts:express-as style="whispering" styledegree="1">
-           Pleas don't have to worry about that.
-        </mstts:express-as>
-        <mstts:express-as style="hopeful" styledegree="1">
-           Is there anything exciting you've learned recently or a cool project you're working on?
-        </mstts:express-as>
-        <mstts:express-as style="excited" styledegree="1.5">
-           Or maybe we could come up with a fun game to play together.
-        </mstts:express-as>
-    </voice>
-</speak>""".format(
-    speech_synthesis_voice_name
-)
-
-
-tts_request = speechsdk.SpeechSynthesisRequest(
-    input_type=speechsdk.SpeechSynthesisRequestInputType.TextStream
-)
-speech_synthesis_result = speech_synthesizer.speak_ssml_async(ssml).get()
-
-
-# from RealtimeTTS import AzureEngine, ElevenlabsEngine, SystemEngine, TextToAudioStream
-
-# engine = AzureEngine(
-#     speech_key="d9e1868008cf477eb9cad5ddca6e4994",
-#     service_region="eastus",
-#     voice="en-US-GuyNeural",
-# )  # replace with your TTS e"ngine
-# engine.emotion = "excited"
-# stream = TextToAudioStream(engine)
-
-# stream.feed(
-#     "OpenAI's API supports streaming responses. You can use this feature to receive text in chunks."
+# output = replicate.run(
+#     ref="lucataco/xtts-v2:684bc3855b37866c0c65add2ff39c78f3dea3f4ff103a436465326e0f438d55e",
+#     input=input,
 # )
-# stream.feed(
-#     "OpenAI's API supports streaming responses. You can use this feature to receive text in chunks."
+# print("pintt", output)
+
+
+# output = replicate.run(
+#     "chenxwh/openvoice:d548923c9d7fc9330a3b7c7f9e2f91b2ee90c83311a351dfcd32af353799223d",
+#     input={
+#         "text": "Just know I'm here whenever you want to chat or need a sprinkle of fluffiness in your day.",
+#         "audio": "https://example.com/voice.wav",
+#         "speed": 1,
+#         "language": "EN_NEWEST",
+#     },
 # )
-# stream.play_async()
+# print(output)
+
+
+import requests
+
+url = "https://6aorzjhtqs31o9-8000.proxy.runpod.net/synthesize_speech/"
+params = {
+    "text": "Once uopn the time, there once was a guy who was super excited about his new voice-activated lamp. You know, one of those fancy ones that you just talk to, and it turns on or off.",
+    "voice": "demo_speaker1",
+    "accent": "en-newest",
+    "language": "English",
+    "speed": 1.0,
+}
+
+response = requests.get(url, params=params)
+print(response.content)
+
+with open("output1.wav", "wb") as f:
+    f.write(response.content)

@@ -2,7 +2,6 @@ import os
 
 from app.core.config import settings
 from app.services.clients import Clients
-from litellm import acompletion, completion
 
 # model_name = settings.LLM_MODEL_NAME
 

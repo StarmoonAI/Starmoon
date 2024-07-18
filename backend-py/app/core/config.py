@@ -10,6 +10,7 @@ import logging
 import os
 from typing import ClassVar
 
+import torch
 from dotenv import load_dotenv
 from pydantic import AnyHttpUrl, ConfigDict, Field
 from pydantic_settings import BaseSettings
@@ -27,6 +28,14 @@ root_logger.addHandler(stream_handler)
 
 logger = logging.getLogger(__name__)
 load_dotenv()
+
+
+silero_vad = torch.hub.load(
+    repo_or_dir="snakers4/silero-vad",
+    model="silero_vad",
+    # force_reload=True,
+    onnx=True,
+)
 
 
 class Settings(BaseSettings):
@@ -74,6 +83,9 @@ class Settings(BaseSettings):
     BACKEND_CORS_ORIGINS: list[AnyHttpUrl] = []
 
     PROJECT_NAME: str = "fastapi supabase"
+
+    silero_vad_model: ClassVar = silero_vad[0]
+    silero_vad_utils: ClassVar = silero_vad[1]
 
     Config: ClassVar[ConfigDict] = ConfigDict(arbitrary_types_allowed=True)
 

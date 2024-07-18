@@ -6,7 +6,10 @@ replace the .env.copy to .env and replace the values with your own
 
 ### Install poetry
 
+create a new virtual environment (Python 3.10)
+
 ```bash
+pip install poetry
 poetry install
 ```
 
@@ -15,6 +18,7 @@ poetry install
 ```bash
 brew install portaudio
 brew install ffmpeg
+# brew install chardet
 ```
 
 ## - Run locally

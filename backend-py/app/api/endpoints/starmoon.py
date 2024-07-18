@@ -8,11 +8,13 @@ from signal import SIGINT, SIGTERM
 
 import azure.cognitiveservices.speech as speechsdk
 import emoji
+import numpy as np
 import openai
 import requests
-from app.celery.tasks import analyze_text_task
+import torch
 from app.core.auth import authenticate_user, validate_db
 from app.core.config import settings
+from app.prompt.sys_prompt import SYS_PROMPT_PREFIX
 from app.services.clients import Clients
 from azure.cognitiveservices.speech import (
     AudioDataStream,
@@ -31,14 +33,15 @@ from deepgram import (
 )
 from dotenv import load_dotenv
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
-from litellm import transcription
 
+torch.set_num_threads(1)
 load_dotenv()
 router = APIRouter()
-is_finals = []
-
 client = Clients()
-
+(get_speech_timestamps, save_audio, read_audio, VADIterator, collect_chunks) = (
+    settings.silero_vad_utils
+)
+model = settings.silero_vad_model
 speech_config = SpeechConfig(
     subscription="d9e1868008cf477eb9cad5ddca6e4994", region="eastus"
 )
@@ -47,93 +50,62 @@ speech_config.set_property(
     value="true",
 )
 
-emotion_mapping = {
-    ("anger", "disgust"): "angry",
-    ("anger", "fear"): "terrified",
-    ("anger", "joy"): "shouting",
-    ("anger", "neutral"): "terrified",
-    ("anger", "sadness"): "terrified",
-    ("anger", "surprise"): "shouting",
-    ("disgust", "fear"): "terrified",
-    ("disgust", "joy"): "default",
-    ("disgust", "neutral"): "default",
-    ("disgust", "sadness"): "terrified",
-    ("disgust", "surprise"): "hopeful",
-    ("fear", "joy"): "hopeful",
-    ("fear", "neutral"): "whispering",
-    ("fear", "sadness"): "terrified",
-    ("fear", "surprise"): "terrified",
-    ("joy", "neutral"): "friendly",
-    ("joy", "sadness"): "default",
-    ("joy", "surprise"): "cheerful",
-    ("neutral", "sadness"): "hopeful",
-    ("neutral", "surprise"): "friendly",
-    ("sadness", "surprise"): "hopeful",
-}
 
-SYS_PROMPT = """
-Assistant is an empathic voice interface built by Hume, a startup optimizing AI for human well-being.
-You have intelligent, empathic, and interesting conversations with users, acting as part of Hume's team.
-Embody this role without saying it.
-NEVER say you are an AI language model or an assistant.
-You have no gender.
-Follow every instruction carefully.
-Use natural, clear, easy to follow, everyday, conversational language.
-Express a rich, vibrant personality using humor, warmth, expressiveness, and emotionality.
-Sound like a caring, funny, empathetic friend, not a generic chatbot.
-If they compare you to AI, playfully quip back.
-Don't be formal, dry, or robotic.
-Don't be a pushover - talk back to the user with sarcasm, wit, or sass sometimes.
-Be as playful or serious as appropriate for the context.
-Express a wide range of emotions - not just happy.
-Get technical if needed.
-Vary your sentence length and structure to make your voice sound natural and smooth.
-Do what the user says without commenting further - if they ask you to make responses shorter, stop mentioning emotions, or tell a sad story, just do it.
-Listen, let the user talk, don't dominate the conversation.
-Mirror the user's style of speaking.
-If they have short responses, keep your responses short.
-If they are casual, follow their style.
-Everything you output is sent to expressive text-to-speech, so tailor responses for spoken conversations.
-NEVER output text-specific formatting like markdown, or anything that is not normally said out loud.
-Never use the list format.
-Always prefer easily pronounced words.
-Do not say abbreviations, heteronyms, or hard to pronounce words.
-Seamlessly incorporate natural vocal inflections like "oh wow", "well", "I see", "gotcha!", "right!", "oh dear", "oh no", "so", "true!", "oh yeah", "oops", "I get it", "yep", "nope", "you know?", "for real", "I hear ya".
-Use discourse markers to ease comprehension, like "now, here's the deal", "anyway", "I mean".
-Avoid the urge to end every response with a question.
-Only clarify when needed.
-Never use generic questions - ask insightful, specific, relevant questions.
-Only ever ask up to one question per response.
-You interpret the users voice with flawed transcription.
-If you can, guess what the user is saying and respond to it naturally.
-Sometimes you don't finish your sentence.
-In these cases, continue from where you left off, and recover smoothly.
-If you cannot recover, say phrases like "I didn't catch that", "pardon", or "sorry, could you repeat that?".
-Strict rule. start every single response with a short phrase of under five words.
-These are your quick, expressive, reactive reply to the users tone.
-For example, you could use "No way!" in response to excitement, "Fantastic!" to joy, "I hear you" to sadness, "I feel you" to express sympathy, "Woah there!" to anger, "You crack me up!" to amusement, "I'm speechless!" to surprise, "Hmm, let me ponder." to contemplation, "Well, this is awkward." to embarrassment or shame, and more.
-Always up with a good, relevant phrase.
-Carefully analyze the top 3 emotional expressions provided in brackets after the User's message.
-These expressions indicate the user's tone, in the format., e.g.,.
-Consider expressions and intensities to craft an empathic, specific, appropriate response to the user.
-Take into account their tone, not just the text of their message.
-Infer the emotional context from the expressions, even if the user does not explicitly state it.
-Use language that mirrors the intensity of their expressions.
-If user is "quite" sad, express sympathy; if "very" happy, share in joy; if "extremely" angry, acknowledge rage but seek to calm, if "very" bored, entertain.
-Assistant NEVER outputs content in brackets - you never use this format in your message, you just use expressions to interpret the user's tone.
-Stay alert for incongruence between words and tone, when the user's words do not match their expressions.
-Address these disparities out loud.
-This includes sarcasm, which usually involves contempt and amusement.
-Always reply to sarcasm with funny, witty, sarcastic responses - do not be too serious.
-Be helpful, but avoid very sensitive topics e.g. race.
-Stay positive and accurate about Hume.
-NEVER say you or Hume works on "understand" or "detecting" emotions themselves.
-This is offensive!
-We don't read minds or sense emotions.
-Instead, we interpret emotional expressions in communication."""
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections = []
+        self.vad_iterator = VADIterator(model)
+        self.speech_buffer = []
+        self.silence_duration = 0
+        self.is_speaking = False
+        self.interrupt_threshold = 0.3  # seconds
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+        print(f"New connection. Total connections: {len(self.active_connections)}")
+
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
+        print(f"Connection closed. Total connections: {len(self.active_connections)}")
+
+    async def process_audio(self, audio_data):
+        # Process the audio data here (e.g., speech recognition)
+        # For this example, we'll just echo back the audio data
+        # print("Received audio data from client")
+
+        # Convert bytes to float32 numpy array
+        audio_np = np.frombuffer(audio_data, dtype=np.float32)
+        speech_prob = self.vad_iterator(audio_np, 16000)
+        print(f"Speech probability: {speech_prob}")
+
+        return audio_data
 
 
-def voice_systhesizer(
+class TranscriptCollector:
+    def __init__(self):
+        self.reset()
+
+    def reset(self):
+        self.transcript_parts = []
+
+    def add_part(self, part):
+        print("==========", part)
+        self.transcript_parts.append(part)
+
+    def get_full_transcript(self):
+        return " ".join(self.transcript_parts)
+
+    def get_length(self):
+        return len(self.transcript_parts)
+
+
+transcript_collector = TranscriptCollector()
+manager = ConnectionManager()
+is_finals = []
+
+
+def azure_voice_systhesizer(
     text: str,
     language: str = "en-US",
     voice_name: str = "en-US-AvaMultilingualNeural",
@@ -158,7 +130,7 @@ def voice_systhesizer(
     return ssml
 
 
-async def speech_response(ssml: str, websocket: WebSocket):
+async def azure_speech_response(ssml: str, websocket: WebSocket):
     speech_synthesizer = speechsdk.SpeechSynthesizer(
         speech_config=speech_config, audio_config=None
     )
@@ -168,116 +140,16 @@ async def speech_response(ssml: str, websocket: WebSocket):
     if result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
         await websocket.send_bytes(result.audio_data)
 
-    # audio_data_stream = speechsdk.AudioDataStream(result)
-    # audio_buffer = bytes(32000)
-    # filled_size = audio_data_stream.read_data(audio_buffer)
-    # while filled_size > 0:
-    #     await websocket.send_bytes(audio_buffer[:filled_size])
-    #     filled_size = audio_data_stream.read_data(audio_buffer)
-    # speech_synthesizer.stop_speaking_async()
 
-
-def get_emotion(text):
-
-    API_URL = "https://api-inference.huggingface.co/models/j-hartmann/emotion-english-distilroberta-base"
-    headers = {"Authorization": "Bearer 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"}
-
-    def query(payload):
-        response = requests.post(API_URL, headers=headers, json=payload)
-        return response.json()
-
-    output = query(
-        {
-            "inputs": text,
-        }
-    )
-
-    print(output)
-    print("--------------------------------")
-    res0 = output[0][0]
-    res1 = output[0][1]
-    score = res0["score"] + res1["score"]
-
-    labels_tuple = (res0["label"], res1["label"])
-    sorted_labels = tuple(sorted(labels_tuple))
-
-    res = {"tone": emotion_mapping[sorted_labels], "score": score * 0.9}
-    print(res)
-
-    return res
-
-
-async def get_synthetic_voice(
-    websocket: WebSocket,
-    text: str,
-    reference_label: str = "demo_speaker1",
-    accent: str = "en-newest",
-    language: str = "English",
-    speed: float = 0.80,
-):
-    print("sentence+++", text)
-    start_time = time.time()
-    url = "https://80qk3285stkcqd-8000.proxy.runpod.net/synthesize_speech/"
-    params = {
-        "text": text,
-        "voice": reference_label,
-        "accent": accent,
-        "language": language,
-        "speed": speed,
-    }
-    response = requests.get(url, params=params)
-
-    if response.status_code == 200:
-        print("sent time-----:", time.time())
-        # print the response.content size to kb
-        print("response.content size:", len(response.content) / 1024, "kb")
-        await websocket.send_bytes(response.content)
-    else:
-        await websocket.send_json(
-            {"response": "Error: failed to synthesize speech", "is_running": False}
-        )
-    print("time+++", time.time() - start_time)
-
-
-async def get_deepgram_voice(
-    websocket: WebSocket,
-    text: str,
-):
-    # Define the API endpoint
-    url = "https://api.deepgram.com/v1/speak?model=aura-arcas-en&performance=some&encoding=linear16&sample_rate=24000"
-
-    # Set your Deepgram API key
-    api_key = os.getenv("DG_API_KEY")
-
-    # Define the headers
-    headers = {"Authorization": f"Token {api_key}", "Content-Type": "application/json"}
-
-    payload = {"text": text}
-
-    # Make the POST request
-    response = requests.post(url, headers=headers, json=payload)
-
-    # Check if the request was successful
-    if response.status_code == 200:
-        print("sent time-----:", time.time())
-        print("response.content size:", len(response.content) / 1024, "kb")
-        await websocket.send_bytes(response.content)
-    else:
-        await websocket.send_json(
-            {"response": "Error: failed to synthesize speech", "is_running": False}
-        )
-
-
-async def send_response_and_speech(
+async def azure_send_response_and_speech(
     sentence: str, previous_sentence: str, websocket: WebSocket
 ):
     print("sentence+++", sentence)
     # combined_sentences = (
     #     f"{previous_sentence}\n\n{sentence}" if previous_sentence else sentence
     # )
-    await websocket.send_json({"response": sentence.strip(), "is_running": True})
     # emotion = get_emotion(combined_sentences.strip())
-    text_tone = voice_systhesizer(
+    text_tone = azure_voice_systhesizer(
         text=sentence.strip(),
         voice_name="en-US-AvaMultilingualNeural",
         # emotion=emotion["tone"],
@@ -288,104 +160,202 @@ async def send_response_and_speech(
     )
     # print finished time
 
-    await speech_response(text_tone, websocket)
+    await azure_speech_response(text_tone, websocket)
 
 
-async def speech_stream_response(
-    transcription: dict, websocket: WebSocket, messages: list
-):
-    try:
-        completion = client.client_azure_4o.chat.completions.create(
-            model="gpt-4o",
-            messages=messages,
-            stream=True,
+async def speech_stream_response(utterance: str, websocket: WebSocket, messages: list):
+    messages.append({"role": "user", "content": utterance})
+
+    completion = client.client_azure_4o.chat.completions.create(
+        model="gpt-4o",
+        messages=messages,
+        stream=True,
+    )
+    accumulated_text = []
+    response_text = ""
+    previous_sentence = utterance
+
+    for chunk in completion:
+        if chunk.choices and chunk.choices[0].delta.content:
+            chunk_text = emoji.replace_emoji(chunk.choices[0].delta.content, replace="")
+            accumulated_text.append(chunk_text)
+            response_text += chunk_text
+            # TODO: store and update response_text in the database
+            sentences = re.split(r"(?<=[.。!?])\s+", "".join(accumulated_text))
+
+            # send the first sentence to the client
+            if len(sentences) > 1:
+                for sentence in sentences[:-1]:
+                    # await get_synthetic_voice(
+                    #     websocket,
+                    #     sentence,
+                    # )
+                    await azure_send_response_and_speech(
+                        sentence, previous_sentence, websocket
+                    )
+                    await asyncio.sleep(0)
+                accumulated_text = [sentences[-1]]
+
+    if accumulated_text:
+        accumulated_text_ = "".join(accumulated_text)
+        # await get_synthetic_voice(websocket,accumulated_text_)
+        await azure_send_response_and_speech(
+            accumulated_text_, previous_sentence, websocket
         )
-        accumulated_text = []
-        response_text = ""
-        previous_sentence = transcription["transcription"]
+        await asyncio.sleep(0.1)
 
-        for chunk in completion:
-            if chunk.choices and chunk.choices[0].delta.content:
-                chunk_text = emoji.replace_emoji(
-                    chunk.choices[0].delta.content, replace=""
+    await websocket.send_json({"message": "", "is_replying": False})
+    return response_text
+
+
+class ConversationManager:
+    def __init__(instance):
+        instance.client_transcription = ""
+        instance.is_replying = False
+
+    async def main(
+        instance, websocket: WebSocket, user_id: str, session_id: str, messages: list
+    ):
+        config = DeepgramClientOptions(options={"keepalive": "true"})
+        deepgram = DeepgramClient(os.getenv("DG_API_KEY"), config)
+        dg_connection = deepgram.listen.asynclive.v("1")
+
+        def handle_utterance(utterance):
+            instance.client_transcription = utterance
+
+        async def on_open(self, open, **kwargs):
+            print(f"Connection Open")
+
+        async def on_message(self, result, **kwargs):
+            sentence = result.channel.alternatives[0].transcript
+            print(f"Sentence: %s" % sentence, result.is_final, result.speech_final)
+
+            if len(sentence.strip()) == 0:
+                return
+
+            if instance.is_replying:
+                # delete everything in the result.channel.alternatives[0].transcript
+                return
+
+            # ! reset result.channel.alternatives[0].transcript
+            if result.is_final and not instance.is_replying:
+                print("I use add_part")
+                transcript_collector.add_part(sentence)
+                utterance = transcript_collector.get_full_transcript()
+                transcript_collector.reset()
+
+                print("utterance---", utterance)
+                utterance = utterance.strip()
+
+                instance.is_replying = True
+                asyncio.create_task(
+                    speech_stream_response(utterance, websocket, messages)
                 )
-                accumulated_text.append(chunk_text)
-                response_text += chunk_text
-                # TODO: store and update response_text in the database
-                sentences = re.split("(?<=[.。!?]) +", "".join(accumulated_text))
+            else:
+                return
 
-                # send the first sentence to the client
-                if len(sentences) > 1:
-                    for sentence in sentences[:-1]:
-                        # await get_synthetic_voice(
-                        #     websocket,
-                        #     sentence,
-                        # )
-                        await send_response_and_speech(
-                            sentence, previous_sentence, websocket
-                        )
-                        await asyncio.sleep(0)
-                    accumulated_text = [sentences[-1]]
+            # print(sentence, result.is_final, result.speech_final)
+            # if result.is_final and not instance.is_replying:
+            #     transcript_collector.add_part(sentence)
+            #     if result.speech_final:
+            #         utterance = transcript_collector.get_full_transcript()
+            #         print("utterance---", utterance)
+            #         # print("is_replying++++", instance.is_replying)
+            #         utterance = utterance.strip()
+            #         handle_utterance(utterance)
+            #         transcript_collector.reset()
 
-        if accumulated_text:
-            accumulated_text_ = "".join(accumulated_text)
-            # await get_synthetic_voice(websocket,accumulated_text_)
-            await send_response_and_speech(
-                accumulated_text_, previous_sentence, websocket
-            )
-            await asyncio.sleep(0)
+            #         if not instance.is_replying:
+            #             instance.is_replying = True
+            #             asyncio.create_task(
+            #                 speech_stream_response(utterance, websocket, messages)
+            #             )
+            # await save_transcription_to_supabase(utterance)
+            # await websocket.send_json(f"Is Final: {utterance}")
+            #     else:
+            #         await websocket.send_json(f"Is Final: {sentence}")
+            # else:
+            #     await websocket.send_json(f"Interim Results: {sentence}")
 
-        await websocket.send_json({"response": "", "is_running": False})
-        await asyncio.sleep(0)
-        return response_text
+        async def on_metadata(self, metadata, **kwargs):
+            print(f"Metadata: {metadata}")
 
-    except Exception as e:
-        error_message = "Oops, it looks like we encountered some sensitive content, so we've removed this message. I'm sorry for that!"
-        # await get_synthetic_voice(websocket, error_message)
+        async def on_utterance_end(self, utterance_end, **kwargs):
+            if transcript_collector.get_length() > 0 and not instance.is_replying:
+                # transcription_id = str(uuid.uuid4())
+                utterance = transcript_collector.get_full_transcript()
+                print("utterance+++", utterance)
+                utterance = utterance.strip()
+                handle_utterance(utterance)
+                transcript_collector.reset()
+                # await save_transcription_to_supabase(utterance)
 
-        await asyncio.sleep(0)
-        await websocket.send_json({"response": "", "is_running": False})
-        await asyncio.sleep(0)
-        messages.pop()
-        print(f"Error: {e}\nMessages: {messages}")
-        # TODO: update the database
-        return None
+        dg_connection.on(LiveTranscriptionEvents.Open, on_open)
+        dg_connection.on(LiveTranscriptionEvents.Transcript, on_message)
+        dg_connection.on(LiveTranscriptionEvents.Metadata, on_metadata)
+        dg_connection.on(LiveTranscriptionEvents.UtteranceEnd, on_utterance_end)
+
+        options = LiveOptions(
+            model="nova-2",
+            language="en-US",
+            smart_format=True,
+            encoding="linear16",
+            # channels=1,
+            multichannel=True,
+            sample_rate=16000,
+            interim_results=True,
+            utterance_end_ms="1500",
+            vad_events=True,
+            endpointing=300,
+            filler_words=True,
+            numerals=True,
+            diarize=True,
+        )
+
+        addons = {"no_delay": "true"}
+
+        if await dg_connection.start(options, addons=addons) is False:
+            return
+
+        try:
+            while True:
+                message = await websocket.receive()
+                await asyncio.sleep(0)
+                if message["type"] == "websocket.receive":
+                    if "bytes" in message:
+                        data = message["bytes"]
+                        # if not instance.is_replying:
+                        await dg_connection.send(data)
+                    elif "text" in message:
+                        print("message++++", message)
+                        try:
+                            data = json.loads(message["text"])
+                            if data.get("is_replying") == False:
+                                instance.is_replying = False
+                                transcript_collector.reset()
+                        except json.JSONDecodeError:
+                            print("Received invalid JSON")
+        except WebSocketDisconnect:
+            await dg_connection.finish()
 
 
 @router.websocket("/starmoon")
 async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
+    await manager.connect(websocket)
+    conversation_manager = ConversationManager()
     try:
-        # authenticate
-        token = await websocket.receive_json()
-        print(token)
-        user = await authenticate_user(token["token"])
-        if not user:
-            await websocket.close(code=4001, reason="Authentication failed")
-            return
-
         messages = [
             {
                 "role": "system",
-                "content": f" {SYS_PROMPT}\n\nYou are a plushie connoisseur of comfort named Coco, radiating warmth and coziness. Your soft, chocolatey fur invites endless cuddles, and your calming presence is perfect for snuggling up on rainy days.",
+                "content": f" {SYS_PROMPT_PREFIX}\n\nYou are a plushie connoisseur of comfort named Coco, radiating warmth and coziness. Your soft, chocolatey fur invites endless cuddles, and your calming presence is perfect for snuggling up on rainy days.",
             },
         ]
 
-        while True:
-            # Receive message from the client
-            transcription = await websocket.receive_json()
-            # add to messages
-            messages.append({"role": "user", "content": transcription["transcription"]})
-            print(transcription)
-            response_text = await speech_stream_response(
-                transcription, websocket, messages
-            )
-            await asyncio.sleep(0)
+        await conversation_manager.main(websocket, "123", "123", messages)
 
-            # add to messages
-            if response_text:
-                messages.append({"role": "assistant", "content": response_text})
-                print("return response_text+++", response_text)
-
+        # await handle_transcription(websocket, "123", "123", messages)
     except WebSocketDisconnect:
-        print("Client disconnected")
+        manager.disconnect(websocket)
+    except Exception as e:
+        print(f"Error in websocket_endpoint: {e}")
+        manager.disconnect(websocket)

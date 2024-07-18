@@ -2,209 +2,209 @@ import asyncio
 import json
 import logging
 import os
-import time
-from signal import SIGINT, SIGTERM
+import threading
+from concurrent.futures import ThreadPoolExecutor
 
 import pyaudio
-import pygame
 import sounddevice as sd
 import websockets
 from colorama import Fore, init
-from deepgram import (
-    DeepgramClient,
-    DeepgramClientOptions,
-    LiveOptions,
-    LiveTranscriptionEvents,
-    Microphone,
-)
 from dotenv import load_dotenv
-from pygame import mixer
 
 load_dotenv()
 
 
-# from record import play_audio, record_audio
-
-# URI = "wss://api.starmoon.app"
-URI = "ws://localhost:8000"
-# wss://api.starmoon.app for https
-# "ws://localhost:8000" for http
+CHUNK = 1024
+FORMAT = pyaudio.paInt16
+CHANNELS = 1
+RATE = 16000
 
 
-audio_player = pyaudio.PyAudio()
-mixer.init()
-
-
-class TranscriptCollector:
-    def __init__(self):
-        self.reset()
-
-    def reset(self):
-        self.transcript_parts = []
-
-    def add_part(self, part):
-        self.transcript_parts.append(part)
-
-    def get_full_transcript(self):
-        return " ".join(self.transcript_parts)
-
-
-transcript_collector = TranscriptCollector()
-
-
-def play_audio(data):
-    sd.play(data, samplerate=16000, blocking=True)
-
-
-async def get_transcript(callback):
-    transcription_complete = asyncio.Event()  # Event to signal transcription completion
-
-    try:
-        # example of setting up a client config. logging values: WARNING, VERBOSE, DEBUG, SPAM
-        config = DeepgramClientOptions(options={"keepalive": "true"})
-        deepgram: DeepgramClient = DeepgramClient(os.getenv("DG_API_KEY"), config)
-
-        dg_connection = deepgram.listen.asynclive.v("1")
-        print("Listening...")
-
-        async def on_message(self, result, **kwargs):
-            sentence = result.channel.alternatives[0].transcript
-
-            if not result.speech_final:
-                transcript_collector.add_part(sentence)
-            else:
-                # This is the final part of the current sentence
-                transcript_collector.add_part(sentence)
-                full_sentence = transcript_collector.get_full_transcript()
-                # Check if the full_sentence is not empty before printing
-                if len(full_sentence.strip()) > 0:
-                    full_sentence = full_sentence.strip()
-                    print(f"Human: {full_sentence}")
-                    callback(full_sentence)  # Call the callback with the full_sentence
-                    transcript_collector.reset()
-                    transcription_complete.set()  # Signal to stop transcription and exit
-
-        dg_connection.on(LiveTranscriptionEvents.Transcript, on_message)
-
-        options = LiveOptions(
-            model="nova-2",
-            punctuate=True,
-            language="en-US",
-            smart_format=True,
-            encoding="linear16",
-            # channels=1,
-            multichannel=True,
-            sample_rate=16000,
-            # interim_results=True,
-            # utterance_end_ms="1500",
-            vad_events=True,
-            endpointing=300,
-            filler_words=True,
-            numerals=True,
-            diarize=True,
+class AudioClient:
+    def __init__(self, uri):
+        self.uri = uri
+        self.p = pyaudio.PyAudio()
+        self.audio_queue = asyncio.Queue(maxsize=50)  # Buffer for audio chunks
+        self.stream_in = self.p.open(
+            format=FORMAT,
+            channels=CHANNELS,
+            rate=RATE,
+            input=True,
+            frames_per_buffer=CHUNK,
+            stream_callback=self.audio_callback,
         )
+        self.stream_out = self.p.open(
+            format=FORMAT,
+            channels=CHANNELS,
+            rate=RATE,
+            output=True,
+            frames_per_buffer=CHUNK,
+        )
+        self.websocket = None
+        self.send_lock = asyncio.Lock()
+        self.loop = asyncio.get_event_loop()
+        self.executor = ThreadPoolExecutor(max_workers=1)
+        self.playback_duration = 0  # Duration of the audio being played back
 
-        addons = {"no_delay": "true"}
-        await dg_connection.start(options, addons)
+    def audio_callback(self, in_data, frame_count, time_info, status):
+        self.loop.call_soon_threadsafe(self.loop.create_task, self.put_audio(in_data))
+        return (None, pyaudio.paContinue)
 
-        # Open a microphone stream on the default input device
-        microphone = Microphone(dg_connection.send)
-        microphone.start()
-
-        await transcription_complete.wait()  # Wait for the transcription to complete instead of looping indefinitely
-
-        # Wait for the microphone to close
-        microphone.finish()
-
-        # Indicate that we've finished
-        await dg_connection.finish()
-
-    except Exception as e:
-        print(f"Could not open socket: {e}")
-        return
-
-
-class ConversationManager:
-    def __init__(self, token):
-        self.transcription_response = ""
-        self.token = token
-        self.is_running = True
-
-    async def main(self):
-        def handle_full_sentence(full_sentence):
-            self.transcription_response = full_sentence
-
-        async with websockets.connect(
-            f"{URI}/starmoon", ping_interval=1800, ping_timeout=1800
-        ) as websocket:
+    async def put_audio(self, in_data):
+        try:
+            await asyncio.wait_for(self.audio_queue.put(in_data), timeout=0.1)
+        except asyncio.TimeoutError:
+            print("Audio queue is full, dropping oldest chunk")
             try:
-                # authenticate with the server
-                await websocket.send(json.dumps({"token": self.token}))
-                while True:
-                    # 🟢 step 1: get transcript
-                    await get_transcript(handle_full_sentence)
+                self.audio_queue.get_nowait()
+                await self.audio_queue.put(in_data)
+            except asyncio.QueueEmpty:
+                pass
 
-                    # 🟢 Check for "goodbye" to exit the loop
-                    if "goodbye" in self.transcription_response.lower():
-                        break
+    async def connect(self):
+        self.websocket = await websockets.connect(
+            self.uri, ping_interval=900, ping_timeout=900
+        )
+        print("Connected to server")
 
-                    # 🟢 Step 2: Send text + token to server
-                    print(self.transcription_response)
-                    await websocket.send(
-                        json.dumps(
-                            {
-                                "transcription": self.transcription_response,
-                            }
-                        ),
+    async def send_audio(self):
+        try:
+            while True:
+                data = await self.audio_queue.get()
+                async with self.send_lock:
+                    await self.websocket.send(data)
+                print(f"Sent {len(data)} bytes")
+        except Exception as e:
+            print(f"Error in send_audio: {e}")
+
+    async def receive_and_play_audio(self):
+        try:
+            while True:
+                recv = await self.websocket.recv()
+                if isinstance(recv, bytes):
+                    # print(f"Received {len(recv)} bytes")
+                    await self.loop.run_in_executor(
+                        self.executor, self.stream_out.write, recv
                     )
+                    chunk_duration = len(recv) / (RATE * CHANNELS * 2)
+                    self.playback_duration = chunk_duration
+                    print("chunk_duration", chunk_duration)
+                else:
+                    data = json.loads(recv)
+                    print(f"Received: {data}")
+                    if data.get("is_replying") is False:
+                        await asyncio.sleep(self.playback_duration + 0.1)
+                        await self.websocket.send(
+                            json.dumps({"message": "", "is_replying": False})
+                        )
+        except Exception as e:
+            print(f"Error in receive_and_play_audio: {e}")
 
-                    # 🟢 Step 3: Receive audio response from server
-                    # p = pyaudio.PyAudio()
-                    # stream = p.open(
-                    #     format=pyaudio.paInt16, channels=1, rate=16000, output=True
-                    # )
-                    while self.is_running:
-                        start_time = time.time()
-                        response = await websocket.recv()
-                        print("recived time-----:", time.time())
-                        if isinstance(response, bytes):
-                            print("Received audio response from server")
-                            # stream.write(response)
-                            # save the audio response to a wav file
-                            with open("output.wav", "wb") as f:
-                                f.write(response)
-                            print("time++", time.time() - start_time)
-                            sound = mixer.Sound("output.wav")
-                            sound.play()
-                            pygame.time.wait(int(sound.get_length() * 1000))
-                        else:
-                            print(Fore.GREEN + response)
-                            response = json.loads(response)
-                            # hold for 5 seconds
-                            # if response["is_running"] is True:
-                            #     time.sleep(5)
-                            if response["is_running"] is False:
-                                if response["response"]:
-                                    print(Fore.RED + response["response"])
-                                break
+    async def run(self):
+        await self.connect()
+        self.stream_in.start_stream()
+        send_task = asyncio.create_task(self.send_audio())
+        receive_task = asyncio.create_task(self.receive_and_play_audio())
+        await asyncio.gather(send_task, receive_task)
 
-                    # Wait until all audio chunks are played
-                    # stream.stop_stream()
-                    # stream.close()
-                    # p.terminate()
+    def stop(self):
+        self.stream_in.stop_stream()
+        self.stream_in.close()
+        self.stream_out.stop_stream()
+        self.stream_out.close()
+        self.p.terminate()
+        self.executor.shutdown(wait=False)
+        if self.websocket:
+            asyncio.run(self.websocket.close())
 
-                    # 🟢 Reset transcription_response for the next loop iteration
-                    self.transcription_response = ""
-            except websockets.exceptions.ConnectionClosed as e:
-                print(f"Connection closed with code: {e.code}, reason: {e.reason}")
-                if e.code == 4001:
-                    print("Authentication failed. Please check your token.")
+
+async def main():
+    uri = "ws://localhost:8000/starmoon"
+    client = AudioClient(uri)
+    try:
+        await client.run()
+    except KeyboardInterrupt:
+        print("Stopping...")
+    finally:
+        client.stop()
 
 
 if __name__ == "__main__":
-    manager = ConversationManager(
-        token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1bnJ1eGlvbmdAZ21haWwuY29tIiwidXNlcl9pZCI6IjAwNzljZWU5LTE4MjAtNDQ1Ni05MGE0LWU4YzI1MzcyZmUyOSIsImNyZWF0ZWRfdGltZSI6IjIwMjQtMDctMDhUMDA6MDA6MDAuMDAwWiJ9.tN8PhmPuiXAUKOagOlcfNtVzdZ1z--8H2HGd-zk6BGE"
-    )
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(manager.main())
-    # asyncio.run(manager.main())
+    asyncio.run(main())
+
+    # When the client is play audio response, the server don't send the mic audio back unless user interrupt it
+    # import whisperx
+
+    # model = whisperx.load_model
+    # tokenizer = whisperx.load_token
+
+    # from whisper_online import *
+
+    # src_lan = "en"  # source language
+    # tgt_lan = "en"  # target language  -- same as source for ASR, "en" if translate task is used
+
+    # asr = OpenaiApiASR()
+
+    # from diart import SpeakerDiarization
+    # from diart.inference import StreamingInference
+    # from diart.sinks import RTTMWriter
+    # from diart.sources import MicrophoneAudioSource
+
+    # pipeline = SpeakerDiarization()
+    # mic = MicrophoneAudioSource()
+    # inference = StreamingInference(pipeline, mic)
+
+    # # print the realt time data callback to attach_hooks
+    # def attach_hooks(prediction):
+    #     print(prediction)
+
+    # inference.attach_hooks(attach_hooks)
+    # prediction = inference()
+
+    # print(prediction)
+
+    # import torch
+    # from transformers import pipeline
+    # from transformers.utils import is_flash_attn_2_available
+
+    # pipe = pipeline(
+    #     "automatic-speech-recognition",
+    #     model="openai/whisper-large-v3",  # select checkpoint from https://huggingface.co/openai/whisper-large-v3#model-details
+    #     torch_dtype=torch.float16,
+    #     device="mps",  # or mps for Mac devices
+    #     model_kwargs=(
+    #         {"attn_implementation": "flash_attention_2"}
+    #         if is_flash_attn_2_available()
+    #         else {"attn_implementation": "sdpa"}
+    #     ),
+    # )
+
+    # outputs = pipe(
+    #     "/Users/joeyxiong/Downloads/ted_60.wav",
+    #     chunk_length_s=30,
+    #     batch_size=24,
+    #     return_timestamps=True,
+    # )
+
+    # print(outputs)
+
+    # import os
+
+    # from groq import Groq
+
+    # api_key = os.environ.get("GROQ_API_KEY")
+
+    # client = Groq()
+    # filename = "/Users/joeyxiong/Downloads/ted_60.wav"
+
+    # with open(filename, "rb") as file:
+    #     transcription = client.audio.transcriptions.create(
+    #         file=(filename, file.read()),
+    #         model="whisper-large-v3",
+    #         prompt="Specify context or spelling",  # Optional
+    #         response_format="json",  # Optional
+    #         language="en",  # Optional
+    #         temperature=0.0,  # Optional
+    #     )
+    #     print(transcription.text)
+    #     print(transcription)
