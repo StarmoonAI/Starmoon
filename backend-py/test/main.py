@@ -120,6 +120,7 @@ class AudioClient:
 
 async def main():
     uri = "ws://localhost:8000/starmoon"
+    # uri = "wss://api.starmoon.app/starmoon"
     client = AudioClient(uri)
     try:
         await client.run()
