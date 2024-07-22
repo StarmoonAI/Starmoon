@@ -27,7 +27,7 @@ RUN apt-get update \
 RUN pip install poetry
 
 # Install poetry dependencies
-RUN poetry install --no-dev
+RUN poetry install --only main
 
 # Command to run the application
 CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--ws-ping-interval", "600", "--ws-ping-timeout", "600"]

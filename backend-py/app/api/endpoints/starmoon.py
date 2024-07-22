@@ -205,6 +205,8 @@ async def speech_stream_response(utterance: str, websocket: WebSocket, messages:
         await asyncio.sleep(0.1)
 
     await websocket.send_json({"message": "", "is_replying": False})
+
+    messages.append({"role": "system", "content": response_text})
     return response_text
 
 
@@ -234,48 +236,27 @@ class ConversationManager:
                 return
 
             if instance.is_replying:
-                # delete everything in the result.channel.alternatives[0].transcript
                 return
 
             # ! reset result.channel.alternatives[0].transcript
             if result.is_final and not instance.is_replying:
-                print("I use add_part")
                 transcript_collector.add_part(sentence)
-                utterance = transcript_collector.get_full_transcript()
-                transcript_collector.reset()
+                if result.speech_final:
+                    utterance = transcript_collector.get_full_transcript()
+                    utterance = utterance.strip()
+                    print("utterance---", utterance)
+                    handle_utterance(utterance)
 
-                print("utterance---", utterance)
-                utterance = utterance.strip()
-
-                instance.is_replying = True
-                asyncio.create_task(
-                    speech_stream_response(utterance, websocket, messages)
-                )
-            else:
-                return
-
-            # print(sentence, result.is_final, result.speech_final)
-            # if result.is_final and not instance.is_replying:
-            #     transcript_collector.add_part(sentence)
-            #     if result.speech_final:
-            #         utterance = transcript_collector.get_full_transcript()
-            #         print("utterance---", utterance)
-            #         # print("is_replying++++", instance.is_replying)
-            #         utterance = utterance.strip()
-            #         handle_utterance(utterance)
-            #         transcript_collector.reset()
-
-            #         if not instance.is_replying:
-            #             instance.is_replying = True
-            #             asyncio.create_task(
-            #                 speech_stream_response(utterance, websocket, messages)
-            #             )
-            # await save_transcription_to_supabase(utterance)
-            # await websocket.send_json(f"Is Final: {utterance}")
+                    instance.is_replying = True
+                    asyncio.create_task(
+                        speech_stream_response(utterance, websocket, messages)
+                    )
+                    transcript_collector.reset()
+                    # await save_transcription_to_supabase(utterance)
             #     else:
-            #         await websocket.send_json(f"Is Final: {sentence}")
+            #         await websocket.send_text(f"Is Final: {sentence}")
             # else:
-            #     await websocket.send_json(f"Interim Results: {sentence}")
+            #     await websocket.send_text(f"Interim Results: {sentence}")
 
         async def on_metadata(self, metadata, **kwargs):
             print(f"Metadata: {metadata}")
@@ -284,9 +265,15 @@ class ConversationManager:
             if transcript_collector.get_length() > 0 and not instance.is_replying:
                 # transcription_id = str(uuid.uuid4())
                 utterance = transcript_collector.get_full_transcript()
-                print("utterance+++", utterance)
                 utterance = utterance.strip()
+                print("utterance+++", utterance)
                 handle_utterance(utterance)
+
+                instance.is_replying = True
+                asyncio.create_task(
+                    speech_stream_response(utterance, websocket, messages)
+                )
+
                 transcript_collector.reset()
                 # await save_transcription_to_supabase(utterance)
 
@@ -344,6 +331,14 @@ async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
     conversation_manager = ConversationManager()
     try:
+        # authenticate
+        token = await websocket.receive_json()
+        print(token)
+        user = await authenticate_user(token["token"])
+        if not user:
+            await websocket.close(code=4001, reason="Authentication failed")
+            return
+
         messages = [
             {
                 "role": "system",

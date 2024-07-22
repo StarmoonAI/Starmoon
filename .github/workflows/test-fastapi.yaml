@@ -36,7 +36,7 @@ jobs:
                   pip install flake8
             - name: Install poetry dependencies
               run: |
-                  poetry install --no-dev
+                  poetry install --only main
             - name: Look for major issues with flake8
               run: |
                   flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics

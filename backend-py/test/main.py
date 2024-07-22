@@ -21,7 +21,8 @@ RATE = 16000
 
 
 class AudioClient:
-    def __init__(self, uri):
+    def __init__(self, token, uri):
+        self.token = token
         self.uri = uri
         self.p = pyaudio.PyAudio()
         self.audio_queue = asyncio.Queue(maxsize=50)  # Buffer for audio chunks
@@ -65,7 +66,11 @@ class AudioClient:
         self.websocket = await websockets.connect(
             self.uri, ping_interval=900, ping_timeout=900
         )
-        print("Connected to server")
+        try:
+            await self.websocket.send(json.dumps({"token": self.token}))
+            print("Connected to server")
+        except Exception as e:
+            print(f"Error in connect: {e}")
 
     async def send_audio(self):
         try:
@@ -119,9 +124,10 @@ class AudioClient:
 
 
 async def main():
+    token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1bnJ1eGlvbmdAZ21haWwuY29tIiwidXNlcl9pZCI6IjAwNzljZWU5LTE4MjAtNDQ1Ni05MGE0LWU4YzI1MzcyZmUyOSIsImNyZWF0ZWRfdGltZSI6IjIwMjQtMDctMDhUMDA6MDA6MDAuMDAwWiJ9.tN8PhmPuiXAUKOagOlcfNtVzdZ1z--8H2HGd-zk6BGE"
     uri = "ws://localhost:8000/starmoon"
     # uri = "wss://api.starmoon.app/starmoon"
-    client = AudioClient(uri)
+    client = AudioClient(token, uri)
     try:
         await client.run()
     except KeyboardInterrupt:
@@ -188,24 +194,3 @@ if __name__ == "__main__":
     # )
 
     # print(outputs)
-
-    # import os
-
-    # from groq import Groq
-
-    # api_key = os.environ.get("GROQ_API_KEY")
-
-    # client = Groq()
-    # filename = "/Users/joeyxiong/Downloads/ted_60.wav"
-
-    # with open(filename, "rb") as file:
-    #     transcription = client.audio.transcriptions.create(
-    #         file=(filename, file.read()),
-    #         model="whisper-large-v3",
-    #         prompt="Specify context or spelling",  # Optional
-    #         response_format="json",  # Optional
-    #         language="en",  # Optional
-    #         temperature=0.0,  # Optional
-    #     )
-    #     print(transcription.text)
-    #     print(transcription)
