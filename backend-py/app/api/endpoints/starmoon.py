@@ -1,4 +1,5 @@
 import asyncio
+import base64
 import json
 import os
 import re
@@ -33,6 +34,7 @@ from deepgram import (
 )
 from dotenv import load_dotenv
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from networkx import boundary_expansion
 
 torch.set_num_threads(1)
 load_dotenv()
@@ -130,7 +132,7 @@ def azure_voice_systhesizer(
     return ssml
 
 
-async def azure_speech_response(ssml: str, websocket: WebSocket):
+def azure_speech_response(ssml: str, websocket: WebSocket):
     speech_synthesizer = speechsdk.SpeechSynthesizer(
         speech_config=speech_config, audio_config=None
     )
@@ -138,11 +140,14 @@ async def azure_speech_response(ssml: str, websocket: WebSocket):
     result = speech_synthesizer.speak_ssml_async(ssml).get()
     # send response back to the client
     if result.reason == speechsdk.ResultReason.SynthesizingAudioCompleted:
-        await websocket.send_bytes(result.audio_data)
+        # await websocket.send_bytes(result.audio_data)
+        return result
+
+    return None
 
 
 async def azure_send_response_and_speech(
-    sentence: str, previous_sentence: str, websocket: WebSocket
+    sentence: str, previous_sentence: str, boundary: str, websocket: WebSocket
 ):
     print("sentence+++", sentence)
     # combined_sentences = (
@@ -160,7 +165,24 @@ async def azure_send_response_and_speech(
     )
     # print finished time
 
-    await azure_speech_response(text_tone, websocket)
+    result = azure_speech_response(text_tone, websocket)
+
+    # Encode the audio data to base64
+    audio_data_base64 = base64.b64encode(result.audio_data).decode("utf-8")
+
+    # Create a JSON object with the encoded data
+    json_data = json.dumps(
+        {
+            "type": "response",  # Specify the type of message
+            "audio_data": audio_data_base64,
+            "text_data": sentence,
+            "boundary": boundary,  # Use the boundary parameter instead of sentence
+            "task_id": "123",
+        }
+    )
+
+    # Send the JSON object over the WebSocket connection
+    await websocket.send_text(json_data)
 
 
 async def speech_stream_response(utterance: str, websocket: WebSocket, messages: list):
@@ -174,10 +196,12 @@ async def speech_stream_response(utterance: str, websocket: WebSocket, messages:
     accumulated_text = []
     response_text = ""
     previous_sentence = utterance
+    is_first_chunk = True
 
     for chunk in completion:
         if chunk.choices and chunk.choices[0].delta.content:
             chunk_text = emoji.replace_emoji(chunk.choices[0].delta.content, replace="")
+
             accumulated_text.append(chunk_text)
             response_text += chunk_text
             # TODO: store and update response_text in the database
@@ -190,21 +214,38 @@ async def speech_stream_response(utterance: str, websocket: WebSocket, messages:
                     #     websocket,
                     #     sentence,
                     # )
+                    boundary = "start" if is_first_chunk else "mid"
                     await azure_send_response_and_speech(
-                        sentence, previous_sentence, websocket
+                        sentence, previous_sentence, boundary, websocket
                     )
                     await asyncio.sleep(0)
                 accumulated_text = [sentences[-1]]
 
-    if accumulated_text:
-        accumulated_text_ = "".join(accumulated_text)
-        # await get_synthetic_voice(websocket,accumulated_text_)
-        await azure_send_response_and_speech(
-            accumulated_text_, previous_sentence, websocket
-        )
-        await asyncio.sleep(0.1)
+        if is_first_chunk:
+            print("This is the first chunk")
+            is_first_chunk = False
 
-    await websocket.send_json({"message": "", "is_replying": False})
+        # Check if this is the last chunk
+        if chunk.choices and chunk.choices[0].finish_reason is not None:
+            print("This is the last chunk")
+            # Process any remaining text
+            if accumulated_text:
+                accumulated_text_ = "".join(accumulated_text)
+                await azure_send_response_and_speech(
+                    accumulated_text_, previous_sentence, "end", websocket
+                )
+                await asyncio.sleep(0.01)
+            break
+
+    # if accumulated_text:
+    #     accumulated_text_ = "".join(accumulated_text)
+    #     # await get_synthetic_voice(websocket,accumulated_text_)
+    #     await azure_send_response_and_speech(
+    #         accumulated_text_, previous_sentence, websocket
+    #     )
+    #     await asyncio.sleep(0.1)
+
+    # await websocket.send_json({"message": "", "is_replying": False})
 
     messages.append({"role": "system", "content": response_text})
     return response_text
@@ -230,10 +271,11 @@ class ConversationManager:
 
         async def on_message(self, result, **kwargs):
             sentence = result.channel.alternatives[0].transcript
-            print(f"Sentence: %s" % sentence, result.is_final, result.speech_final)
 
             if len(sentence.strip()) == 0:
                 return
+
+            print(f"Sentence: %s" % sentence, result.is_final, result.speech_final)
 
             if instance.is_replying:
                 return

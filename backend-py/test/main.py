@@ -1,4 +1,5 @@
 import asyncio
+import base64
 import json
 import logging
 import os
@@ -10,6 +11,7 @@ import sounddevice as sd
 import websockets
 from colorama import Fore, init
 from dotenv import load_dotenv
+from torch import device
 
 load_dotenv()
 
@@ -45,7 +47,7 @@ class AudioClient:
         self.send_lock = asyncio.Lock()
         self.loop = asyncio.get_event_loop()
         self.executor = ThreadPoolExecutor(max_workers=1)
-        self.playback_duration = 0  # Duration of the audio being played back
+        # self.playback_duration = 0  # Duration of the audio being played back
 
     def audio_callback(self, in_data, frame_count, time_info, status):
         self.loop.call_soon_threadsafe(self.loop.create_task, self.put_audio(in_data))
@@ -86,22 +88,47 @@ class AudioClient:
         try:
             while True:
                 recv = await self.websocket.recv()
-                if isinstance(recv, bytes):
-                    # print(f"Received {len(recv)} bytes")
+                data = json.loads(recv)
+
+                if data["type"] == "response":
+                    # Decode the base64-encoded audio data
+                    audio_data_base64 = data["audio_data"]
+                    audio_data = base64.b64decode(audio_data_base64)
+
+                    playback_duration = len(audio_data) / (RATE * CHANNELS * 2)
                     await self.loop.run_in_executor(
-                        self.executor, self.stream_out.write, recv
+                        self.executor, self.stream_out.write, audio_data
                     )
-                    chunk_duration = len(recv) / (RATE * CHANNELS * 2)
-                    self.playback_duration = chunk_duration
-                    print("chunk_duration", chunk_duration)
-                else:
-                    data = json.loads(recv)
-                    print(f"Received: {data}")
-                    if data.get("is_replying") is False:
-                        await asyncio.sleep(self.playback_duration + 0.1)
+
+                    if data["boundary"] == "end":
+                        await asyncio.sleep(playback_duration + 0.01)
                         await self.websocket.send(
                             json.dumps({"message": "", "is_replying": False})
                         )
+                    elif data["boundary"] == "start":
+                        await asyncio.sleep(playback_duration + 0.01)
+                        await self.websocket.send(
+                            json.dumps({"message": "", "is_replying": True})
+                        )
+                    # else:
+                    #     pass
+
+                # if isinstance(recv, bytes):
+                #     # print(f"Received {len(recv)} bytes")
+                #     await self.loop.run_in_executor(
+                #         self.executor, self.stream_out.write, recv
+                #     )
+                #     chunk_duration = len(recv) / (RATE * CHANNELS * 2)
+                #     self.playback_duration = chunk_duration
+                #     print("chunk_duration", chunk_duration)
+                # else:
+                #     data = json.loads(recv)
+                #     print(f"Received: {data}")
+                #     if data.get("is_replying") is False:
+                #         await asyncio.sleep(self.playback_duration + 0.1)
+                #         await self.websocket.send(
+                #             json.dumps({"message": "", "is_replying": False})
+                #         )
         except Exception as e:
             print(f"Error in receive_and_play_audio: {e}")
 
@@ -138,6 +165,18 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+    # from funasr import AutoModel
+
+    # model = AutoModel(model="iic/emotion2vec_plus_large", device="mps")
+    # wav_file = f"/Users/joeyxiong/Downloads/voice.wav"
+    # res = model.generate(
+    #     wav_file,
+    #     output_dir="./outputs",
+    #     granularity="utterance",
+    #     extract_embedding=False,
+    # )
+    # print(res)
+    # # ! for text: michellejieli/emotion_text_classifier / j-hartmann/emotion-english-distilroberta-base
 
     # When the client is play audio response, the server don't send the mic audio back unless user interrupt it
     # import whisperx
