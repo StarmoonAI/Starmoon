@@ -45,6 +45,6 @@ if __name__ == "__main__":
         app,
         host="0.0.0.0",
         port=8000,
-        ws_ping_interval=600,
-        ws_ping_timeout=600,
+        ws_ping_interval=900,
+        ws_ping_timeout=900,
     )
