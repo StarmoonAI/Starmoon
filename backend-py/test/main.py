@@ -112,6 +112,8 @@ class AudioClient:
                         await self.websocket.send(
                             json.dumps({"speaker": "user", "is_replying": True})
                         )
+                elif data["type"] == "warning":
+                    print(Fore.RED + data["text_data"])
                     # else:
                     #     pass
         except Exception as e:

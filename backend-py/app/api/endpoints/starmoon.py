@@ -149,7 +149,7 @@ def azure_speech_response(ssml: str, websocket: WebSocket):
 
 
 async def azure_send_response_and_speech(
-    sentence: str, previous_sentence: str, boundary: str, websocket: WebSocket
+    sentence: str, boundary: str, websocket: WebSocket
 ):
     # print("sentence+++", sentence)
     # combined_sentences = (
@@ -188,58 +188,66 @@ async def azure_send_response_and_speech(
 
 
 async def speech_stream_response(utterance: str, websocket: WebSocket, messages: list):
-    messages.append({"role": "user", "content": utterance})
+    try:
+        messages.append({"role": "user", "content": utterance})
+        completion = client.client_azure_4o.chat.completions.create(
+            model="gpt-4o",
+            messages=messages,
+            stream=True,
+        )
+        accumulated_text = []
+        response_text = ""
+        is_first_chunk = True
 
-    completion = client.client_azure_4o.chat.completions.create(
-        model="gpt-4o",
-        messages=messages,
-        stream=True,
-    )
-    accumulated_text = []
-    response_text = ""
-    previous_sentence = utterance
-    is_first_chunk = True
-
-    for chunk in completion:
-        if chunk.choices and chunk.choices[0].delta.content:
-            chunk_text = emoji.replace_emoji(chunk.choices[0].delta.content, replace="")
-
-            accumulated_text.append(chunk_text)
-            response_text += chunk_text
-            # TODO: store and update response_text in the database
-            sentences = re.split(r"(?<=[.。!?])\s+", "".join(accumulated_text))
-
-            # send the first sentence to the client
-            if len(sentences) > 1:
-                for sentence in sentences[:-1]:
-                    boundary = "start" if is_first_chunk else "mid"
-                    await azure_send_response_and_speech(
-                        sentence, previous_sentence, boundary, websocket
-                    )
-                    await asyncio.sleep(0)  # Yield control back to the event loop
-
-                accumulated_text = [sentences[-1]]
-
-        if is_first_chunk:
-            print("This is the first chunk")
-            is_first_chunk = False
-
-        # Check if this is the last chunk
-        if chunk.choices and chunk.choices[0].finish_reason is not None:
-            print("This is the last chunk")
-            # Process any remaining text
-            if accumulated_text:
-                accumulated_text_ = "".join(accumulated_text)
-                await azure_send_response_and_speech(
-                    accumulated_text_, previous_sentence, "end", websocket
+        for chunk in completion:
+            if chunk.choices and chunk.choices[0].delta.content:
+                chunk_text = emoji.replace_emoji(
+                    chunk.choices[0].delta.content, replace=""
                 )
-                await asyncio.sleep(0)  # Yield control back to the event loop
-            break
 
-        await asyncio.sleep(0)  # Yield control back to the event loop
+                accumulated_text.append(chunk_text)
+                response_text += chunk_text
+                # TODO: store and update response_text in the database
+                sentences = re.split(r"(?<=[.。!?])\s+", "".join(accumulated_text))
 
-    messages.append({"role": "system", "content": response_text})
-    return response_text
+                # send the first sentence to the client
+                if len(sentences) > 1:
+                    for sentence in sentences[:-1]:
+                        boundary = "start" if is_first_chunk else "mid"
+                        await azure_send_response_and_speech(
+                            sentence, boundary, websocket
+                        )
+                        await asyncio.sleep(0)
+
+                    accumulated_text = [sentences[-1]]
+
+            if is_first_chunk:
+                print("This is the first chunk")
+                is_first_chunk = False
+
+            # Check if this is the last chunk
+            if chunk.choices and chunk.choices[0].finish_reason is not None:
+                print("This is the last chunk")
+                # Process any remaining text
+                if accumulated_text:
+                    accumulated_text_ = "".join(accumulated_text)
+                    await azure_send_response_and_speech(
+                        accumulated_text_, "end", websocket
+                    )
+                    await asyncio.sleep(0)
+                break
+
+        messages.append({"role": "system", "content": response_text})
+
+        return response_text
+
+    except Exception as e:
+        error_message = "Oops, it looks like we encountered some sensitive content, so we've removed this message. I'm sorry for that!"
+        await azure_send_response_and_speech(error_message, "end", websocket)
+        await asyncio.sleep(0)
+        messages.pop()
+
+        return None
 
 
 async def get_deepgram_transcript(
@@ -332,32 +340,51 @@ async def get_deepgram_transcript(
         return
 
 
-def interruption_detection(words: list, ai_speaker_id: str = 1):
-    interrupt_words = ""
-    for word in words:
-        if word.speaker != ai_speaker_id:
-            print(word)
-
-
 class ConversationManager:
-    def __init__(instance):
-        instance.client_transcription = ""
-        instance.is_replying = False
+    def __init__(self):
+        self.client_transcription = ""
+        self.is_replying = False
 
     async def get_transcript(
-        instance,
+        self,
         data_stream: asyncio.Queue,
         transcription_complete: asyncio.Event,
     ):
         def handle_utterance(utterance):
-            instance.client_transcription = utterance
+            self.client_transcription = utterance
 
         await get_deepgram_transcript(
             handle_utterance, data_stream, transcription_complete
         )
 
+    async def timeout_check(
+        self,
+        websocket: WebSocket,
+        transcription_complete: asyncio.Event,
+        timeout: int = 15,
+    ):
+        try:
+            await asyncio.sleep(timeout - 5)
+            if not transcription_complete.is_set() and self.client_transcription == "":
+                print("hahahahahah")
+                json_data = json.dumps(
+                    {
+                        "type": "warning",  # Specify the type of message
+                        "audio_data": None,
+                        "text_data": "Reminder: No transcription detected, disconnecting in 5 seconds...",
+                        "boundary": None,  # Use the boundary parameter instead of sentence
+                        "task_id": None,
+                    }
+                )
+            await websocket.send_text(json_data)
+            await asyncio.sleep(5)
+            if not transcription_complete.is_set() and self.client_transcription == "":
+                transcription_complete.set()
+        except asyncio.CancelledError:
+            return
+
     async def main(
-        instance,
+        self,
         websocket: WebSocket,
         data_stream: asyncio.Queue,
         user_id: str,
@@ -365,10 +392,10 @@ class ConversationManager:
         messages: list,
     ):
         while True:
-            if not instance.is_replying:
+            if not self.is_replying:
                 transcription_complete = asyncio.Event()
                 transcription_task = asyncio.create_task(
-                    instance.get_transcript(data_stream, transcription_complete)
+                    self.get_transcript(data_stream, transcription_complete)
                 )
 
                 # ! if the client is palying audio, cancel the transcription task
@@ -378,6 +405,11 @@ class ConversationManager:
 
                 # bytes to json, add additional info (is_playing)
 
+                print("Create timeout task")
+                timeout_task = asyncio.create_task(
+                    self.timeout_check(websocket, transcription_complete, timeout=10)
+                )
+
                 while not transcription_complete.is_set():
                     message = await websocket.receive()
                     if message["type"] == "websocket.receive":
@@ -385,7 +417,6 @@ class ConversationManager:
                             print("message++++", message)
                             try:
                                 data = json.loads(message["text"])
-                                # data.get("is_replying")
                             except json.JSONDecodeError:
                                 print("Received invalid JSON")
                         elif "bytes" in message:
@@ -393,19 +424,28 @@ class ConversationManager:
                             await data_stream.put(data)
 
                 transcription_task.cancel()
+                timeout_task.cancel()
 
-                print(instance.client_transcription)
+                if not self.client_transcription:
+                    # await websocket.send_text(
+                    #     "No transcription detected, disconnecting..."
+                    # )
+                    await websocket.close()
+                    break
 
-                instance.is_replying = True
+                self.is_replying = True
                 asyncio.create_task(
                     speech_stream_response(
-                        instance.client_transcription, websocket, messages
+                        self.client_transcription, websocket, messages
                     )
                 )
+
+                self.client_transcription = ""
+
             else:
                 print("is replying")
-                transcription_complete.set()
-                transcription_task.cancel()
+                # transcription_complete.set()
+                # transcription_task.cancel()
                 # do other process + interrupt detection (no deepgram)
                 message = await websocket.receive()
                 if message["type"] == "websocket.receive":
@@ -416,7 +456,7 @@ class ConversationManager:
                         try:
                             data = json.loads(message["text"])
                             if data.get("is_replying") == False:
-                                instance.is_replying = False
+                                self.is_replying = False
                                 transcript_collector.reset()
                         except json.JSONDecodeError:
                             print("Received invalid JSON")
