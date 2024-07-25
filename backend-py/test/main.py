@@ -27,7 +27,7 @@ class AudioClient:
         self.token = token
         self.uri = uri
         self.p = pyaudio.PyAudio()
-        self.audio_queue = asyncio.Queue(maxsize=50)  # Buffer for audio chunks
+        self.audio_queue = asyncio.Queue(maxsize=20)  # Buffer for audio chunks
         self.stream_in = self.p.open(
             format=FORMAT,
             channels=CHANNELS,
@@ -88,6 +88,8 @@ class AudioClient:
         try:
             while True:
                 recv = await self.websocket.recv()
+                # print(recv)
+
                 data = json.loads(recv)
 
                 if data["type"] == "response":
@@ -101,34 +103,17 @@ class AudioClient:
                     )
 
                     if data["boundary"] == "end":
-                        await asyncio.sleep(playback_duration + 0.01)
+                        await asyncio.sleep(playback_duration + 0.1)
                         await self.websocket.send(
-                            json.dumps({"message": "", "is_replying": False})
+                            json.dumps({"speaker": "user", "is_replying": False})
                         )
                     elif data["boundary"] == "start":
                         await asyncio.sleep(playback_duration + 0.01)
                         await self.websocket.send(
-                            json.dumps({"message": "", "is_replying": True})
+                            json.dumps({"speaker": "user", "is_replying": True})
                         )
                     # else:
                     #     pass
-
-                # if isinstance(recv, bytes):
-                #     # print(f"Received {len(recv)} bytes")
-                #     await self.loop.run_in_executor(
-                #         self.executor, self.stream_out.write, recv
-                #     )
-                #     chunk_duration = len(recv) / (RATE * CHANNELS * 2)
-                #     self.playback_duration = chunk_duration
-                #     print("chunk_duration", chunk_duration)
-                # else:
-                #     data = json.loads(recv)
-                #     print(f"Received: {data}")
-                #     if data.get("is_replying") is False:
-                #         await asyncio.sleep(self.playback_duration + 0.1)
-                #         await self.websocket.send(
-                #             json.dumps({"message": "", "is_replying": False})
-                #         )
         except Exception as e:
             print(f"Error in receive_and_play_audio: {e}")
 
