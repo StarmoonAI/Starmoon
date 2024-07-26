@@ -80,7 +80,7 @@ class AudioClient:
                 data = await self.audio_queue.get()
                 async with self.send_lock:
                     await self.websocket.send(data)
-                print(f"Sent {len(data)} bytes")
+                # print(f"Sent {len(data)} bytes")
         except Exception as e:
             print(f"Error in send_audio: {e}")
 

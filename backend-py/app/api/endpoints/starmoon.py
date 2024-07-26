@@ -12,7 +12,7 @@ import numpy as np
 import openai
 import requests
 import torch
-from app.celery.tasks import emotion_detction
+from app.celery.tasks import emotion_detection
 
 # from app.celery.tasks import speech_stream_response_task
 from app.core.auth import authenticate_user, validate_db
@@ -105,7 +105,6 @@ class TranscriptCollector:
 
 transcript_collector = TranscriptCollector()
 manager = ConnectionManager()
-is_finals = []
 
 
 def azure_voice_systhesizer(
@@ -186,9 +185,9 @@ async def azure_send_response_and_speech(
     await websocket.send_text(json_data)
 
 
-def create_emotion_detction_task(utterance: str):
+def create_emotion_detection_task(utterance: str):
     # send utterance to celery task
-    celery_task = emotion_detction.delay(utterance)
+    celery_task = emotion_detection.delay(utterance)
     task_id = celery_task.id
 
     return task_id
@@ -214,10 +213,26 @@ async def check_task_result(task_id, websocket):
     )
 
 
+def split_sentences(text, min_length=30):
+    sentences = re.split(r"(?<=[.。!?])\s+", text)
+    result = []
+    current = ""
+    for sentence in sentences:
+        if len(current) + len(sentence) < min_length:
+            current += " " + sentence if current else sentence
+        else:
+            if current:
+                result.append(current)
+            current = sentence
+    if current:
+        result.append(current)
+    return result
+
+
 async def speech_stream_response(utterance: str, websocket: WebSocket, messages: list):
     try:
         # send utterance to celery task
-        task_id_input = create_emotion_detction_task(utterance)
+        task_id_input = create_emotion_detection_task(utterance)
         # Send the utterance to client
         await websocket.send_text(
             json.dumps(
@@ -251,13 +266,14 @@ async def speech_stream_response(utterance: str, websocket: WebSocket, messages:
                 accumulated_text.append(chunk_text)
                 response_text += chunk_text
                 # TODO: store and update response_text in the database
+                # sentences = split_sentences("".join(accumulated_text))
                 sentences = re.split(r"(?<=[.。!?])\s+", "".join(accumulated_text))
 
                 # send the first sentence to the client
                 if len(sentences) > 1:
                     for sentence in sentences[:-1]:
                         boundary = "start" if is_first_chunk else "mid"
-                        task_id = create_emotion_detction_task(sentence)
+                        task_id = create_emotion_detection_task(sentence)
                         await azure_send_response_and_speech(
                             sentence, boundary, websocket, task_id
                         )
@@ -276,7 +292,7 @@ async def speech_stream_response(utterance: str, websocket: WebSocket, messages:
                 # Process any remaining text
                 if accumulated_text:
                     accumulated_text_ = "".join(accumulated_text)
-                    task_id = create_emotion_detction_task(accumulated_text_)
+                    task_id = create_emotion_detection_task(accumulated_text_)
                     await azure_send_response_and_speech(
                         accumulated_text_, "end", websocket, task_id
                     )
@@ -292,7 +308,7 @@ async def speech_stream_response(utterance: str, websocket: WebSocket, messages:
         print(f"Error in speech_stream_response: {e}")
 
         error_message = "Oops, it looks like we encountered some sensitive content, so we've removed this message. I'm sorry for that!"
-        task_id = create_emotion_detction_task(error_message)
+        task_id = create_emotion_detection_task(error_message)
         await azure_send_response_and_speech(error_message, "end", websocket, task_id)
         await asyncio.sleep(0)
         asyncio.create_task(check_task_result(task_id, websocket))
@@ -306,8 +322,9 @@ async def get_deepgram_transcript(
 ):
     try:
         # example of setting up a client config. logging values: WARNING, VERBOSE, DEBUG, SPAM
-        config = DeepgramClientOptions(options={"keepalive": "false"})
-        deepgram = DeepgramClient(os.getenv("DG_API_KEY"), config)
+        # config = DeepgramClientOptions(options={"keepalive": "false"})
+        # deepgram = DeepgramClient(os.getenv("DG_API_KEY"), config)
+        deepgram = DeepgramClient(os.getenv("DG_API_KEY"))
         dg_connection = deepgram.listen.asynclive.v("1")
         # print("Listening...")
 
@@ -415,20 +432,20 @@ class ConversationManager:
         timeout: int = 15,
     ):
         try:
-            await asyncio.sleep(timeout - 5)
+            await asyncio.sleep(timeout - 10)
             if not transcription_complete.is_set() and self.client_transcription == "":
-                print("hahahahahah")
+                print("This connection will be closed in 10 seconds...")
                 json_data = json.dumps(
                     {
                         "type": "warning",  # Specify the type of message
                         "audio_data": None,
-                        "text_data": "Reminder: No transcription detected, disconnecting in 5 seconds...",
+                        "text_data": "Reminder: No transcription detected, disconnecting in 10 seconds...",
                         "boundary": None,  # Use the boundary parameter instead of sentence
                         "task_id": None,
                     }
                 )
             await websocket.send_text(json_data)
-            await asyncio.sleep(5)
+            await asyncio.sleep(10)
             if not transcription_complete.is_set() and self.client_transcription == "":
                 transcription_complete.set()
         except asyncio.CancelledError:
@@ -450,7 +467,7 @@ class ConversationManager:
                 )
 
                 timeout_task = asyncio.create_task(
-                    self.timeout_check(websocket, transcription_complete, timeout=10)
+                    self.timeout_check(websocket, transcription_complete, timeout=20)
                 )
 
                 while not transcription_complete.is_set():
@@ -489,8 +506,8 @@ class ConversationManager:
 
             else:
                 print("is replying")
-                # transcription_complete.set()
-                # transcription_task.cancel()
+                transcription_complete.set()
+                transcription_task.cancel()
                 # do other process + interrupt detection (no deepgram)
                 message = await websocket.receive()
                 if message["type"] == "websocket.receive":

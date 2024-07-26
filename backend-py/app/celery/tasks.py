@@ -2,15 +2,13 @@ import asyncio
 import os
 from datetime import datetime
 
-import emoji
+import requests
 from app.celery.worker import celery_app
 from app.services.clients import Clients
 from deepgram import AnalyzeOptions, DeepgramClient, TextSource
 from dotenv import load_dotenv
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 load_dotenv()
-
 deepgram = DeepgramClient(os.getenv("DG_API_KEY"))
 client = Clients()
 
@@ -38,8 +36,14 @@ def print_current_time(utterance: str, messages: list):
 
 
 @celery_app.task(name="app.celery.tasks.emotion_detection")
-def emotion_detction(utterance: str):
-    return f"Processed transcription: {utterance}"
+def emotion_detection(utterance: str):
+    API_URL = "https://api-inference.huggingface.co/models/j-hartmann/emotion-english-distilroberta-base"
+    token = os.getenv("HF_ACCESS_TOKEN")
+    headers = {"Authorization": f"Bearer {token}"}
+
+    response = requests.post(API_URL, headers=headers, json={"inputs": utterance})
+
+    return response.json()
 
 
 # @celery_app.task(name="app.celery.tasks.speech_stream_response_task")

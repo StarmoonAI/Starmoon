@@ -4,7 +4,7 @@ import os
 from signal import SIGINT, SIGTERM
 from typing import Union
 
-from app.api.endpoints import analyze_text, db_user, speech2text, starmoon
+from app.api.endpoints import analyze_text, db_user, starmoon
 from app.core.config import settings
 from deepgram.utils import verboselogs
 from dotenv import load_dotenv
@@ -33,7 +33,6 @@ app = FastAPI()
 # print(settings.silero_vad_utils)
 app.include_router(analyze_text.router, prefix="/api", tags=["LLM response"])
 app.include_router(db_user.router, prefix="/api", tags=["User"])
-app.include_router(speech2text.router, tags=["Audio WebSocket"])
 # app.include_router(tts.router, tags=["TTS WebSocket"])
 app.include_router(starmoon.router, tags=["StarMoon WebSocket"])
 

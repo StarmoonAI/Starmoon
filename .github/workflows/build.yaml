@@ -69,6 +69,7 @@ jobs:
                   SUPABASE_JWT_SECRET=${{ secrets.SUPABASE_JWT_SECRET }}
                   DG_API_KEY=${{ secrets.DG_API_KEY }}
                   SECRET_KEY=${{ secrets.SECRET_KEY }}
+                  HF_ACCESS_TOKEN=${{ secrets.HF_ACCESS_TOKEN }}
                   EOF
                   kubectl create secret generic fastapi-prod-env --from-env-file=./.env.prod
             - name: Refresh k8s deployment
