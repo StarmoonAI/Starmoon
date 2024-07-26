@@ -112,6 +112,13 @@ class AudioClient:
                         await self.websocket.send(
                             json.dumps({"speaker": "user", "is_replying": True})
                         )
+
+                elif data["type"] == "input":
+                    print(Fore.GREEN + data["task_id"])
+
+                elif data["type"] == "task":
+                    print(Fore.BLUE + data["task_id"])
+
                 elif data["type"] == "warning":
                     print(Fore.RED + data["text_data"])
                     # else:

@@ -1,13 +1,18 @@
+import asyncio
 import os
 from datetime import datetime
 
+import emoji
 from app.celery.worker import celery_app
+from app.services.clients import Clients
 from deepgram import AnalyzeOptions, DeepgramClient, TextSource
 from dotenv import load_dotenv
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 load_dotenv()
 
 deepgram = DeepgramClient(os.getenv("DG_API_KEY"))
+client = Clients()
 
 
 @celery_app.task(name="app.celery.tasks.analyze_text_task")
@@ -28,5 +33,36 @@ def analyze_text_task(utterance: str, transcription_id: str):
 
 # This is the celery periodic task
 @celery_app.task
-def print_current_time():
+def print_current_time(utterance: str, messages: list):
     print(f"Current time: {datetime.now()}")
+
+
+@celery_app.task(name="app.celery.tasks.emotion_detection")
+def emotion_detction(utterance: str):
+    return f"Processed transcription: {utterance}"
+
+
+# @celery_app.task(name="app.celery.tasks.speech_stream_response_task")
+# def speech_stream_response_task(utterance: str, websocket: WebSocket, messages: list):
+#     print("speech_stream_response_task")
+
+
+# @celery_app.task(name="app.celery.tasks.voice_response")
+# async def speech_stream_response_task(utterance: str, messages: list):
+#     messages.append({"role": "user", "content": utterance})
+
+#     completion = client.client_azure_4o.chat.completions.create(
+#         model="gpt-4o",
+#         messages=messages,
+#         stream=True,
+#     )
+#     accumulated_text = []
+#     response_text = ""
+#     previous_sentence = utterance
+#     is_first_chunk = True
+
+#     for chunk in completion:
+#         if chunk.choices and chunk.choices[0].delta.content:
+#             chunk_text = emoji.replace_emoji(chunk.choices[0].delta.content, replace="")
+#             asyncio.sleep(3)
+#             print("hahah")

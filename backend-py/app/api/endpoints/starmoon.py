@@ -5,7 +5,6 @@ import os
 import re
 import time
 import uuid
-from signal import SIGINT, SIGTERM
 
 import azure.cognitiveservices.speech as speechsdk
 import emoji
@@ -13,6 +12,7 @@ import numpy as np
 import openai
 import requests
 import torch
+from app.celery.tasks import emotion_detction
 
 # from app.celery.tasks import speech_stream_response_task
 from app.core.auth import authenticate_user, validate_db
@@ -36,7 +36,6 @@ from deepgram import (
 )
 from dotenv import load_dotenv
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
-from networkx import boundary_expansion
 
 torch.set_num_threads(1)
 load_dotenv()
@@ -149,7 +148,7 @@ def azure_speech_response(ssml: str, websocket: WebSocket):
 
 
 async def azure_send_response_and_speech(
-    sentence: str, boundary: str, websocket: WebSocket
+    sentence: str, boundary: str, websocket: WebSocket, task_id: str
 ):
     # print("sentence+++", sentence)
     # combined_sentences = (
@@ -179,7 +178,7 @@ async def azure_send_response_and_speech(
             "audio_data": audio_data_base64,
             "text_data": sentence,
             "boundary": boundary,  # Use the boundary parameter instead of sentence
-            "task_id": "123",
+            "task_id": task_id,
         }
     )
 
@@ -187,8 +186,52 @@ async def azure_send_response_and_speech(
     await websocket.send_text(json_data)
 
 
+def create_emotion_detction_task(utterance: str):
+    # send utterance to celery task
+    celery_task = emotion_detction.delay(utterance)
+    task_id = celery_task.id
+
+    return task_id
+
+
+async def check_task_result(task_id, websocket):
+    celery_task = AsyncResult(task_id)
+
+    while not celery_task.ready():
+        await asyncio.sleep(0.5)  # Wait for 0.5 second before checking again
+    result = celery_task.result
+
+    await websocket.send_text(
+        json.dumps(
+            {
+                "type": "task",
+                "audio_data": None,
+                "text_data": result,
+                "boundary": None,
+                "task_id": task_id,
+            }
+        )
+    )
+
+
 async def speech_stream_response(utterance: str, websocket: WebSocket, messages: list):
     try:
+        # send utterance to celery task
+        task_id_input = create_emotion_detction_task(utterance)
+        # Send the utterance to client
+        await websocket.send_text(
+            json.dumps(
+                {
+                    "type": "input",
+                    "audio_data": None,
+                    "text_data": utterance,
+                    "boundary": None,
+                    "task_id": task_id_input,
+                }
+            )
+        )
+        asyncio.create_task(check_task_result(task_id_input, websocket))
+
         messages.append({"role": "user", "content": utterance})
         completion = client.client_azure_4o.chat.completions.create(
             model="gpt-4o",
@@ -214,10 +257,12 @@ async def speech_stream_response(utterance: str, websocket: WebSocket, messages:
                 if len(sentences) > 1:
                     for sentence in sentences[:-1]:
                         boundary = "start" if is_first_chunk else "mid"
+                        task_id = create_emotion_detction_task(sentence)
                         await azure_send_response_and_speech(
-                            sentence, boundary, websocket
+                            sentence, boundary, websocket, task_id
                         )
                         await asyncio.sleep(0)
+                        asyncio.create_task(check_task_result(task_id, websocket))
 
                     accumulated_text = [sentences[-1]]
 
@@ -231,10 +276,12 @@ async def speech_stream_response(utterance: str, websocket: WebSocket, messages:
                 # Process any remaining text
                 if accumulated_text:
                     accumulated_text_ = "".join(accumulated_text)
+                    task_id = create_emotion_detction_task(accumulated_text_)
                     await azure_send_response_and_speech(
-                        accumulated_text_, "end", websocket
+                        accumulated_text_, "end", websocket, task_id
                     )
                     await asyncio.sleep(0)
+                    asyncio.create_task(check_task_result(task_id, websocket))
                 break
 
         messages.append({"role": "system", "content": response_text})
@@ -242,9 +289,13 @@ async def speech_stream_response(utterance: str, websocket: WebSocket, messages:
         return response_text
 
     except Exception as e:
+        print(f"Error in speech_stream_response: {e}")
+
         error_message = "Oops, it looks like we encountered some sensitive content, so we've removed this message. I'm sorry for that!"
-        await azure_send_response_and_speech(error_message, "end", websocket)
+        task_id = create_emotion_detction_task(error_message)
+        await azure_send_response_and_speech(error_message, "end", websocket, task_id)
         await asyncio.sleep(0)
+        asyncio.create_task(check_task_result(task_id, websocket))
         messages.pop()
 
         return None
@@ -274,7 +325,7 @@ async def get_deepgram_transcript(
                 if result.speech_final:
                     utterance = transcript_collector.get_full_transcript()
                     utterance = utterance.strip()
-                    # print("utterance---", utterance)
+                    print("utterance---", utterance)
                     callback(utterance)
                     transcript_collector.reset()
                     transcription_complete.set()
@@ -398,14 +449,6 @@ class ConversationManager:
                     self.get_transcript(data_stream, transcription_complete)
                 )
 
-                # ! if the client is palying audio, cancel the transcription task
-                # transcription_complete.set()
-                # transcription_task.cancel()
-                # break
-
-                # bytes to json, add additional info (is_playing)
-
-                print("Create timeout task")
                 timeout_task = asyncio.create_task(
                     self.timeout_check(websocket, transcription_complete, timeout=10)
                 )
@@ -434,6 +477,8 @@ class ConversationManager:
                     break
 
                 self.is_replying = True
+
+                # get the return of create_task and send celery task
                 asyncio.create_task(
                     speech_stream_response(
                         self.client_transcription, websocket, messages
