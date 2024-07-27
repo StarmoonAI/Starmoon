@@ -197,7 +197,7 @@ async def check_task_result(task_id, websocket):
     celery_task = AsyncResult(task_id)
 
     while not celery_task.ready():
-        await asyncio.sleep(0.5)  # Wait for 0.5 second before checking again
+        await asyncio.sleep(1)  # Wait for 1 second before checking again
     result = celery_task.result
 
     await websocket.send_text(
@@ -229,7 +229,9 @@ def split_sentences(text, min_length=30):
     return result
 
 
-async def speech_stream_response(utterance: str, websocket: WebSocket, messages: list):
+async def speech_stream_response(
+    previous_sentence: str, utterance: str, websocket: WebSocket, messages: list
+):
     try:
         # send utterance to celery task
         task_id_input = create_emotion_detection_task(utterance)
@@ -256,6 +258,7 @@ async def speech_stream_response(utterance: str, websocket: WebSocket, messages:
         accumulated_text = []
         response_text = ""
         is_first_chunk = True
+        previous_sentence = utterance
 
         for chunk in completion:
             if chunk.choices and chunk.choices[0].delta.content:
@@ -273,12 +276,15 @@ async def speech_stream_response(utterance: str, websocket: WebSocket, messages:
                 if len(sentences) > 1:
                     for sentence in sentences[:-1]:
                         boundary = "start" if is_first_chunk else "mid"
-                        task_id = create_emotion_detection_task(sentence)
+                        task_id = create_emotion_detection_task(
+                            f"{previous_sentence}\n\n{sentence}"
+                        )
                         await azure_send_response_and_speech(
                             sentence, boundary, websocket, task_id
                         )
                         await asyncio.sleep(0)
                         asyncio.create_task(check_task_result(task_id, websocket))
+                        previous_sentence = sentence
 
                     accumulated_text = [sentences[-1]]
 
@@ -292,17 +298,20 @@ async def speech_stream_response(utterance: str, websocket: WebSocket, messages:
                 # Process any remaining text
                 if accumulated_text:
                     accumulated_text_ = "".join(accumulated_text)
-                    task_id = create_emotion_detection_task(accumulated_text_)
+                    task_id = create_emotion_detection_task(
+                        f"{previous_sentence}\n\n{accumulated_text_}"
+                    )
                     await azure_send_response_and_speech(
                         accumulated_text_, "end", websocket, task_id
                     )
                     await asyncio.sleep(0)
                     asyncio.create_task(check_task_result(task_id, websocket))
+                    previous_sentence = accumulated_text
                 break
 
         messages.append({"role": "system", "content": response_text})
 
-        return response_text
+        return previous_sentence
 
     except Exception as e:
         print(f"Error in speech_stream_response: {e}")
@@ -459,6 +468,7 @@ class ConversationManager:
         session_id: str,
         messages: list,
     ):
+        previous_sentence = None
         while True:
             if not self.is_replying:
                 transcription_complete = asyncio.Event()
@@ -496,11 +506,15 @@ class ConversationManager:
                 self.is_replying = True
 
                 # get the return of create_task and send celery task
-                asyncio.create_task(
+                to_speech_task = asyncio.create_task(
                     speech_stream_response(
-                        self.client_transcription, websocket, messages
+                        previous_sentence,
+                        self.client_transcription,
+                        websocket,
+                        messages,
                     )
                 )
+                previous_sentence = await to_speech_task
 
                 self.client_transcription = ""
 

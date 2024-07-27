@@ -36,12 +36,12 @@ def print_current_time(utterance: str, messages: list):
 
 
 @celery_app.task(name="app.celery.tasks.emotion_detection")
-def emotion_detection(utterance: str):
-    API_URL = "https://api-inference.huggingface.co/models/j-hartmann/emotion-english-distilroberta-base"
+def emotion_detection(text: str):
+    API_URL = "https://api-inference.huggingface.co/models/michellejieli/emotion_text_classifier"
     token = os.getenv("HF_ACCESS_TOKEN")
     headers = {"Authorization": f"Bearer {token}"}
 
-    response = requests.post(API_URL, headers=headers, json={"inputs": utterance})
+    response = requests.post(API_URL, headers=headers, json={"inputs": text})
 
     return response.json()
 
