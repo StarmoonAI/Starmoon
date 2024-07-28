@@ -57,7 +57,7 @@ async def authenticate_user(token: str = Depends(get_token_from_query)):
 #         expire = datetime.datetime.utcnow() + expires_delta
 #         to_encode.update({"exp": expire})
 
-#     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+#     encoded_jwt = jwt.encode(to_encode, secret_key, algorithm=ALGORITHM)
 #     return encoded_jwt
 
 
@@ -66,5 +66,5 @@ async def authenticate_user(token: str = Depends(get_token_from_query)):
 # user_id = "0079cee9-1820-4456-90a4-e8c25372fe29"
 # created_time = "2024-07-08T00:00:00.000Z"
 # data = {"email": email, "user_id": user_id, "created_time": created_time}
-# token = create_access_token(data=data)
+# token = create_access_token(data=data, expires_delta=datetime.timedelta(days=1))
 # print(f"AUTH_TOKEN: {token}")

@@ -1,0 +1,62 @@
+import asyncio
+import json
+import secrets
+import time
+
+from app.core.config import settings
+from app.models.text_analysis_output import TextAnalysisOutput
+from app.models.text_input import TextInput
+from app.services.llm_response import openai_response
+from fastapi import APIRouter, HTTPException
+from fastapi.responses import JSONResponse
+
+router = APIRouter()
+
+import datetime
+
+from jose import jwt
+
+# secret_key = secrets.token_urlsafe(32)
+# print("secret_key", secret_key)
+
+ALGORITHM = "HS256"
+
+
+def create_access_token(secret_key: str, data: dict, expire_days: int = None):
+    to_encode = data.copy()
+
+    if expire_days:
+        expire = datetime.datetime.utcnow() + datetime.timedelta(days=expire_days)
+        to_encode.update({"exp": expire})
+
+    encoded_jwt = jwt.encode(to_encode, secret_key, algorithm=ALGORITHM)
+    return encoded_jwt
+
+
+@router.post("/generate_client_token")
+async def generate_client_token(email: str, user_id: str, expire_days: int = None):
+
+    secret_key = settings.SECRET_KEY
+
+    payload = {
+        "email": email,
+        "user_id": user_id,
+        "created_time": datetime.datetime.utcnow(),
+    }
+    try:
+        token = create_access_token(
+            secret_key=secret_key, data=payload, expire_days=expire_days
+        )
+        return JSONResponse(content={"token": token})
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# # Usage:
+# email = "junruxiong@gmail.com"
+# user_id = "0079cee9-1820-4456-90a4-e8c25372fe29"
+# created_time = datetime.datetime.utcnow()
+# data = {"email": email, "user_id": user_id, "created_time": created_time}
+# token = create_access_token(data=data)
+# print(f"AUTH_TOKEN: {token}")
