@@ -4,7 +4,6 @@ from venv import create
 from app.core.config import settings
 from app.db.supabase import create_supabase_client
 from fastapi import Depends, FastAPI, HTTPException, WebSocket
-from fastapi.websockets import WebSocketDisconnect
 from jose import JWTError, jwt
 
 SECRET_KEY = settings.SECRET_KEY
