@@ -2,9 +2,7 @@
 
 ## Getting Started 🚀
 
-You can deploy Starmoon to Porter Cloud with one-click:
-
-If you would like to deploy locally, follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
+You can deploy Starmoon locally, follow these instructions to get a copy of the project up and running on your local machine for development and testing purposes.
 
 You can find everything on the [documentation](https://docs.starmoon.app/).
 
@@ -15,7 +13,7 @@ Ensure you have the following installed:
 - Docker
 - Docker Compose
 
-### 60 seconds Installation 💽
+### Quick Installation 💽
 
 You can find the installation video [here](https://www.youtube.com).
 
