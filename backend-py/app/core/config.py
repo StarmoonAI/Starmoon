@@ -41,8 +41,8 @@ silero_vad = torch.hub.load(
 class Settings(BaseSettings):
     # API_V1_STR: str = "/api/v1"
 
+    # App
     SECRET_KEY: str = os.getenv("SECRET_KEY", "")
-
     CELERY_BROKER_URL: str = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
     CELERY_RESULT_BACKEND: str = os.getenv(
         "CELERY_RESULT_BACKEND", "redis://localhost:6379/0"
@@ -55,22 +55,31 @@ class Settings(BaseSettings):
         },
     }
 
+    # LLM
     LLM_MODEL_NAME: str = Field(default_factory=lambda: os.getenv("LLM_MODEL_NAME", ""))
-
     AZURE_OPENAI_ENDPOINT: str = Field(
         default_factory=lambda: os.getenv("AZURE_OPENAI_ENDPOINT", "")
     )
     AZURE_OPENAI_API_KEY: str = Field(
         default_factory=lambda: os.getenv("AZURE_OPENAI_API_KEY", "")
     )
+
+    # STT
     DEEPGRAM_API_KEY: str = Field(default_factory=lambda: os.getenv("DG_API_KEY", ""))
 
+    # TTS
     MS_SPEECH_ENDPOINTY: str = Field(
         default_factory=lambda: os.getenv("MS_SPEECH_ENDPOINTY", "")
     )
     SPEECH_KEY: str = Field(default_factory=lambda: os.getenv("SPEECH_KEY", ""))
     SPEECH_REGION: str = Field(default_factory=lambda: os.getenv("SPEECH_REGION", ""))
 
+    # Analytics
+    HF_ACCESS_TOKEN: str = Field(
+        default_factory=lambda: os.getenv("HF_ACCESS_TOKEN", "")
+    )
+
+    # DB
     SUPABASE_URL: str = Field(default_factory=lambda: os.getenv("SUPABASE_URL", ""))
     SUPABASE_KEY: str = Field(default_factory=lambda: os.getenv("SUPABASE_KEY", ""))
     SERVICE_ROLE: str = Field(default_factory=lambda: os.getenv("SERVICE_ROLE", ""))
@@ -78,14 +87,16 @@ class Settings(BaseSettings):
         default_factory=lambda: os.getenv("SUPABASE_JWT_SECRET", "")
     )
 
+    # Voice processing
+    silero_vad_model: ClassVar = silero_vad[0]
+    silero_vad_utils: ClassVar = silero_vad[1]
+
+    # Others
     SERVER_HOST: AnyHttpUrl = "https://localhost"
     SERVER_PORT: int = 8000
     BACKEND_CORS_ORIGINS: list[AnyHttpUrl] = []
 
     PROJECT_NAME: str = "fastapi supabase"
-
-    silero_vad_model: ClassVar = silero_vad[0]
-    silero_vad_utils: ClassVar = silero_vad[1]
 
     Config: ClassVar[ConfigDict] = ConfigDict(arbitrary_types_allowed=True)
 

@@ -45,9 +45,9 @@ client = Clients()
     settings.silero_vad_utils
 )
 model = settings.silero_vad_model
-speech_config = SpeechConfig(
-    subscription="d9e1868008cf477eb9cad5ddca6e4994", region="eastus"
-)
+SPEECH_KEY = settings.SPEECH_KEY
+SPEECH_REGION = settings.SPEECH_REGION
+speech_config = SpeechConfig(subscription=SPEECH_KEY, region=SPEECH_REGION)
 speech_config.set_property(
     property_id=speechsdk.PropertyId.SpeechServiceResponse_RequestSentenceBoundary,
     value="true",
@@ -330,10 +330,10 @@ async def get_deepgram_transcript(
     callback, data_stream: asyncio.Queue, transcription_complete: asyncio.Event
 ):
     try:
-        # example of setting up a client config. logging values: WARNING, VERBOSE, DEBUG, SPAM
-        # config = DeepgramClientOptions(options={"keepalive": "false"})
-        # deepgram = DeepgramClient(os.getenv("DG_API_KEY"), config)
-        deepgram = DeepgramClient(os.getenv("DG_API_KEY"))
+        config = DeepgramClientOptions(options={"keepalive": "true"})
+        DEEPGRAM_API_KEY = settings.DEEPGRAM_API_KEY
+        deepgram = DeepgramClient(DEEPGRAM_API_KEY, config)
+        # deepgram = DeepgramClient(DG_API_KEY)
         dg_connection = deepgram.listen.asynclive.v("1")
         # print("Listening...")
 
@@ -477,7 +477,7 @@ class ConversationManager:
                 )
 
                 timeout_task = asyncio.create_task(
-                    self.timeout_check(websocket, transcription_complete, timeout=20)
+                    self.timeout_check(websocket, transcription_complete, timeout=30)
                 )
 
                 while not transcription_complete.is_set():

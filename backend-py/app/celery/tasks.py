@@ -4,12 +4,16 @@ from datetime import datetime
 
 import requests
 from app.celery.worker import celery_app
+from app.core.config import settings
 from app.services.clients import Clients
 from deepgram import AnalyzeOptions, DeepgramClient, TextSource
-from dotenv import load_dotenv
 
-load_dotenv()
-deepgram = DeepgramClient(os.getenv("DG_API_KEY"))
+# from dotenv import load_dotenv
+
+# load_dotenv()
+
+DEEPGRAM_API_KEY = settings.DEEPGRAM_API_KEY
+deepgram = DeepgramClient(DEEPGRAM_API_KEY)
 client = Clients()
 
 
@@ -38,7 +42,7 @@ def print_current_time(utterance: str, messages: list):
 @celery_app.task(name="app.celery.tasks.emotion_detection")
 def emotion_detection(text: str):
     API_URL = "https://api-inference.huggingface.co/models/michellejieli/emotion_text_classifier"
-    token = os.getenv("HF_ACCESS_TOKEN")
+    token = settings.HF_ACCESS_TOKEN
     headers = {"Authorization": f"Bearer {token}"}
 
     response = requests.post(API_URL, headers=headers, json={"inputs": text})

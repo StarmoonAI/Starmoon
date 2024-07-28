@@ -103,12 +103,12 @@ class AudioClient:
                     )
 
                     if data["boundary"] == "end":
-                        await asyncio.sleep(playback_duration + 0.1)
+                        # await asyncio.sleep(playback_duration + 0.01)
                         await self.websocket.send(
                             json.dumps({"speaker": "user", "is_replying": False})
                         )
                     elif data["boundary"] == "start":
-                        await asyncio.sleep(playback_duration)
+                        # await asyncio.sleep(playback_duration)
                         await self.websocket.send(
                             json.dumps({"speaker": "user", "is_replying": True})
                         )
