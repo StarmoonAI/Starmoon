@@ -29,8 +29,7 @@ app = FastAPI()
 #     allow_headers=["*"],
 # )
 
-# print(settings.silero_vad_model)
-# print(settings.silero_vad_utils)
+
 app.include_router(analyze_text.router, prefix="/api", tags=["LLM response"])
 app.include_router(db_user.router, prefix="/api", tags=["User"])
 app.include_router(generat_token.router, prefix="/api", tags=["Token"])

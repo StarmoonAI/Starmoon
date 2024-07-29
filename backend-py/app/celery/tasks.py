@@ -47,7 +47,11 @@ def emotion_detection(text: str):
 
     response = requests.post(API_URL, headers=headers, json={"inputs": text})
 
-    return response.json()
+    res = response.json()
+
+    converted_data = {"scores": {item["label"]: item["score"] for item in res[0]}}
+
+    return converted_data
 
 
 # @celery_app.task(name="app.celery.tasks.speech_stream_response_task")

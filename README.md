@@ -44,7 +44,7 @@ You can find the installation video [here](https://www.youtube.com).
   vim .env # or emacs or vscode or nano
   ```
 
-  Update **OPENAI_API_KEY** in the `.env` file.
+  Update **OPENAI_API_KEY** and **DG_API_KEY** in the `.env` file.
 
   You just need to update the `OPENAI_API_KEY` variable in the `.env` file. You can get your API key [here](https://platform.openai.com/api-keys). You need to create an account first. And put your credit card information. Don't worry, you won't be charged unless you use the API. You can find more information about the pricing [here](https://openai.com/pricing/).
 

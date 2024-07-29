@@ -197,7 +197,7 @@ async def check_task_result(task_id, websocket):
     celery_task = AsyncResult(task_id)
 
     while not celery_task.ready():
-        await asyncio.sleep(1)  # Wait for 1 second before checking again
+        await asyncio.sleep(0.5)  # Wait for 1 second before checking again
     result = celery_task.result
 
     await websocket.send_text(
@@ -333,7 +333,7 @@ async def get_deepgram_transcript(
         config = DeepgramClientOptions(options={"keepalive": "true"})
         DEEPGRAM_API_KEY = settings.DEEPGRAM_API_KEY
         deepgram = DeepgramClient(DEEPGRAM_API_KEY, config)
-        # deepgram = DeepgramClient(DG_API_KEY)
+        deepgram = DeepgramClient(os.getenv("DG_API_KEY"))
         dg_connection = deepgram.listen.asynclive.v("1")
         # print("Listening...")
 
