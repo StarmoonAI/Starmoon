@@ -80,7 +80,7 @@ class AudioClient:
                 data = await self.audio_queue.get()
                 async with self.send_lock:
                     await self.websocket.send(data)
-                print(f"Sent {len(data)} bytes")
+                # print(f"Sent {len(data)} bytes")
         except Exception as e:
             print(f"Error in send_audio: {e}")
 
@@ -103,15 +103,22 @@ class AudioClient:
                     )
 
                     if data["boundary"] == "end":
-                        await asyncio.sleep(playback_duration + 0.1)
+                        # await asyncio.sleep(playback_duration + 0.01)
                         await self.websocket.send(
                             json.dumps({"speaker": "user", "is_replying": False})
                         )
                     elif data["boundary"] == "start":
-                        await asyncio.sleep(playback_duration + 0.01)
+                        # await asyncio.sleep(playback_duration)
                         await self.websocket.send(
                             json.dumps({"speaker": "user", "is_replying": True})
                         )
+
+                elif data["type"] == "input":
+                    print(Fore.GREEN + data["task_id"])
+
+                elif data["type"] == "task":
+                    print(Fore.BLUE + data["task_id"])
+
                 elif data["type"] == "warning":
                     print(Fore.RED + data["text_data"])
                     # else:

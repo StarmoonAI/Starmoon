@@ -1,11 +1,14 @@
 import os
 
 import azure.cognitiveservices.speech as speechsdk
+from app.core.config import settings
 
 # ! config
-speech_config = speechsdk.SpeechConfig(
-    subscription="d9e1868008cf477eb9cad5ddca6e4994", region="eastus"
-)
+
+SPEECH_KEY = settings.SPEECH_KEY
+SPEECH_REGION = settings.SPEECH_REGION
+
+speech_config = speechsdk.SpeechConfig(subscription=SPEECH_KEY, region=SPEECH_REGION)
 audio_config = speechsdk.audio.AudioOutputConfig(use_default_speaker=True)
 
 
