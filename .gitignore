@@ -1,0 +1,12 @@
+.DS_Store
+.history
+.vscode
+__pycache__
+.pylintrc
+.flake8
+.prettierrc.json
+backend-py-deprecated
+backend-py-deprecated2
+frontend-ts-deprecated
+.prettierrc
+archive

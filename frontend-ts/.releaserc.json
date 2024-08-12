@@ -1,0 +1,34 @@
+{
+  "branches": [
+    { "name": "main" },
+    { "name": "next", "channel": "next", "prerelease": true },
+    { "name": "rc", "channel": "rc", "prerelease": true },
+    { "name": "beta", "channel": "beta", "prerelease": true },
+    { "name": "alpha", "channel": "alpha", "prerelease": true }
+  ],
+  "tagFormat": "${version}",
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    [
+      "@semantic-release/npm",
+      {
+        "npmPublish": false
+      }
+    ],
+    [
+      "@semantic-release/changelog",
+      {
+        "changelogFile": "CHANGELOG.md",
+        "changelogTitle": "Change Log"
+      }
+    ],
+    [
+      "@semantic-release/git",
+      {
+        "assets": ["package.json", "CHANGELOG.md"]
+      }
+    ],
+    "@semantic-release/github"
+  ]
+}
