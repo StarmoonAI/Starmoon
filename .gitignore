@@ -5,9 +5,6 @@ __pycache__
 .pylintrc
 .flake8
 .prettierrc.json
-backend-py-deprecated
-backend-py-deprecated2
-frontend-ts-deprecated
 .prettierrc
-archive
 frontend_auth
+.env

@@ -131,7 +131,7 @@ export default async function Login({ searchParams }: LoginProps) {
         <CardContent className="grid gap-4">
           {/* <ToyPreview /> */}
 
-          {process.env.NEXT_PUBLIC_ENV !== "local" && (
+          {process.env.NEXT_PUBLIC_REDIRECT_URL && (
             <GoogleLoginButton toy_id={toy_id} />
           )}
 
