@@ -17,67 +17,69 @@ Before you begin, ensure you have the following:
 
 - Install Supabase CLI to your machine
 
-```bash
-# for macOS
-brew install supabase/tap/supabase
-# for Windows
-scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
-scoop install supabase
-# for Linux
-brew install supabase/tap/supabase
-```
+    ```bash
+    # for macOS
+    brew install supabase/tap/supabase
+    # for Windows
+    scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
+    scoop install supabase
+    # for Linux
+    brew install supabase/tap/supabase
+    ```
 
 ## Setting Up Supabase
 
 ### 1. Create a Hosted Supabase project
 
-- Login and create a Supabase project and follow its instructions
+- Login and create a hosted Supabase project and follow the instructions
 
-```bash
-supabase login
-```
+    ```bash
+    supabase login
+    ```
 
-```bash
-supabase projects create <your-project-name>
-```
+    ```bash
+    supabase projects create <your-project-name>
+    ```
 
-- After creating an instance, you will see this link in the terminal `https://supabase.com/dashboard/project/<project-id>` and remember your `<project-id>`.
+    After creating an instance, you will see this link in the terminal `https://supabase.com/dashboard/project/<project-id>` and remember your `<project-id>`.
 
-- Go to `https://supabase.com/dashboard/project/<replace-project-id>/settings/api` and set up `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in your `.env` file.
+- Link your hosted Supabase
 
-### 2. Start the Supabase CLI
+    ```bash
+    supabase link --project-ref <project-id>
+    # You can get <project-id> from your project's dashboard URL: https://supabase.com/dashboard/project/<project-id>
+    ```
 
-To start, initialize a new Supabase project:
+- Go to `https://supabase.com/dashboard/project/<replace-project-id>/settings/api` to set up `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` and `JWT_SECRET_KEY` in your `.env` file.
 
-```bash
-supabase start
-```
+### 2. Apply migration through Supabase CLI
 
-```bash
-supabase db reset
-```
+- Start the Supabase stack
 
-### 3. Sync schema to Hosted Supabase
+    ```bash
+    supabase start
+    ```
 
-- Link your local Supabase to a hosted Supabase:
+- Apply the migration
 
-```bash
-supabase link --project-ref <project-id>
-# You can get <project-id> from your project's dashboard URL: https://supabase.com/dashboard/project/<project-id>
-```
+    ```bash
+    supabase db reset
+    ```
 
-- Deploy your local Supabase to a hosted Supabase:
+### 3. Push migration to Hosted Supabase
 
-```bash
-supabase db push --linked
-```
+- Deploy your Supabase CLI instance to a hosted Supabase:
 
-- After you deployed to a hosted Supabase, you can stop the local Supabase instance to release resources:
+    ```bash
+    supabase db push --linked
+    ```
 
-```bash
-supabase stop
-```
+- After you deployed to a hosted Supabase, you can stop the local Supabase CLI instance to release resources:
+
+    ```bash
+    supabase stop
+    ```
 
 ## Conclusion
 
-By following these steps, you can successfully configure Supabase in Starmoon, making use of its powerful database and backend services to enhance your project.
+By following these steps, you can successfully configure Supabase in Starmoon, making use of its powerful database service to enhance your project.
