@@ -10,3 +10,4 @@ backend-py-deprecated2
 frontend-ts-deprecated
 .prettierrc
 archive
+frontend_auth

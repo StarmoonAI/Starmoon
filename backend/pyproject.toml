@@ -1,0 +1,40 @@
+[tool.poetry]
+name = "backend"
+version = "0.1.0"
+description = ""
+authors = ["Joey Xiong <junruxiong@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.10,<3.12"
+python-dotenv = "^1.0.1"
+pyaudio = "^0.2.14"
+aiohttp = "^3.9.5"
+websockets = "^12.0"
+pydub = "^0.25.1"
+pydantic-settings = "^2.3.4"
+fastapi = "^0.111.0"
+uvicorn = "^0.30.1"
+httpx = "^0.27.0"
+ffmpeg = "^1.4"
+celery = "^5.4.0"
+redis = "^5.0.7"
+flower = "^2.0.1"
+python-jose = "^3.3.0"
+supabase = "^2.5.1"
+openai = "^1.40.3"
+anthropic = "^0.28.0"
+pytest = "^8.2.2"
+transformers = "4.38.2"
+deepgram-sdk = "^3.3.1"
+azure-cognitiveservices-speech = "^1.38.0"
+onnxruntime = "^1.18.1"
+torch = "2.3.0"
+torchaudio = "2.3.0"
+colorama = "^0.4.6"
+emoji = "^2.12.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
