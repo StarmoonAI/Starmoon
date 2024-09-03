@@ -3,10 +3,7 @@ import { headers } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { SubmitButton } from "./submit-button";
-import { FaGoogle } from "react-icons/fa";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { getToyById } from "@/db/toys";
 import {
   Card,
   CardContent,
@@ -16,8 +13,6 @@ import {
 } from "@/components/ui/card";
 import { Sparkles } from "lucide-react";
 import { Label } from "@/components/ui/label";
-import { createUser, doesUserExist } from "@/db/users";
-import Messages from "./messages";
 import GoogleLoginButton from "../../components/GoogleLoginButton";
 
 interface LoginProps {
@@ -26,53 +21,6 @@ interface LoginProps {
 
 export default async function Login({ searchParams }: LoginProps) {
   const toy_id = searchParams?.toy_id as string | undefined;
-  console.log("+++++", toy_id);
-
-  const signIn = async (formData: FormData) => {
-    "use server";
-
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    const supabase = createClient();
-
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      return redirect("/login?message=Could not authenticate user");
-    }
-
-    return redirect("/home");
-  };
-
-  const signUp = async (formData: FormData) => {
-    "use server";
-
-    const origin = headers().get("origin");
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    const supabase = createClient();
-
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          toy_id: toy_id,
-        },
-        emailRedirectTo: `${origin}/auth/callback`,
-      },
-    });
-
-    if (error) {
-      return redirect("/login?message=Could not sign up user");
-      // await signIn(formData);
-    }
-
-    return redirect("/login?message=Check email to continue sign in process");
-  };
 
   const signInOrSignUp = async (formData: FormData) => {
     "use server";
@@ -109,11 +57,13 @@ export default async function Login({ searchParams }: LoginProps) {
       return redirect("/login?message=Could not authenticate user");
     }
 
-    if (process.env.NEXT_PUBLIC_ENV === "local") {
-      return redirect("/login?message=Sussessfully signed up");
-    } else {
-      return redirect("/login?message=Check email to continue sign in process");
-    }
+    // if (process.env.NEXT_PUBLIC_ENV === "local") {
+    //   return redirect("/login?message=Sussessfully signed up");
+    // } else {
+    //   return redirect("/login?message=Check email to continue sign in process");
+    // }
+
+    return redirect("/login?message=Check email to continue sign in process");
   };
 
   return (
@@ -121,11 +71,11 @@ export default async function Login({ searchParams }: LoginProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex flex-row gap-1 items-center">
-            Start Playground
+            Playground
             <Sparkles size={20} fill="black" />
           </CardTitle>
           <CardDescription>
-            Log into your Starmoon AI account to continue.
+            Login or sign up your account to continue
           </CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
@@ -135,7 +85,7 @@ export default async function Login({ searchParams }: LoginProps) {
             <GoogleLoginButton toy_id={toy_id} />
           )}
 
-          <Separator className="mt-4" />
+          <Separator className="mt-2" />
           <form className="flex-1 flex flex-col w-full justify-center gap-4">
             <Label className="text-md" htmlFor="email">
               Email
@@ -158,14 +108,22 @@ export default async function Login({ searchParams }: LoginProps) {
               required
             />
 
-            {process.env.NEXT_PUBLIC_ENV !== "local" && (
+            {/* {process.env.NEXT_PUBLIC_ENV !== "local" && (
               <Link
                 className="text-xs text-foreground underline"
                 href="/forgot-password"
               >
                 Forgot Password?
               </Link>
-            )}
+            )} */}
+
+            <Link
+              className="text-xs text-foreground underline"
+              href="/forgot-password"
+            >
+              Forgot Password?
+            </Link>
+
             <SubmitButton
               formAction={signInOrSignUp}
               className="text-sm font-medium bg-gray-100 hover:bg-gray-50 dark:text-stone-900 border-[0.1px] rounded-md px-4 py-2 text-foreground my-2"

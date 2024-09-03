@@ -1,11 +1,10 @@
-import { getAllToys, getToyById } from "@/db/toys";
+import { createToys, getAllToys, getToyById } from "@/db/toys";
 import { getUserById } from "@/db/users";
 import { createClient } from "@/utils/supabase/server";
 import Preorder from "./components/Preorder";
 import Products from "./components/Products";
-import { defaultToyId } from "@/lib/data";
+import { defaultToyId, toys } from "@/lib/data";
 import LandingPageSection from "./components/LandingPageSection";
-import Footer from "./components/Footer";
 
 const Sections = [
   {
@@ -44,8 +43,18 @@ export default async function Index() {
   } = await supabase.auth.getUser();
 
   const dbUser = user ? await getUserById(supabase, user.id) : undefined;
-  const allToys = await getAllToys(supabase);
-  console.log(allToys);
+  let allToys = await getAllToys(supabase);
+
+  if (allToys.length === 0) {
+    try {
+      await createToys(supabase, toys);
+      allToys = toys;
+      console.log("Toys created", allToys.length);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   const toy = await getToyById(supabase, dbUser?.toy_id ?? defaultToyId);
 
   return (
@@ -67,7 +76,8 @@ export default async function Index() {
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="mx-auto max-w-2xl text-center">
               <h1 className="font-inter text-4xl font-bold tracking-tight text-stone-800 sm:text-5xl">
-                The open-source low-cost voice-enabled AI device
+                The open-source <span className="text-amber-500">low-cost</span>{" "}
+                voice-enabled AI device{" "}
               </h1>
               <p className="mt-6 text-2xl leading-8 text-stone-600">
                 for companionship, entertainment, learning and more...

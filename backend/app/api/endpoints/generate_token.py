@@ -1,6 +1,3 @@
-import asyncio
-import json
-import secrets
 import time
 
 from app.core.config import settings
@@ -16,27 +13,27 @@ import datetime
 
 from jose import jwt
 
-# secret_key = secrets.token_urlsafe(32)
-# print("secret_key", secret_key)
+# jwt_secret_key = secrets.token_urlsafe(32)
+# print("jwt_secret_key", jwt_secret_key)
 
 ALGORITHM = "HS256"
 
 
-def create_access_token(secret_key: str, data: dict, expire_days: int = None):
+def create_access_token(jwt_secret_key: str, data: dict, expire_days: int = None):
     to_encode = data.copy()
 
     if expire_days:
         expire = datetime.datetime.utcnow() + datetime.timedelta(days=expire_days)
         to_encode.update({"exp": expire})
 
-    encoded_jwt = jwt.encode(to_encode, secret_key, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, jwt_secret_key, algorithm=ALGORITHM)
     return encoded_jwt
 
 
 @router.post("/generate_client_token")
 async def generate_client_token(email: str, user_id: str, expire_days: int = None):
 
-    secret_key = settings.SECRET_KEY
+    jwt_secret_key = settings.JWT_SECRET_KEY
 
     payload = {
         "email": email,
@@ -45,7 +42,7 @@ async def generate_client_token(email: str, user_id: str, expire_days: int = Non
     }
     try:
         token = create_access_token(
-            secret_key=secret_key, data=payload, expire_days=expire_days
+            jwt_secret_key=jwt_secret_key, data=payload, expire_days=expire_days
         )
         return JSONResponse(content={"token": token})
 

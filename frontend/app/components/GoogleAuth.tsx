@@ -13,6 +13,4 @@ export const loginWithGoogle = async (toy_id?: string) => {
       redirectTo,
     },
   });
-
-  console.log("data", data);
 };

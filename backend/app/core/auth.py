@@ -6,7 +6,7 @@ from app.db.supabase import create_supabase_client
 from fastapi import Depends, FastAPI, HTTPException, WebSocket
 from jose import JWTError, jwt
 
-SECRET_KEY = settings.SECRET_KEY
+JWT_SECRET_KEY = settings.JWT_SECRET_KEY
 ALGORITHM = "HS256"
 
 
@@ -34,7 +34,7 @@ async def authenticate_user(
     token: str = Depends(get_token_from_query), user_id: str = None
 ):
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[ALGORITHM])
         print(f"payload: {payload}")
 
         if not user_id:
@@ -50,8 +50,8 @@ async def authenticate_user(
 
 # import secrets
 
-# secret_key = secrets.token_urlsafe(32)
-# print(f"SECRET_KEY: {secret_key}")
+# jwt_secret_key = secrets.token_urlsafe(32)
+# print(f"JWT_SECRET_KEY: {jwt_secret_key}")
 
 # import datetime
 
@@ -67,7 +67,7 @@ async def authenticate_user(
 #         expire = datetime.datetime.utcnow() + expires_delta
 #         to_encode.update({"exp": expire})
 
-#     encoded_jwt = jwt.encode(to_encode, secret_key, algorithm=ALGORITHM)
+#     encoded_jwt = jwt.encode(to_encode, jwt_secret_key, algorithm=ALGORITHM)
 #     return encoded_jwt
 
 

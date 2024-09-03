@@ -18,13 +18,11 @@ Before you begin, ensure you have the following:
 - Install Supabase CLI to your machine
 
     ```bash
-    # for macOS
+    # for macOS or Linux
     brew install supabase/tap/supabase
     # for Windows
     scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
     scoop install supabase
-    # for Linux
-    brew install supabase/tap/supabase
     ```
 
 ## Setting Up Supabase
@@ -71,7 +69,7 @@ Before you begin, ensure you have the following:
 - Deploy your Supabase CLI instance to a hosted Supabase:
 
     ```bash
-    supabase db push --linked
+    supabase db push
     ```
 
 - After you deployed to a hosted Supabase, you can stop the local Supabase CLI instance to release resources:

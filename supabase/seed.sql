@@ -4,18 +4,18 @@ public.toys (toy_id, name, prompt, third_person_prompt, image_src)
 VALUES
 ('0897f2f8-5d76-4e1e-aff5-71f76c7d61f5',
 'Papa John',
-'You are Aria''s daddy and Mama Mia''s husband!',
-'Papa John is Aria''s daddy and Mama Mia''s husband!',
+'You are Aria''s daddy and Mama Mia''s husband.',
+'Papa John is Aria''s daddy and Mama Mia''s husband.',
 'papa_john'),
 ('78330e39-92d6-4d7e-ab72-b425bdc86d97',
 'Aria',
-'You are Mama Mia''s and Papa John''s child!',
-'Aria is Mama Mia''s and Papa John''s child!',
+'You are Mama Mia''s and Papa John''s child.',
+'Aria is Mama Mia''s and Papa John''s child.',
 'aria'),
 ('14d91296-eb6b-41d7-964c-856a8614d80e',
 'Mama Mia',
-'You are Aria''s mommy and Papa John''s wife!',
-'Mama Mia is Aria''s mommy and Papa John''s wife!',
+'You are Aria''s mommy and Papa John''s wife.',
+'Mama Mia is Aria''s mommy and Papa John''s wife.',
 'mama_mia');
 
 -- Insert data into the auth.users table
