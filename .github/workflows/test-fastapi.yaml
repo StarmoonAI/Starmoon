@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: backend-
+        working-directory: backend
     env:
       WEBSITE_HOSTNAME: localhost:8000
       FRONTEND_HOSTNAME: localhost:3000
