@@ -1,6 +1,6 @@
 # ESP32 WebSocket Audio Client
 
-This firmware turns your ESP32 device into a WebSocket audio client, enabling real-time audio communication with the WS backend server hosted at `../backend-py`. It's designed to be used in interactive toys or devices that can create AI characters for conversation.
+This firmware turns your ESP32 device into a WebSocket audio client, enabling real-time audio communication with the WS backend server hosted at `../backend`. It's designed to be used in interactive toys or devices that can create AI characters for conversation.
 
 ## Installation with PlatformIO
 

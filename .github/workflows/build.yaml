@@ -70,7 +70,6 @@ jobs:
           EOF
           kubectl create secret generic fastapi-prod-env --from-env-file=./.env.prod
       - name: Refresh k8s deployment
-        working-directory: backend
         run: |
           kubectl apply -f kubernetes/redis/deployment.yaml
           kubectl apply -f kubernetes/fastapi/deployment.yaml

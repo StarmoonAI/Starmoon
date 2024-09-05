@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: celery-beat
+    labels:
+        app: celery-beat
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            pod: celery-beat
+    template:
+        metadata:
+            labels:
+                pod: celery-beat
+        spec:
+            containers:
+                - name: celery-beat
+                  image: aitoyregistry.azurecr.io/aitoy:latest
+                  command: ["/bin/sh", "-c"]
+                  args:
+                      - |
+                          rm -f './celerybeat.pid'
+                          poetry run celery -A app.celery.worker.celery_app beat --loglevel=info
+                  envFrom:
+                      - secretRef:
+                            name: fastapi-prod-env
