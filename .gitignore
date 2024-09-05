@@ -1,0 +1,22 @@
+.DS_Store
+.history
+.vscode
+__pycache__
+.pylintrc
+.flake8
+.prettierrc.json
+.prettierrc
+frontend_auth
+.env
+.env.starmoon
+
+# Ignore all .env files in any directory
+**/.env*
+
+# Optionally, you can also ignore specific .env variants
+**/.env.local
+**/.env.production
+**/.env.development
+
+// Keep this if you want to keep the .env.example file
+!**/.env.example
