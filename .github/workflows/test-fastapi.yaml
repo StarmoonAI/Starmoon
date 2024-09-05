@@ -1,0 +1,44 @@
+name: FastAPI Test
+
+on:
+    workflow_call:
+    workflow_dispatch:
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        defaults:
+            run:
+                working-directory: backend-py
+        env:
+            WEBSITE_HOSTNAME: localhost:8000
+            FRONTEND_HOSTNAME: localhost:3000
+        strategy:
+            max-parallel: 4
+            matrix:
+                python-version: ["3.10", "3.11"]
+
+        steps:
+            - uses: actions/checkout@v3
+            - name: Set up Python ${{ matrix.python-version }}
+              uses: actions/setup-python@v3
+              with:
+                  python-version: ${{ matrix.python-version }}
+            - name: Install system dependencies
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y portaudio19-dev python-all-dev
+
+            - name: Install Python dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install poetry
+                  pip install flake8
+            - name: Install poetry dependencies
+              run: |
+                  poetry install --only main
+            - name: Look for major issues with flake8
+              run: |
+                  flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+            # - name: Run tests
+            #   run: poetry run pytest
