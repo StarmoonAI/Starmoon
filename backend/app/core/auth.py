@@ -39,6 +39,7 @@ async def authenticate_user(
 
         if not user_id:
             user_id = await get_user_id(payload)
+            print(f"user_id: {user_id}")
 
         user = await get_user(user_id)
         if user is None:
