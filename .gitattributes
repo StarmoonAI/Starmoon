@@ -1,2 +1,2 @@
 .github/workflows/* merge=ours
-backend/kubernetess/* merge=ours
+backend/kubernetes/* merge=ours
