@@ -14,7 +14,7 @@ interface TokenPayload {
   [key: string]: any;
 }
 
-export const createAccessToken = (
+const createAccessToken = (
   jwtSecretKey: string,
   data: TokenPayload,
   expireDays?: number | null
