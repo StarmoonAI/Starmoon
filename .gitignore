@@ -20,3 +20,4 @@ frontend_auth
 
 // Keep this if you want to keep the .env.example file
 !**/.env.example
+backend/kubernetes
