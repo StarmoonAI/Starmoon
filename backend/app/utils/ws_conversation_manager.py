@@ -60,7 +60,7 @@ class ConversationManager:
         )
 
         loop.close()
-        self.is_replying = False
+        # self.is_replying = False
         return previous_sentence
 
     async def speech_stream_response(
@@ -238,11 +238,17 @@ class ConversationManager:
         self,
         websocket: WebSocket,
         transcription_complete: asyncio.Event,
+        is_replying: bool,
         timeout: int = 15,
     ):
+        print("timeout_check:", is_replying)
         try:
             await asyncio.sleep(timeout - 10)
-            if not transcription_complete.is_set() and self.client_transcription == "":
+            if (
+                not transcription_complete.is_set()
+                and self.client_transcription == ""
+                and is_replying == False
+            ):
                 print("This connection will be closed in 10 seconds...")
                 json_data = json.dumps(
                     {
@@ -255,7 +261,11 @@ class ConversationManager:
                 )
             await self.send_message(websocket, json_data)
             await asyncio.sleep(10)
-            if not transcription_complete.is_set() and self.client_transcription == "":
+            if (
+                not transcription_complete.is_set()
+                and self.client_transcription == ""
+                and is_replying == False
+            ):
                 json_data = json.dumps(
                     {
                         "type": "warning",  # Specify the type of message
@@ -291,7 +301,10 @@ class ConversationManager:
 
                     timeout_task = asyncio.create_task(
                         self.timeout_check(
-                            websocket, transcription_complete, timeout=30
+                            websocket,
+                            transcription_complete,
+                            self.is_replying,
+                            timeout=30,
                         )
                     )
 

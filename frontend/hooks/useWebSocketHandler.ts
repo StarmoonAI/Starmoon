@@ -168,12 +168,12 @@ export const useWebSocketHandler = (
 
       // Send JSON message based on the boundary
       if (nextAudio.boundary === "end") {
-        // const playbacTime = nextAudio.audio.length / 16000;
+        const playbacTime = nextAudio.audio.length / 16000;
         // console.log("playbackTime", playbacTime);
         // send sendJsonMessage after playbackTime
         setTimeout(() => {
           sendJsonMessage({ speaker: "user", is_replying: false });
-        }, 50);
+        }, playbacTime);
       } else if (nextAudio.boundary === "start") {
         sendJsonMessage({ speaker: "user", is_replying: true });
       }
