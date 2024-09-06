@@ -1,0 +1,2 @@
+.github/workflows/* merge=ours
+backend/kubernetess/* merge=ours
