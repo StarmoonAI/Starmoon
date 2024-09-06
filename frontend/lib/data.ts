@@ -1,8 +1,8 @@
-export const defaultToyId: string = "78330e39-92d6-4d7e-ab72-b425bdc86d97";
+export const defaultToyId: string = "56224f7f-250d-4351-84ee-e4a13b881c7b";
 
 export const toys: IToy[] = [
   {
-    toy_id: "0897f2f8-5d76-4e1e-aff5-71f76c7d61f5",
+    toy_id: "6c3eb71a-8d68-4fc6-85c5-27d283ecabc8",
     name: "Papa John",
     prompt: "You are Aria''s daddy and Mama Mia''s husband.",
     third_person_prompt: "Papa John is Aria''s daddy and Mama Mia''s husband.",
@@ -10,7 +10,7 @@ export const toys: IToy[] = [
     image_src: "papa_john",
   },
   {
-    toy_id: "78330e39-92d6-4d7e-ab72-b425bdc86d97",
+    toy_id: "56224f7f-250d-4351-84ee-e4a13b881c7b",
     name: "Aria",
     prompt: "You are Mama Mia''s and Papa John''s child.",
     expanded_prompt: "",

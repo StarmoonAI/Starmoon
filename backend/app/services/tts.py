@@ -30,9 +30,9 @@ speech_config.set_property(
 
 
 toyid2speechname = {
-    "0897f2f8-5d76-4e1e-aff5-71f76c7d61f5": "en-US-KaiNeural",
+    "6c3eb71a-8d68-4fc6-85c5-27d283ecabc8": "en-US-KaiNeural",
     "14d91296-eb6b-41d7-964c-856a8614d80e": "en-US-AvaMultilingualNeural",
-    "78330e39-92d6-4d7e-ab72-b425bdc86d97": "en-US-AnaNeural",
+    "56224f7f-250d-4351-84ee-e4a13b881c7b": "en-US-AnaNeural",
 }
 
 

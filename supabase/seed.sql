@@ -2,12 +2,12 @@
 INSERT INTO
 public.toys (toy_id, name, prompt, third_person_prompt, image_src)
 VALUES
-('0897f2f8-5d76-4e1e-aff5-71f76c7d61f5',
+('6c3eb71a-8d68-4fc6-85c5-27d283ecabc8',
 'Papa John',
 'You are Aria''s daddy and Mama Mia''s husband.',
 'Papa John is Aria''s daddy and Mama Mia''s husband.',
 'papa_john'),
-('78330e39-92d6-4d7e-ab72-b425bdc86d97',
+('56224f7f-250d-4351-84ee-e4a13b881c7b',
 'Aria',
 'You are Mama Mia''s and Papa John''s child.',
 'Aria is Mama Mia''s and Papa John''s child.',
@@ -33,7 +33,7 @@ VALUES
 INSERT INTO
 public.users (user_id, toy_name, toy_id, email, modules, most_recent_chat_group_id, session_time, supervisor_name, supervisee_name, supervisee_persona, supervisee_age)
 VALUES
-('5af62b0e-3da4-4c44-adf7-5b1b7c9c4cb6', 'Papa John', '0897f2f8-5d76-4e1e-aff5-71f76c7d61f5', 'admin@starmoon.app', NULL, NULL, 0, 'Parent', 'Child', '', 5);
+('5af62b0e-3da4-4c44-adf7-5b1b7c9c4cb6', 'Papa John', '6c3eb71a-8d68-4fc6-85c5-27d283ecabc8', 'admin@starmoon.app', NULL, NULL, 0, 'Parent', 'Child', '', 5);
 
 -- -- Add the foreign key constraint to the public.users table
 -- ALTER TABLE public.users
