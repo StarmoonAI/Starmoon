@@ -33,21 +33,20 @@ Open-source
 
 ### 3.0 Prerequisites 📋
 
-Docker installed in your machine
+1. Docker installed in your machine
+   - make sure localhost ports 8000, 3000, 6379, 5555 are not used.
+  
+2. Vscode and PlatformIO plugin installed in your machine
 
-Hardware list (direct link to buy):
-1
-2
+3. API keys:
+   - Supabase: For database
+   - OpenAI: For AI language models
+   - Deepgram API key: For speech-to-text
+   - Azure speech API key: For text-to-speech
+   - Huggingface: For Emotion recognition
 
-Tokens:
-1 Supabase
-2 Qdrant
-3 OpenAI
-4 deepgram
-5 Azure speech
-6 huggingface
-
-  make sure localhost ports 8000, 3000, 6379, 5555 are not used.
+4. Hardware list (direct link to buy):
+   - 1
 
 ### 3.1 Software setup 🖥️
 
