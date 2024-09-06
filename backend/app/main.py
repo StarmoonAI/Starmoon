@@ -19,17 +19,6 @@ from fastapi.responses import HTMLResponse
 
 load_dotenv()
 
-
-# @asynccontextmanager
-# async def lifespan(app: FastAPI):
-#     # Start MQTT thread on startup
-#     mqtt_thread_instance = threading.Thread(target=mqtt_thread, daemon=True)
-#     mqtt_thread_instance.start()
-#     print("MQTT thread started")
-#     yield
-
-
-# app = FastAPI(lifespan=lifespan)
 app = FastAPI()
 
 
@@ -54,8 +43,6 @@ app.include_router(starmoon.router, tags=["StarMoon WebSocket"])
 
 
 if __name__ == "__main__":
-    # # start mqtt thread
-    # start FastAPI thread
     uvicorn.run(
         app,
         host="0.0.0.0",
