@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: starmoon-app
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: starmoon-app
+    template:
+        metadata:
+            labels:
+                app: starmoon-app
+        spec:
+            containers:
+                - name: starmoon-app
+                  image: aitoyregistry.azurecr.io/aitoy:latest
+                  command:
+                    - poetry
+                    - run
+                    - uvicorn
+                    - app.main:app
+                    - "--host"
+                    - "0.0.0.0"
+                    - "--port"
+                    - "8000"
+                    - "--ws-ping-interval"
+                    - "600"
+                    - "--ws-ping-timeout"
+                    - "600"
+                  ports:
+                      - containerPort: 8000
+                  envFrom:
+                      - secretRef:
+                            name: fastapi-prod-env
+            affinity:
+                podAntiAffinity:
+                    requiredDuringSchedulingIgnoredDuringExecution:
+                        - labelSelector:
+                              matchExpressions:
+                                  - key: "app"
+                                    operator: In
+                                    values:
+                                        - starmoon-app
+                          topologyKey: "kubernetes.io/hostname"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: starmoon-service
+spec:
+    type: LoadBalancer
+    # type: ClusterIP
+    ports:
+        - protocol: TCP
+          port: 80
+          targetPort: 8000
+    selector:
+        app: starmoon-app
+
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+    name: starmoon-app
+spec:
+    scaleTargetRef:
+        apiVersion: apps/v1
+        kind: Deployment
+        name: starmoon-app
+    minReplicas: 1
+    maxReplicas: 20
+    targetCPUUtilizationPercentage: 90
