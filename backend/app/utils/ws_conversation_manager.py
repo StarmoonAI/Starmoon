@@ -60,7 +60,7 @@ class ConversationManager:
         )
 
         loop.close()
-        # self.is_replying = False
+        # self.is_replying = False #
         return previous_sentence
 
     async def speech_stream_response(
