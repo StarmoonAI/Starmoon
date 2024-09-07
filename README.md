@@ -1,4 +1,4 @@
-# Starmoon, your low-cost physical empathic AI companion
+# Starmoon, the low-cost empathic AI device
 
 <div align="center">
     <img src="./logo.png" alt="Starmoon-logo" width="20%"  style="border-radius: 50%; padding-bottom: 20px"/>
@@ -19,13 +19,14 @@ Usecases: 1, 2, 3
 
 ## 1. Demo Highlights 🎥
 
-123
+Video
 
 ## 2. Key features 🎯
 
 Low-cost
 Voice-enabled emotional intelligence
 Open-source
+Small size (as small as the Apple Watch)
 
 ## 3. Getting Started 🚀
 
@@ -34,39 +35,43 @@ Open-source
 ### 3.0 Prerequisites 📋
 
 1. Docker installed in your machine
-   - make sure localhost ports 8000, 3000, 6379, 5555 are not used.
-  
-2. Vscode and PlatformIO plugin installed in your machine
+   - Make sure localhost ports 8000, 3000, 6379, 5555 are not used
 
-3. API keys:
+2. Supabase CLI
+   - Follow the instructions here to install the Supabase CLI Follow the instructions here to install the Supabase CLI if you haven't installed
+  
+3. Vscode and PlatformIO plugin installed in your machine
+
+4. API keys:
    - Supabase: For database
    - OpenAI: For AI language models
    - Deepgram API key: For speech-to-text
    - Azure speech API key: For text-to-speech
-   - Huggingface: For Emotion recognition
+   - Huggingface: For emotion recognition
 
-4. Hardware list (direct link to buy):
-   - 1
+5. Hardware list (not sponsored):
+   - Seeed Studio Xiao ESP32-C6
+   - Microphone (model)
+   - Amplifier (model)
+   - Speaker (model)
+   - PCB prototype board (link)
+   - 28 AWG wires + soldering toolset
 
 ### 3.1 Software setup 🖥️
 
-- **Step 2**: Supabase setup
-
-  please follow the instructions
-
-- **Step 2**: Clone the repository:
+- **Step 1**: Clone the repository:
 
   ```bash
   git clone https://github.com/StarmoonAI/Starmoon.git && cd starmoon
   ```
 
-- **Step 3**: Copy the `.env.example` files
+- **Step 2**: Copy the `.env.example` files
 
   ```bash
   cp .env.example .env
   ```
 
-- **Step 4**: Update the `.env` files
+- **Step 3**: Update the `.env` files
 
   ```bash
   vim .env # or emacs or vscode or nano
@@ -74,9 +79,7 @@ Open-source
 
   Update **OPENAI_API_KEY** in the `.env` file.
 
-  You just need to update the `OPENAI_API_KEY` variable in the `.env` file. You can get your API key [here](https://platform.openai.com/api-keys). You need to create an account first. And put your credit card information. Don't worry, you won't be charged unless you use the API. You can find more information about the pricing [here](https://openai.com/pricing/).
-
-- **Step 5**: Launch the project
+- **Step 4**: Launch the project
 
   ```bash
   cd ../
@@ -90,11 +93,13 @@ Open-source
 
 - **Step 5**: Login to the app
 
-  You can now sign in to the app with `admin@starmoon.app` & `admin`. You can access the app at [http://localhost:3000/login](http://localhost:3000/login).
+  - You can now sign in to the app with `admin@quivr.app` & `admin`. You can access the Starmoon webapp at [http://localhost:3000/login](http://localhost:3000/login) and sign up an account
 
-  You can access Quivr backend API at [http://localhost:5050/docs](http://localhost:5050/docs)
+  - You can access Starmoon backend API at [http://localhost:8000/docs](http://localhost:8000/docs)
 
-  You can access supabase at [http://localhost:54323](http://localhost:54323)
+  - You can access Supabase dashboard at [http://localhost:54323](http://localhost:54323)
+  
+  - You can access Celery Flower background task dashboard at [http://localhost:5555](http://localhost:5555) (`admin@quivr.app` & `admin`)
 
 ### 3.2 Hardware setup 🧰
 
