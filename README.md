@@ -37,7 +37,7 @@ Small size (as small as the Apple Watch)
 1. Softwares and services:
    - Docker
    - Supabase CLI
-     - Follow the instructions here to install if you haven't installed
+     - Follow the instructions [here](supabase-setup.md) to install if you haven't installed
    - Vscode and PlatformIO plugin: For firmware burning
    - OpenAI API key: For AI language models
    - Deepgram API key: For speech-to-text
@@ -69,17 +69,8 @@ Small size (as small as the Apple Watch)
   cp .env.example .env
   ```
 
-- **Step 3**: Update the `.env` files
-  You can manually update tokens in the `.env` file
-
-  or use:
-
-  ```bash
-  vim .env # or emacs or vscode or nano
-  ```
-
-  Update **OPENAI_API_KEY** in the `.env` file.
-
+- **Step 3**: Update tokens in the `.env` file
+  
 - **Step 4**: Launch the project
   If you have a Mac, go to Docker Desktop > Settings > General and check that the "file sharing implementation" is set to `VirtioFS`.
 

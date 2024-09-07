@@ -1,8 +1,4 @@
-# Supabase
-
-Comprehensive guide on setting up Supabase for Starmoon, including CLI usage, migrations, database reset, and deployment.
-
-## Configuring Supabase
+# Configuring Supabase
 
 This document provides a comprehensive guide on how to configure Supabase in Starmoon, detailing CLI usage, running migrations, resetting the database, and deploying to a hosted version of Supabase.
 
