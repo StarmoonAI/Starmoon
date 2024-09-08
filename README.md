@@ -1,9 +1,10 @@
-# <span><img style='vertical-align:middle; display:inline;' src="./logo.png"  width="5%" height="5%">&nbsp; Starmoon, the low-cost empathic AI device</span>
+# <span><img style='vertical-align: middle;' src="./logo.png" width="5%" height="5%">&nbsp; Starmoon, the low-cost empathic AI device</span>
 
 <!-- # Starmoon, the low-cost empathic AI device -->
 
 <div align="center">
     <img src="./logo.png" alt="Starmoon-logo" width="20%"  style="border-radius: 50%; padding-bottom: 20px"/>
+
 
 <!-- [![Discord Follow](https://dcbadge.vercel.app/api/server/HUpRgp2HG8?style=flat)](https://discord.gg/HUpRgp2HG8) -->
 [![License: GPLv3](https://img.shields.io/badge/license-GPLv3-blue)](https://www.gnu.org/licenses/gpl-3.0.en.html)&ensp;&ensp;&ensp;
