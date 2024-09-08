@@ -35,33 +35,41 @@ Small size (as small as the Apple Watch)
 ### Prerequisites 📋
 
 1. Softwares and services:
-   - Docker
+   - [Docker](https://docs.docker.com/get-started/get-docker/)
    - Supabase CLI
      - Follow the instructions [here](supabase-setup.md) to install if you haven't installed
-   - Vscode and PlatformIO plugin: For firmware burning
-   - OpenAI API key: For AI language models
-   - Deepgram API key: For speech-to-text
-   - Azure speech API key: For text-to-speech
-   - Huggingface API key: For emotion recognition
+   - Vscode and [PlatformIO](https://platformio.org/install/ide?install=vscode) plugin: For firmware burning
+   - [OpenAI API key](https://platform.openai.com/api-keys): For AI language models
+   - [Deepgram API key](https://developers.deepgram.com/docs/create-additional-api-keys): For speech-to-text
+   - [Azure speech API key](https://vitalpbx.com/blog/how-to-create-microsoft-azure-tts-api-key/): For text-to-speech
+   - [Huggingface API key](https://huggingface.co/docs/api-inference/en/quicktour#get-your-api-token): For emotion recognition
 
-2. Hardware list, you have two options:
-   - Buying an assembled device [website](https://www.starmoon.app)
-   - Or assemble the device yourself with off-the-shelf components:
-      - Seeed Studio Xiao ESP32C6
-      - Microphone (INMP441)
-      - Amplifier (model)
-      - Speaker (model)
-      - LED light (model)
-      - Button (model)
-      - PCB prototype board (link) + 28 AWG wires + soldering toolset
+2. Hardware list
+   - Seeed Studio Xiao ESP32C6
+   - Microphone (INMP441)
+   - Amplifier (98357A)
+   - Speaker (model)
+   - LED light (model)
+   - Button (model)
+   - PCB prototype board (link) + 28 AWG wires + soldering toolset
 
 ### Software setup 🖥️
 
-- **Step 1**: Clone the repository:
+- **Step 0**: Clone the repository:
 
   ```bash
   git clone https://github.com/StarmoonAI/Starmoon.git && cd starmoon
   ```
+
+- **Step 1**: Se tup Supabase:
+
+    ```bash
+    supabase start
+    ```
+
+    ```bash
+    supabase db reset
+    ```
 
 - **Step 2**: Copy the `.env.example` files
 
@@ -70,6 +78,7 @@ Small size (as small as the Apple Watch)
   ```
 
 - **Step 3**: Update tokens in the `.env` file
+   For local set up, you only need to update `OPENAI_API_KEY`, `MS_SPEECH_ENDPOINTY`, `SPEECH_KEY`, `SPEECH_REGION`, `DG_API_KEY`, `HF_ACCESS_TOKEN`
   
 - **Step 4**: Launch the project
   If you have a Mac, go to Docker Desktop > Settings > General and check that the "file sharing implementation" is set to `VirtioFS`.

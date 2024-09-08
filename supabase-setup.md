@@ -20,9 +20,7 @@ Before you begin, ensure you have the following:
     scoop install supabase
     ```
 
-## Setting Up Supabase
-
-### 1. Create a Hosted Supabase project
+<!-- ### 1. Create a Hosted Supabase project
 
 - Login and create a hosted Supabase project and follow the instructions
 
@@ -71,7 +69,7 @@ Before you begin, ensure you have the following:
 
     ```bash
     supabase stop
-    ```
+    ``` -->
 
 ## Conclusion
 
