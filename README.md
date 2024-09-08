@@ -101,7 +101,7 @@ Video
 ### Hardware setup 🧰
 
 - **Step 0 (Optional)**: Build the device yourself (if you haven't bought the assembled device)
-  - Follow the instructions here for more details on assembly
+  - Follow the instructions [here](firmware/README.md) for more details on assembly
 
 - **Step 1**: Open PlatformIO Icon (Vscode icon left sidebar)
   - Click "Pick a folder"
