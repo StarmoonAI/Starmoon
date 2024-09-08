@@ -1,4 +1,8 @@
-# <span ><img style='vertical-align:middle; display:inline;' src="./logo.png"  width="5%" height="5%"><span style='vertical-align: middle; line-height: normal;'>&nbsp;Starmoon, your low-cost AI companion device </span></span>
+# <span ><img style='vertical-align:middle; display:inline;' src="./logo.png"  width="5%" height="5%"><span style='vertical-align: middle; line-height: normal;'>&nbsp;Starmoon - Low-cost AI empathic companion</span></span>
+
+Starmoon is a low-cost little AI companion device, you can bring it anywhere and talk to it. It can understand your emotions and respond to you with various empathic voice.
+
+[Check our Roadmap](roadmap.md)
 
 <!-- Put on a toy, Hanging on the hand, put on the desktop near macbook -->
 
@@ -10,11 +14,6 @@
 <!-- [![GitHub Repo stars](https://img.shields.io/github/stars/quivrhq/quivr?style=social)](https://github.com/quivrhq/quivr) -->
 <!-- [![Twitter Follow](https://img.shields.io/twitter/follow/StanGirard?style=social)](https://twitter.com/_StanGirard) -->
 </div>
-
-Starmoon is a little AI companion, you can bring it anywhere and talk to it. It can understand your emotions and respond to you with an empathic voice.
-
-[Check our Roadmap](roadmap.md)
-<!-- custom voice clone, RAG, agent -->
 
 ## Demo Highlights 🎥
 
