@@ -40,7 +40,7 @@ const ToyPicker: React.FC<ToyPickerProps> = ({
                             className="flex flex-col gap-2 bg-gray-50- rounded-[15px]"
                         >
                             <div
-                                className={`flex flex-col max-w-[320px] max-h-[320px] gap-2 mb-4 rounded-2xl overflow-hidden cursor-pointer transition-colors duration-200 ease-in-out`}
+                                className={`flex flex-col items-center max-w-[320px] max-h-[320px] gap-2 mb-4 rounded-2xl overflow-hidden cursor-pointer transition-colors duration-200 ease-in-out`}
                                 onClick={() => onClickSelectedToy(toy)}
                             >
                                 <Image

@@ -13,12 +13,13 @@ import { Messages } from "./Messages";
 import { getAssistantAvatar, getUserAvatar } from "@/lib/utils";
 import { MoonStar, MoonStarIcon } from "lucide-react";
 import Image from "next/image";
-import CardCarousel from "./PickCharacter";
+import PickCharacter from "./PickCharacter";
 
 interface PlaygroundProps {
     selectedUser: IUser;
     selectedToy: IToy;
     allToys: IToy[];
+    allPersonalities: IPersonality[];
     accessToken: string;
 }
 
@@ -27,6 +28,7 @@ const Playground: React.FC<PlaygroundProps> = ({
     selectedToy,
     allToys,
     accessToken,
+    allPersonalities,
 }) => {
     const {
         messageHistory,
@@ -163,8 +165,9 @@ const Playground: React.FC<PlaygroundProps> = ({
                                 </Button>
                             </motion.div>
                         </AnimatePresence>
-                        <CardCarousel
+                        <PickCharacter
                             allToys={allToys}
+                            allPersonalities={allPersonalities}
                             selectedToy={selectedToy}
                             selectedUser={selectedUser}
                         />

@@ -16,55 +16,18 @@ import { createClient } from "@/utils/supabase/client";
 import { updateUser } from "@/db/users";
 import { useToast } from "@/components/ui/use-toast";
 
-const cardData = [
-    {
-        id: 1,
-        title: "Mountain Retreat",
-        description: "Peaceful getaway in the mountains",
-        imageUrl: "/placeholder.svg?height=300&width=400",
-    },
-    {
-        id: 2,
-        title: "Beach Paradise",
-        description: "Sunny beaches and crystal clear waters",
-        imageUrl: "/placeholder.svg?height=300&width=400",
-    },
-    {
-        id: 3,
-        title: "City Adventure",
-        description: "Explore the vibrant city life",
-        imageUrl: "/placeholder.svg?height=300&width=400",
-    },
-    {
-        id: 4,
-        title: "Forest Cabin",
-        description: "Cozy cabin surrounded by nature",
-        imageUrl: "/placeholder.svg?height=300&width=400",
-    },
-    {
-        id: 5,
-        title: "Desert Oasis",
-        description: "Unique experience in the heart of the desert",
-        imageUrl: "/placeholder.svg?height=300&width=400",
-    },
-    {
-        id: 6,
-        title: "Tropical Island",
-        description: "Paradise found on a remote island",
-        imageUrl: "/placeholder.svg?height=300&width=400",
-    },
-];
-
 interface PickCharacterProps {
     selectedUser: IUser;
     selectedToy: IToy;
     allToys: IToy[];
+    allPersonalities: IPersonality[];
 }
 
 export default function PickCharacter({
     selectedUser,
     selectedToy,
     allToys,
+    allPersonalities,
 }: PickCharacterProps) {
     const supabase = createClient();
     const { toast } = useToast();
@@ -133,7 +96,7 @@ export default function PickCharacter({
                         allToys={allToys}
                         currentToy={selectedToy}
                         buttonText={"Pick"}
-                        imageSize={200}
+                        imageSize={250}
                         chooseToy={pickToy}
                         showHelpText={false}
                     />
@@ -149,27 +112,29 @@ export default function PickCharacter({
                             className="w-full"
                         >
                             <CarouselContent className="-ml-2 md:-ml-4">
-                                {cardData.map((card) => (
+                                {allPersonalities.map((personality) => (
                                     <CarouselItem
-                                        key={card.id}
+                                        key={personality.personality_id}
                                         className="pl-2 md:pl-4 sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
                                     >
                                         <Card className="overflow-hidden rounded-lg">
                                             <div className="h-[400px] relative">
                                                 <img
-                                                    src={card.imageUrl}
-                                                    alt={card.title}
+                                                    src={personality.image_src}
+                                                    alt={personality.title}
                                                     className="w-full h-2/3 object-cover"
                                                 />
                                                 <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-white p-4 flex flex-col justify-between">
                                                     <div className="flex justify-between items-start mb-2">
                                                         <div>
                                                             <h3 className="font-semibold text-lg">
-                                                                {card.title}
+                                                                {
+                                                                    personality.title
+                                                                }
                                                             </h3>
                                                             <p className="text-sm text-gray-600">
                                                                 {
-                                                                    card.description
+                                                                    personality.subtitle
                                                                 }
                                                             </p>
                                                         </div>
