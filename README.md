@@ -1,6 +1,6 @@
 # <span ><img style='vertical-align:middle; display:inline;' src="./logo.png"  width="5%" height="5%"><span style='vertical-align: middle; line-height: normal;'>&nbsp;Starmoon - Low-cost AI empathic companion</span></span>
 
-Starmoon is a low-cost little AI companion device, you can bring it anywhere and talk to it. It can understand your emotions and respond to you with various empathic voice.
+Starmoon is a affordable little AI companion device, you can take it anywhere and talk to it.  It can understand your emotions and respond with empathy, offering supportive conversations and personalized learning assistance.
 
 [Check our Roadmap](roadmap.md)
 
@@ -9,7 +9,7 @@ Starmoon is a low-cost little AI companion device, you can bring it anywhere and
 <div align="center">
     <img src="./logo.png" alt="Starmoon-logo" width="20%"  style="border-radius: 50%; padding-bottom: 20px"/>
 
-<!-- [![Discord Follow](https://dcbadge.vercel.app/api/server/HUpRgp2HG8?style=flat)](https://discord.gg/HUpRgp2HG8) -->
+[![Discord Follow](https://dcbadge.vercel.app/api/server/HUpRgp2HG8?style=flat)](https://discord.gg)
 [![License: GPLv3](https://img.shields.io/badge/license-GPLv3-blue)](https://www.gnu.org/licenses/gpl-3.0.en.html)&ensp;&ensp;&ensp;
 <!-- [![GitHub Repo stars](https://img.shields.io/github/stars/quivrhq/quivr?style=social)](https://github.com/quivrhq/quivr) -->
 <!-- [![Twitter Follow](https://img.shields.io/twitter/follow/StanGirard?style=social)](https://twitter.com/_StanGirard) -->
@@ -40,7 +40,7 @@ Video
    - [Huggingface API key](https://huggingface.co/docs/api-inference/en/quicktour#get-your-api-token): For emotion recognition
 
 1. Hardware list (Tax and shipping rates may vary by region)
-   - [Seeed Studio Xiao ESP32C6](https://www.aliexpress.us/item/1005007341749305.html) - $6.23/unit
+   - [Seeed Studio Xiao ESP32S3](https://www.aliexpress.us/item/1005007341749305.html) - $6.23/unit
    - [Microphone (INMP441)](https://www.aliexpress.us/item/3256806674485209.html) - $1.67/unit
    - [Amplifier (MAX98357A)](https://www.aliexpress.us/item/3256806524695775.html) - $1.52/unit
    - [Speaker (3525)](https://www.aliexpress.us/item/3256805515112434.html) - $0.64/unit
