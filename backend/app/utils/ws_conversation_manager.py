@@ -60,7 +60,7 @@ class ConversationManager:
         )
 
         loop.close()
-        # self.is_replying = False #
+        # self.is_replying = False
         return previous_sentence
 
     async def speech_stream_response(
@@ -323,6 +323,11 @@ class ConversationManager:
                                         if data.get("is_ending") == True:
                                             self.connection_open = False
                                             break
+                                        if data.get("is_interrupted") == True:
+                                            print(
+                                                "interrupted!11111!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+                                            )
+                                            self.is_interrupted = True
                                     except json.JSONDecodeError:
                                         print("Received invalid JSON")
                                 elif "bytes" in message:
@@ -372,7 +377,7 @@ class ConversationManager:
                                     transcript_collector.reset()
                                 if data.get("is_interrupted") == True:
                                     print("interrupted!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-                                    self.is_interrupted = True
+                                    # self.is_interrupted = False
                                     self.is_replying = False
                                     # transcription_complete = asyncio.Event()
                             except json.JSONDecodeError:

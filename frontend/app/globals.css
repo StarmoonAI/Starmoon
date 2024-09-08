@@ -72,7 +72,7 @@
   }
 
   .light .bg-nav-bar {
-    @apply bg-stone-50 bg-opacity-70;
+    @apply bg-white bg-opacity-70;
   }
 
   .dark .bg-nav-bar {

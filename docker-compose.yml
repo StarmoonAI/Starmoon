@@ -10,8 +10,12 @@ services:
       args:
         - NEXT_PUBLIC_SUPABASE_URL
         - NEXT_PUBLIC_SUPABASE_ANON_KEY
+        - JWT_SECRET_KEY
+        - OPENAI_API_KEY
         - GOOGLE_OAUTH
     container_name: web
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       - backend-core
     restart: always
@@ -20,6 +24,7 @@ services:
     environment:
       NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
       NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       GOOGLE_OAUTH: ${GOOGLE_OAUTH}
 

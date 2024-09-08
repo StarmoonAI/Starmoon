@@ -1,8 +1,9 @@
-# Starmoon, your low-cost physical empathic AI companion
+# <span><img style='vertical-align:middle; display:inline;' src="./logo.png"  width="5%" height="5%"><span style='vertical-align: middle; line-height: normal;'>&nbsp;Starmoon, the low-cost empathic AI device</span></span>
+
+<!-- # Starmoon, the low-cost empathic AI device -->
 
 <div align="center">
     <img src="./logo.png" alt="Starmoon-logo" width="20%"  style="border-radius: 50%; padding-bottom: 20px"/>
-
 
 <!-- [![Discord Follow](https://dcbadge.vercel.app/api/server/HUpRgp2HG8?style=flat)](https://discord.gg/HUpRgp2HG8) -->
 [![License: GPLv3](https://img.shields.io/badge/license-GPLv3-blue)](https://www.gnu.org/licenses/gpl-3.0.en.html)&ensp;&ensp;&ensp;
@@ -17,100 +18,140 @@ Usecases: 1, 2, 3
 [Check our Roadmap](www.starmoon.ai)
 <!-- custom voice clone, RAG, agent -->
 
-## 1. Demo Highlights 🎥
+## Demo Highlights 🎥
+
+Video
+
+## Key features 🎯
+
+- Low-cost
+- Voice-enabled emotional intelligence
+- Open-source
+- Tiny size (as small as the Apple Watch)
+
+## Getting Started 🚀
 
 123
 
-## 2. Key features 🎯
+### Prerequisites 📋
 
-Low-cost
-Voice-enabled emotional intelligence
-Open-source
+1. API keys and services:
+   - [Docker](https://docs.docker.com/get-started/get-docker/)
+   - Supabase CLI
+     - Follow the instructions [here](supabase-setup.md) to install if you haven't installed
+   - Vscode and [PlatformIO](https://platformio.org/install/ide?install=vscode) plugin: For firmware burning
+   - [OpenAI API key](https://platform.openai.com/api-keys): For AI language models
+   - [Deepgram API key](https://developers.deepgram.com/docs/create-additional-api-keys): For speech-to-text
+   - [Azure speech API key](https://vitalpbx.com/blog/how-to-create-microsoft-azure-tts-api-key/): For text-to-speech
+   - [Huggingface API key](https://huggingface.co/docs/api-inference/en/quicktour#get-your-api-token): For emotion recognition
 
-## 3. Getting Started 🚀
+2. Hardware list
+   - Seeed Studio Xiao ESP32C6
+   - Microphone (INMP441)
+   - Amplifier (98357A)
+   - Speaker (model)
+   - LED light (model)
+   - Button (model)
+   - PCB prototype board (link) + 28 AWG wires + soldering toolset
 
-123
+### Software setup 🖥️
 
-### 3.0 Prerequisites 📋
-
-Docker installed in your machine
-
-Hardware list (direct link to buy):
-1
-2
-
-Tokens:
-1 Supabase
-2 Qdrant
-3 OpenAI
-4 deepgram
-5 Azure speech
-6 huggingface
-
-  make sure localhost ports 8000, 3000, 6379, 5555 are not used.
-
-### 3.1 Software setup 🖥️
-
-- **Step 2**: Supabase setup
-
-  please follow the instructions
-
-- **Step 2**: Clone the repository:
+- **Step 0**: Clone the repository:
 
   ```bash
   git clone https://github.com/StarmoonAI/Starmoon.git && cd starmoon
   ```
 
-- **Step 3**: Copy the `.env.example` files
+- **Step 1**: Se tup Supabase:
+
+    ```bash
+    supabase start
+    ```
+
+    ```bash
+    supabase db reset
+    ```
+
+- **Step 2**: Copy the `.env.example` files
 
   ```bash
   cp .env.example .env
   ```
 
-- **Step 4**: Update the `.env` files
+- **Step 3**: Update tokens in the `.env` file
+  - For local set up, you only need to update `OPENAI_API_KEY`, `MS_SPEECH_ENDPOINTY`, `SPEECH_KEY`, `SPEECH_REGION`, `DG_API_KEY`, `HF_ACCESS_TOKEN`
+  
+- **Step 4**: Launch the project
+  - If you have a Mac, go to Docker Desktop > Settings > General and check that the "file sharing implementation" is set to `VirtioFS`.
 
   ```bash
-  vim .env # or emacs or vscode or nano
-  ```
-
-  Update **OPENAI_API_KEY** in the `.env` file.
-
-  You just need to update the `OPENAI_API_KEY` variable in the `.env` file. You can get your API key [here](https://platform.openai.com/api-keys). You need to create an account first. And put your credit card information. Don't worry, you won't be charged unless you use the API. You can find more information about the pricing [here](https://openai.com/pricing/).
-
-- **Step 5**: Launch the project
-
-  ```bash
-  cd ../
   docker compose pull
   docker compose up
   ```
-
-  If you have a Mac, go to Docker Desktop > Settings > General and check that the "file sharing implementation" is set to `VirtioFS`.
 
   If you are a **developer**, you can run the project in development mode with the following command: `docker compose -f docker-compose.yml up --build`
 
 - **Step 5**: Login to the app
 
-  You can now sign in to the app with `admin@starmoon.app` & `admin`. You can access the app at [http://localhost:3000/login](http://localhost:3000/login).
+  - You can now sign in to the app with `admin@starmoon.app` & `admin`. You can access the Starmoon webapp at [http://localhost:3000/login](http://localhost:3000/login) and sign up an account
 
-  You can access Quivr backend API at [http://localhost:5050/docs](http://localhost:5050/docs)
+  - You can access Starmoon backend API at [http://localhost:8000/docs](http://localhost:8000/docs)
 
-  You can access supabase at [http://localhost:54323](http://localhost:54323)
+  - You can access Supabase dashboard at [http://localhost:54323](http://localhost:54323)
+  
+  - You can access Celery Flower background task dashboard at [http://localhost:5555](http://localhost:5555) (`admin@starmoon.app` & `admin`)
 
-### 3.2 Hardware setup 🧰
+### Hardware setup 🧰
 
-- **Step 0**: Install PlatformIO in VSCode
+- **Step 0 (Optional)**: Build the device yourself (if you haven't bought the assembled device)
+  - Follow the instructions here for more details on assembly
 
-  Follow the instructions [here](https://platformio.org/install/cli) to install PlatformIO that is required.
+- **Step 1**: Open PlatformIO Icon (Vscode icon left sidebar)
+  - Click "Pick a folder"
+  - Select the location of the firmware folder in the current project.
+
+- **Step 2**: Update the WiFi credentials and WebSocket server details in the code
+  - Find the following lines in the code and update them with your information:
+  - Find the WIFI host by command
+
+    ```cpp
+    const char *ssid = "<your-wifi-name>";
+    const char *password = "<your-wifi-password>";
+    const char *websocket_server_host = "<192.168.1.1.your-server-host>";
+    const uint16_t websocket_server_port = 443;
+    const char *websocket_server_path = "/<your-server-path-here>";
+    const char *auth_token = "<your-auth-token-here>"; // generate auth-token in your starmoon account
+    ```
+
+- **Step 3**: Build the firmware
+  - Click `Build` button in the PlatformIO toolbar or run the build task.
+
+- **Step 5**: Upload the firmware to the device
+  - Connect your ESP32 to your computer using usb.
+  - Click `Upload` button to run the upload task, or `Upload and Monitor` button to run the upload task and monitor the device.
+  
+- **Step 6**: Hardware usage
+  - Once the software and firmware are set up, you can push the button to power on the ESP32 device and start talking to the device.
+  - The LED indicates the current status:
+    - Off: Not connected
+    - Solid On: Connected and listening on microphone
+    - Pulsing: Streaming audio output (receiving from server)
+  
+## Updating Starmoon App 🚀
+
+- **Step 1**: Pull the latest changes
 
   ```bash
-  platformio --version # Check that the installation worked
+  git pull
   ```
 
-## 4. 3rd Party Integrations
+- **Step 2**: Update the migration
 
-123
+  ```bash
+  supabase migration up
+  ```
 
-## 5. License
+
+## License
 
 123

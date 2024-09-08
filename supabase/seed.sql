@@ -33,7 +33,7 @@ VALUES
 INSERT INTO
 public.users (user_id, toy_name, toy_id, email, modules, most_recent_chat_group_id, session_time, supervisor_name, supervisee_name, supervisee_persona, supervisee_age)
 VALUES
-('5af62b0e-3da4-4c44-adf7-5b1b7c9c4cb6', 'Papa John', '6c3eb71a-8d68-4fc6-85c5-27d283ecabc8', 'admin@starmoon.app', NULL, NULL, 0, 'Parent', 'Child', '', 5);
+('5af62b0e-3da4-4c44-adf7-5b1b7c9c4cb6', 'Aria', '56224f7f-250d-4351-84ee-e4a13b881c7b', 'admin@starmoon.app', NULL, NULL, 0, 'Parent', 'Child', '', 5);
 
 -- -- Add the foreign key constraint to the public.users table
 -- ALTER TABLE public.users

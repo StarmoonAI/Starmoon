@@ -1,9 +1,4 @@
----
-title: Supabase
-description: Comprehensive guide on setting up Supabase for Starmoon, including CLI usage, migrations, database reset, and deployment.
----
-
-## Configuring Supabase
+# Configuring Supabase
 
 This document provides a comprehensive guide on how to configure Supabase in Starmoon, detailing CLI usage, running migrations, resetting the database, and deploying to a hosted version of Supabase.
 
@@ -25,9 +20,7 @@ Before you begin, ensure you have the following:
     scoop install supabase
     ```
 
-## Setting Up Supabase
-
-### 1. Create a Hosted Supabase project
+<!-- ### 1. Create a Hosted Supabase project
 
 - Login and create a hosted Supabase project and follow the instructions
 
@@ -76,7 +69,7 @@ Before you begin, ensure you have the following:
 
     ```bash
     supabase stop
-    ```
+    ``` -->
 
 ## Conclusion
 
