@@ -21,6 +21,7 @@ interface LoginProps {
 
 export default async function Login({ searchParams }: LoginProps) {
   const toy_id = searchParams?.toy_id as string | undefined;
+  const isGoogleOAuthEnabled = process.env.GOOGLE_OAUTH === "true";
 
   const signInOrSignUp = async (formData: FormData) => {
     "use server";
@@ -81,7 +82,7 @@ export default async function Login({ searchParams }: LoginProps) {
         <CardContent className="grid gap-4">
           {/* <ToyPreview /> */}
 
-          {process.env.GOOGLE_OAUTH && <GoogleLoginButton toy_id={toy_id} />}
+          {isGoogleOAuthEnabled && <GoogleLoginButton toy_id={toy_id} />}
 
           <Separator className="mt-2" />
           <form className="flex-1 flex flex-col w-full justify-center gap-4">
