@@ -1,5 +1,6 @@
-# <span><img style='vertical-align:middle; display:inline;' src="./logo.png"  width="5%" height="5%"><span style='vertical-align: middle; line-height: normal;'>&nbsp;Starmoon, the low-cost empathic AI companion device</span></span>
+# <span ><img style='vertical-align:middle; display:inline;' src="./logo.png"  width="5%" height="5%"><span style='vertical-align: middle; line-height: normal;'>&nbsp;Starmoon AI</span></span>
 
+## Your low-cost AI companion device 🤖
 <!-- Put on a toy, Hanging on the hand, put on the desktop near macbook -->
 
 <div align="center">
@@ -9,7 +10,6 @@
 [![License: GPLv3](https://img.shields.io/badge/license-GPLv3-blue)](https://www.gnu.org/licenses/gpl-3.0.en.html)&ensp;&ensp;&ensp;
 <!-- [![GitHub Repo stars](https://img.shields.io/github/stars/quivrhq/quivr?style=social)](https://github.com/quivrhq/quivr) -->
 <!-- [![Twitter Follow](https://img.shields.io/twitter/follow/StanGirard?style=social)](https://twitter.com/_StanGirard) -->
-
 </div>
 
 What is Starmoon AI in 1 sentence.
