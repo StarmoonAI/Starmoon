@@ -1,5 +1,5 @@
 import { createUser, doesUserExist, getUserById } from "@/db/users";
-import { getToyById } from "@/db/toys";
+import { getAllToys, getToyById } from "@/db/toys";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { User } from "@supabase/supabase-js";
@@ -11,101 +11,106 @@ import jwt from "jsonwebtoken";
 const ALGORITHM = "HS256";
 
 interface TokenPayload {
-  [key: string]: any;
+    [key: string]: any;
 }
 
 const createAccessToken = (
-  jwtSecretKey: string,
-  data: TokenPayload,
-  expireDays?: number | null
+    jwtSecretKey: string,
+    data: TokenPayload,
+    expireDays?: number | null
 ): string => {
-  const toEncode = { ...data };
+    const toEncode = { ...data };
 
-  if (expireDays) {
-    const expire = new Date();
-    expire.setDate(expire.getDate() + expireDays);
-    toEncode.exp = Math.floor(expire.getTime() / 1000); // JWT expects 'exp' in seconds since epoch
-  }
+    if (expireDays) {
+        const expire = new Date();
+        expire.setDate(expire.getDate() + expireDays);
+        toEncode.exp = Math.floor(expire.getTime() / 1000); // JWT expects 'exp' in seconds since epoch
+    }
 
-  // Convert created_time to ISO format string
-  if (toEncode.created_time) {
-    toEncode.created_time = new Date(toEncode.created_time).toISOString();
-  }
+    // Convert created_time to ISO format string
+    if (toEncode.created_time) {
+        toEncode.created_time = new Date(toEncode.created_time).toISOString();
+    }
 
-  const encodedJwt = jwt.sign(toEncode, jwtSecretKey, { algorithm: ALGORITHM });
-  return encodedJwt;
+    const encodedJwt = jwt.sign(toEncode, jwtSecretKey, {
+        algorithm: ALGORITHM,
+    });
+    return encodedJwt;
 };
 
 async function getData(user: User) {
-  const supabase = createClient();
-  const dbUser = await getUserById(supabase, user!.id);
-  // The return value is *not* serialized
-  // You can return Date, Map, Set, etc.
+    const supabase = createClient();
+    const dbUser = await getUserById(supabase, user!.id);
+    // The return value is *not* serialized
+    // You can return Date, Map, Set, etc.
 
-  if (!dbUser) {
-    // This will activate the closest `error.js` Error Boundary
-    throw new Error("Failed to fetch data");
-  }
+    if (!dbUser) {
+        // This will activate the closest `error.js` Error Boundary
+        throw new Error("Failed to fetch data");
+    }
 
-  return dbUser;
+    return dbUser;
 }
 
 export default async function Home() {
-  const supabase = createClient();
+    const supabase = createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
 
-  if (!user) {
-    redirect("/login");
-  }
-
-  if (user) {
-    const userExists = await doesUserExist(supabase, user);
-    if (!userExists) {
-      // Create user if they don't exist
-      await createUser(supabase, user, {
-        toy_id: user?.user_metadata?.toy_id ?? defaultToyId,
-      });
-      redirect("/onboard");
+    if (!user) {
+        redirect("/login");
     }
-  }
 
-  const dbUser = await getUserById(supabase, user!.id);
-  // const accessToken =
-  //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1bnJ1eGlvbmdAZ21haWwuY29tIiwidXNlcl9pZCI6ImZkYWY1NWI2LTFkY2QtNDE0OC1iZDVjLTA0MDI0MDQxM2E0MiIsImNyZWF0ZWRfdGltZSI6IjIwMjQtMDktMDNUMTI6Mzg6NTIuNzAyNDUxIn0.91BWSMx69KdUIuS2lHmdnJu70J3Zu4fBpkMoGw4iOY8";
+    if (user) {
+        const userExists = await doesUserExist(supabase, user);
+        if (!userExists) {
+            // Create user if they don't exist
+            await createUser(supabase, user, {
+                toy_id: user?.user_metadata?.toy_id ?? defaultToyId,
+            });
+            redirect("/onboard");
+        }
+    }
 
-  const jwtSecretKey = process.env.JWT_SECRET_KEY || null;
-  console.log("JWT Secret Key:", jwtSecretKey);
+    const dbUser = await getUserById(supabase, user!.id);
+    const allToys = await getAllToys(supabase);
 
-  let accessToken = null;
+    // const accessToken =
+    //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1bnJ1eGlvbmdAZ21haWwuY29tIiwidXNlcl9pZCI6ImZkYWY1NWI2LTFkY2QtNDE0OC1iZDVjLTA0MDI0MDQxM2E0MiIsImNyZWF0ZWRfdGltZSI6IjIwMjQtMDktMDNUMTI6Mzg6NTIuNzAyNDUxIn0.91BWSMx69KdUIuS2lHmdnJu70J3Zu4fBpkMoGw4iOY8";
 
-  if (jwtSecretKey !== null) {
-    accessToken = createAccessToken(jwtSecretKey, {
-      user_id: user!.id,
-      email: user!.email,
-    });
+    const jwtSecretKey = process.env.JWT_SECRET_KEY || null;
     console.log("JWT Secret Key:", jwtSecretKey);
-  } else {
-    console.error("JWT Secret Key is null");
-  }
 
-  if (!accessToken) {
-    throw new Error();
-  }
+    let accessToken = null;
 
-  return (
-    <div className="">
-      {dbUser && (
+    if (jwtSecretKey !== null) {
+        accessToken = createAccessToken(jwtSecretKey, {
+            user_id: user!.id,
+            email: user!.email,
+        });
+        console.log("JWT Secret Key:", jwtSecretKey);
+    } else {
+        console.error("JWT Secret Key is null");
+    }
+
+    if (!accessToken) {
+        throw new Error();
+    }
+
+    return (
         <div className="">
-          <Playground
-            selectedUser={dbUser}
-            selectedToy={dbUser.toy!}
-            accessToken={accessToken}
-          />
+            {dbUser && (
+                <div className="">
+                    <Playground
+                        selectedUser={dbUser}
+                        selectedToy={dbUser.toy!}
+                        allToys={allToys}
+                        accessToken={accessToken}
+                    />
+                </div>
+            )}
         </div>
-      )}
-    </div>
-  );
+    );
 }

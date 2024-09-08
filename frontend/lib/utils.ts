@@ -2,51 +2,51 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+    return twMerge(clsx(inputs));
 }
 
 export const getBaseUrl = () => {
-  return process.env.NEXT_PUBLIC_VERCEL_ENV === "production"
-    ? "https://starmoon.app"
-    : "http://localhost:3000";
+    return process.env.NEXT_PUBLIC_VERCEL_ENV === "production"
+        ? "https://starmoon.app"
+        : "http://localhost:3000";
 };
 
 export const getUserAvatar = (email: string) => {
-  return `/kidAvatar_boy_1.png`;
+    return `/kidAvatar_boy_1.png`;
 };
 
 export const getAssistantAvatar = (imageSrc: string) => {
-  return "/" + imageSrc + "_avatar.png";
+    return "/" + imageSrc + ".png";
 };
 
 export const getCreditsRemaining = (user: IUser) => {
-  // starts with 50 credits
-  // max session time is 10 minutes or 600 seconds
+    // starts with 50 credits
+    // max session time is 10 minutes or 600 seconds
 
-  return Math.max(Math.round(50 - (5 * user.session_time) / 60), 0);
+    return Math.max(Math.round(50 - (5 * user.session_time) / 60), 0);
 };
 
 export const constructUserPrompt = (
-  user: IUser,
-  toy: IToy,
-  convState: string | null
+    user: IUser,
+    toy: IToy,
+    convState: string | null
 ) => {
-  const prompt = `<role>Your role is to serve as a conversational partner to the user,
+    const prompt = `<role>Your role is to serve as a conversational partner to the user,
   offering mental health support and engaging in light-hearted
   conversation. Avoid giving technical advice or answering factual
   questions outside of your emotional support role: ${
-    toy.expanded_prompt
+      toy.expanded_prompt
   }</role>
     
     YOU ARE TALKING TO:
     ${user.supervisee_name} who is ${
-      user.supervisee_age
+        user.supervisee_age
     } year old. Here is some more information on ${
-      user.supervisee_name
+        user.supervisee_name
     } set by their parent: ${
-      user.supervisee_persona
+        user.supervisee_persona
     }. Use a friendly tone and talk to this child as if they are ${
-      user.supervisee_age
+        user.supervisee_age
     } years old.
 
   Current time: ${new Date().toLocaleTimeString()}
@@ -66,22 +66,22 @@ export const constructUserPrompt = (
 
     YOUR TOPICS:
     You must be encouraging and foster a growth mindset in conversation. You must focus on these topics: ${(
-      user?.modules ?? []
+        user?.modules ?? []
     ).join(", ")}.
     `;
 
-  // console.log(prompt);
-  return prompt;
+    // console.log(prompt);
+    return prompt;
 };
 
 export const getMessageRoleName = (
-  role: string,
-  selectedUser: IUser,
-  selectedToy: IToy
+    role: string,
+    selectedUser: IUser,
+    selectedToy: IToy
 ) => {
-  if (role === "input") {
-    return selectedUser.supervisee_name;
-  } else {
-    return selectedToy.name;
-  }
+    if (role === "input") {
+        return selectedUser.supervisee_name;
+    } else {
+        return selectedToy.name;
+    }
 };

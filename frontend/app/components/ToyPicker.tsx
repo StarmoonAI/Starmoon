@@ -1,84 +1,92 @@
 import { Button } from "@/components/ui/button";
+import { getAssistantAvatar } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
 interface ToyPickerProps {
-  currentToy?: IToy;
-  chooseToy: (toy: IToy) => void;
-  allToys: IToy[];
-  imageSize: number;
-  buttonText: string;
-  showHelpText: boolean;
+    currentToy?: IToy;
+    chooseToy: (toy: IToy) => void;
+    allToys: IToy[];
+    imageSize: number;
+    buttonText: string;
+    showHelpText: boolean;
 }
 
 const ToyPicker: React.FC<ToyPickerProps> = ({
-  currentToy,
-  allToys,
-  chooseToy,
-  imageSize,
-  buttonText,
-  showHelpText,
+    currentToy,
+    allToys,
+    chooseToy,
+    imageSize,
+    buttonText,
+    showHelpText,
 }) => {
-  const [selectedToy, setSelectedToy] = useState<IToy | undefined>(currentToy);
+    const [selectedToy, setSelectedToy] = useState<IToy | undefined>(
+        currentToy
+    );
 
-  const onClickSelectedToy = (toy: IToy) => {
-    setSelectedToy(toy);
-  };
+    const onClickSelectedToy = (toy: IToy) => {
+        setSelectedToy(toy);
+    };
 
-  return (
-    <div className="flex flex-col-reverse gap-8 pb-6">
-      <div className="flex md:mt-7- md:flex-row flex-col gap-8 items-center justify-center">
-        {allToys.map((toy) => {
-          const chosen = selectedToy?.toy_id === toy.toy_id;
-          return (
-            <div
-              key={toy.toy_id}
-              className="flex flex-col gap-2 bg-gray-50- rounded-[15px]"
-            >
-              <div
-                className={`flex flex-col max-w-[320px] max-h-[320px] gap-2 mb-4 rounded-2xl overflow-hidden cursor-pointer transition-colors duration-200 ease-in-out`}
-                onClick={() => onClickSelectedToy(toy)}
-              >
-                <Image
-                  src={"/" + toy.image_src! + ".png"}
-                  width={600}
-                  height={600}
-                  alt={toy.name}
-                  className="transition-transform duration-300 ease-in-out scale-90 transform hover:scale-100 hover:-rotate-2"
-                />
-              </div>
-              <div className="flex flex-col gap-3 items-center text-center">
-                <div className={`text-2xl font-medium`}>{toy.name}</div>
-                {chosen && (
-                  <>
-                    <div className="font-quicksand max-w-[320px] text-gray-600 text-sm font-normal">
-                      {toy.third_person_prompt}
-                    </div>
-                    <Button
-                      onClick={() => {
-                        chooseToy(toy);
-                      }}
-                      variant="primary"
-                      className="font-medium text-lg flex flex-row gap-2 items-center rounded-full"
-                    >
-                      <span>{buttonText}</span>
-                      <ArrowRight strokeWidth={3} size={20} />
-                    </Button>
-                  </>
-                )}
-              </div>
+    return (
+        <div className="flex flex-col-reverse gap-8 pb-6">
+            <div className="flex md:mt-7- md:flex-row flex-col gap-8 items-center justify-center">
+                {allToys.map((toy) => {
+                    const chosen = selectedToy?.toy_id === toy.toy_id;
+                    return (
+                        <div
+                            key={toy.toy_id}
+                            className="flex flex-col gap-2 bg-gray-50- rounded-[15px]"
+                        >
+                            <div
+                                className={`flex flex-col max-w-[320px] max-h-[320px] gap-2 mb-4 rounded-2xl overflow-hidden cursor-pointer transition-colors duration-200 ease-in-out`}
+                                onClick={() => onClickSelectedToy(toy)}
+                            >
+                                <Image
+                                    src={getAssistantAvatar(toy.image_src!)}
+                                    width={600}
+                                    height={600}
+                                    alt={toy.name}
+                                    className="transition-transform duration-300 ease-in-out scale-90 transform hover:scale-100 hover:-rotate-2"
+                                />
+                            </div>
+                            <div className="flex flex-col gap-3 items-center text-center">
+                                <div className={`text-2xl font-medium`}>
+                                    {toy.name}
+                                </div>
+                                {chosen && (
+                                    <>
+                                        <div className="font-quicksand max-w-[320px] text-gray-600 text-sm font-normal">
+                                            {toy.third_person_prompt}
+                                        </div>
+                                        <Button
+                                            onClick={() => {
+                                                chooseToy(toy);
+                                            }}
+                                            variant="primary"
+                                            className="font-medium text-lg flex flex-row gap-2 items-center rounded-full"
+                                        >
+                                            <span>{buttonText}</span>
+                                            <ArrowRight
+                                                strokeWidth={3}
+                                                size={20}
+                                            />
+                                        </Button>
+                                    </>
+                                )}
+                            </div>
+                        </div>
+                    );
+                })}
             </div>
-          );
-        })}
-      </div>
-      {/* {showHelpText && (
+            {/* {showHelpText && (
         <p className="flex self-center text-sm text-gray-600">
           (pick your favorite AI character to get started!)
         </p>
       )} */}
-    </div>
-  );
+        </div>
+    );
 };
 
 export default ToyPicker;
