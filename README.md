@@ -1,4 +1,4 @@
-# <span><img style='vertical-align:middle; display:inline;' src="./logo.png"  width="5%" height="5%">&nbsp; Starmoon, the low-cost empathic AI device</span>
+# <span><img style='vertical-align:middle; display:inline;' src="./logo.png"  width="5%" height="5%"><span style='vertical-align: middle; line-height: normal;'>&nbsp;Starmoon, the low-cost empathic AI device</span></span>
 
 <!-- # Starmoon, the low-cost empathic AI device -->
 
