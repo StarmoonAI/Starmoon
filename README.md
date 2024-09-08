@@ -1,6 +1,5 @@
-# <span ><img style='vertical-align:middle; display:inline;' src="./logo.png"  width="5%" height="5%"><span style='vertical-align: middle; line-height: normal;'>&nbsp;Starmoon AI</span></span>
+# <span ><img style='vertical-align:middle; display:inline;' src="./logo.png"  width="5%" height="5%"><span style='vertical-align: middle; line-height: normal;'>&nbsp;Starmoon, your low-cost AI companion device </span></span>
 
-## Your low-cost AI companion device 🤖
 <!-- Put on a toy, Hanging on the hand, put on the desktop near macbook -->
 
 <div align="center">
