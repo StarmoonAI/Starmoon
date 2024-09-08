@@ -1,4 +1,4 @@
-# <span ><img style='vertical-align:middle; display:inline;' src="./logo.png"  width="5%" height="5%"><span style='vertical-align: middle; line-height: normal;'>&nbsp;Starmoon - Low-cost AI empathic companion</span></span>
+# <span ><img style='vertical-align:middle; display:inline;' src="./logo.png"  width="5%" height="5%"><span style='vertical-align: middle; line-height: normal;'>&nbsp;Starmoon - The low-cost AI empathic companion</span></span>
 
 Starmoon is a affordable little AI companion device, you can take it anywhere and talk to it.  It can understand your emotions and respond with empathy, offering supportive conversations and personalized learning assistance.
 
