@@ -119,6 +119,6 @@ services:
     ports:
       - 5555:5555
 
-networks:
-  starmoon-network:
-    driver: bridge
+# networks:
+#   starmoon-network:
+#     driver: bridge
