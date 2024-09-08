@@ -11,8 +11,7 @@
 <!-- [![Twitter Follow](https://img.shields.io/twitter/follow/StanGirard?style=social)](https://twitter.com/_StanGirard) -->
 </div>
 
-What is Starmoon AI in 1 sentence.
-Usecases: 1, 2, 3
+Starmoon is a little AI companion, you can bring it anywhere and talk to it. It can understand your emotions and respond to you with an empathic voice.
 
 [Check our Roadmap](roadmap.md)
 <!-- custom voice clone, RAG, agent -->
@@ -50,7 +49,7 @@ Video
    - [Button](https://www.aliexpress.us/item/3256803815119722.html) - $0.01/unit
    - [PCB prototype board](https://www.aliexpress.us/item/3256806179554884.html) - $0.13/unit
    - 3D printed case (link)
-   - Tools: [28AWG wires](https://www.aliexpress.us/item/3256801511896966.html) + [soldering toolset]((https://www.aliexpress.com/item/1005007010143403.html)) + [flux](https://www.aliexpress.com/item/1005007003481283.html)
+   - Tools: [28AWG wires](https://www.aliexpress.us/item/3256801511896966.html) + [soldering toolset](https://www.aliexpress.com/item/1005007010143403.html) + [flux](https://www.aliexpress.com/item/1005007003481283.html)
 
 ### Software setup 🖥️
 
@@ -60,7 +59,7 @@ Video
   git clone https://github.com/StarmoonAI/Starmoon.git && cd starmoon
   ```
 
-- **Step 1**: Se tup Supabase:
+- **Step 1**: Set up Supabase:
 
     ```bash
     supabase start

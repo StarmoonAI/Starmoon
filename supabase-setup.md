@@ -8,8 +8,6 @@ Before you begin, ensure you have the following:
 
 - Make sure [Docker](https://docs.docker.com/get-started/get-docker/) is running
 
-- [Create a Supabase account](https://supabase.com/dashboard/sign-up)
-
 - Install Supabase CLI to your machine
 
     ```bash
