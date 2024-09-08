@@ -45,8 +45,8 @@ const ToyPicker: React.FC<ToyPickerProps> = ({
                             >
                                 <Image
                                     src={getAssistantAvatar(toy.image_src!)}
-                                    width={600}
-                                    height={600}
+                                    width={imageSize}
+                                    height={imageSize}
                                     alt={toy.name}
                                     className="transition-transform duration-300 ease-in-out scale-90 transform hover:scale-100 hover:-rotate-2"
                                 />
