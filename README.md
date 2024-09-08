@@ -25,6 +25,7 @@ Video
 - **Voice-enabled emotional intelligence**: Understands and analyse your emotions according to your voice.
 - **Open-source**: Fully open-scourced, you can deploy locally and self-host to ensure the privacy of your data.
 - **Tiny size device**: As small as the Apple Watch, you can carry the device anywhere.
+- **Reduce screen time**: Many AI companion are screen-based, and our intention is to give your eyes a rest.
 
 ## Getting Started 🚀
 
