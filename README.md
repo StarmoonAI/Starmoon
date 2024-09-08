@@ -1,6 +1,6 @@
-# <span><img style='vertical-align:middle; display:inline;' src="./logo.png"  width="5%" height="5%"><span style='vertical-align: middle; line-height: normal;'>&nbsp;Starmoon, the low-cost empathic AI device</span></span>
+# <span><img style='vertical-align:middle; display:inline;' src="./logo.png"  width="5%" height="5%"><span style='vertical-align: middle; line-height: normal;'>&nbsp;Starmoon, the low-cost empathic AI companion device</span></span>
 
-<!-- # Starmoon, the low-cost empathic AI device -->
+<!-- Put on a toy, Hanging on the hand, put on the desktop near macbook -->
 
 <div align="center">
     <img src="./logo.png" alt="Starmoon-logo" width="20%"  style="border-radius: 50%; padding-bottom: 20px"/>
@@ -15,7 +15,7 @@
 What is Starmoon AI in 1 sentence.
 Usecases: 1, 2, 3
 
-[Check our Roadmap](www.starmoon.ai)
+[Check our Roadmap](roadmap.md)
 <!-- custom voice clone, RAG, agent -->
 
 ## Demo Highlights 🎥
@@ -24,35 +24,34 @@ Video
 
 ## Key features 🎯
 
-- Low-cost
-- Voice-enabled emotional intelligence
-- Open-source
-- Tiny size (as small as the Apple Watch)
+- **Low-cost**: Assemble the device yourself with off-the-shelf components cost in $10.
+- **Voice-enabled emotional intelligence**: Understands and analyse your emotions according to your voice.
+- **Open-source**: Fully open-scourced, you can deploy locally and self-host to ensure the privacy of your data.
+- **Tiny size device**: As small as the Apple Watch, you can carry the device anywhere.
 
 ## Getting Started 🚀
-
-123
 
 ### Prerequisites 📋
 
 1. API keys and services:
    - [Docker](https://docs.docker.com/get-started/get-docker/)
-   - Supabase CLI
-     - Follow the instructions [here](supabase-setup.md) to install if you haven't installed
+   - Supabase CLI: Follow the instructions [here](supabase-setup.md) to install if you haven't installed
    - Vscode and [PlatformIO](https://platformio.org/install/ide?install=vscode) plugin: For firmware burning
    - [OpenAI API key](https://platform.openai.com/api-keys): For AI language models
    - [Deepgram API key](https://developers.deepgram.com/docs/create-additional-api-keys): For speech-to-text
-   - [Azure speech API key](https://vitalpbx.com/blog/how-to-create-microsoft-azure-tts-api-key/): For text-to-speech
+   - [Azure speech API keys](https://vitalpbx.com/blog/how-to-create-microsoft-azure-tts-api-key/): For text-to-speech
    - [Huggingface API key](https://huggingface.co/docs/api-inference/en/quicktour#get-your-api-token): For emotion recognition
 
-2. Hardware list
-   - Seeed Studio Xiao ESP32C6
-   - Microphone (INMP441)
-   - Amplifier (98357A)
-   - Speaker (model)
-   - LED light (model)
-   - Button (model)
-   - PCB prototype board (link) + 28 AWG wires + soldering toolset
+1. Hardware list (Tax and shipping rates may vary by region)
+   - [Seeed Studio Xiao ESP32C6](https://www.aliexpress.us/item/1005007341749305.html) - $6.23/unit
+   - [Microphone (INMP441)](https://www.aliexpress.us/item/3256806674485209.html) - $1.67/unit
+   - [Amplifier (MAX98357A)](https://www.aliexpress.us/item/3256806524695775.html) - $1.52/unit
+   - [Speaker (3525)](https://www.aliexpress.us/item/3256805515112434.html) - $0.64/unit
+   - [LED light](https://www.aliexpress.us/item/3256805384408000.html) - $0.01/unit
+   - [Button](https://www.aliexpress.us/item/3256803815119722.html) - $0.01/unit
+   - [PCB prototype board](https://www.aliexpress.us/item/3256806179554884.html) - $0.13/unit
+   - 3D printed case (link)
+   - Tools: [28AWG wires](https://www.aliexpress.us/item/3256801511896966.html) + [soldering toolset]((https://www.aliexpress.com/item/1005007010143403.html)) + [flux](https://www.aliexpress.com/item/1005007003481283.html)
 
 ### Software setup 🖥️
 
@@ -151,7 +150,6 @@ Video
   supabase migration up
   ```
 
-
 ## License
 
-123
+This project is licensed under the GPL-3.0 License - see the [LICENSE](LICENSE) file for details
