@@ -17,7 +17,7 @@ import { Analytics } from "@vercel/analytics/react";
 import Footer from "./components/Footer";
 import NavbarButtons from "./components/NavbarButtons";
 import StarmoonLogo from "./components/StarmoonLogo";
-import { BookOpenText } from "lucide-react";
+import { BookOpenText, ShoppingCart } from "lucide-react";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -107,7 +107,8 @@ export default async function RootLayout({
                                             className="w-full"
                                         >
                                             <div className="flex flex-row md:px-4 px-2 py-[6px] items-center text-stone-800 dark:text-stone-50 hover:text-stone-700 bg-stone-50- hover:bg-stone-100 dark:hover:bg-stone-900 bg-nav-bar rounded-full">
-                                                <p className="font-medium">
+                                                <ShoppingCart size={18} />
+                                                <p className="pl-2 hidden sm:flex font-medium">
                                                     Preorder
                                                 </p>
                                             </div>
@@ -115,8 +116,8 @@ export default async function RootLayout({
 
                                         <Link href="/docs">
                                             <div className="flex flex-row gap-2 py-[6px] px-2 items-center text-stone-800 dark:text-stone-50 hover:text-stone-700 bg-stone-50- hover:bg-stone-100 dark:hover:bg-stone-900 bg-nav-bar rounded-full">
-                                                <BookOpenText />
-                                                <p className=" hidden sm:flex font-medium">
+                                                <BookOpenText size={18} />
+                                                <p className="hidden sm:flex font-medium">
                                                     Docs
                                                 </p>
                                             </div>
@@ -129,7 +130,7 @@ export default async function RootLayout({
                                             title="Visit our GitHub"
                                         >
                                             <div className="flex flex-row gap-2 md:px-4 px-2 py-[6px] items-center text-stone-800 dark:text-stone-50 hover:text-stone-700 bg-stone-50- hover:bg-stone-100 dark:hover:bg-stone-900 bg-nav-bar rounded-full">
-                                                <FaGithub className="text-2xl" />
+                                                <FaGithub className="text-xl" />
                                                 <p className="hidden sm:flex font-medium">
                                                     GitHub
                                                 </p>
