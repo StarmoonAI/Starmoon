@@ -16,6 +16,7 @@ import Image from "next/image";
 import PickCharacter from "./PickCharacter";
 import PickPersonality from "./PickPersonality";
 import PickVoice from "./PickVoice";
+import { updateUser } from "@/db/users";
 
 interface PlaygroundProps {
     selectedUser: IUser;
@@ -32,6 +33,8 @@ const Playground: React.FC<PlaygroundProps> = ({
     accessToken,
     allPersonalities,
 }) => {
+    const supabase = createClient();
+
     const {
         messageHistory,
         emotionDictionary,
@@ -98,7 +101,17 @@ const Playground: React.FC<PlaygroundProps> = ({
                         <div className="flex flex-col max-h-[300px] items-start gap-2 my-4 transition-colors duration-200 ease-in-out">
                             <div className="flex flex-row items-start gap-4">
                                 <PickPersonality
-                                    onPersonalityPicked={() => {}}
+                                    onPersonalityPicked={async (
+                                        personality_id: string
+                                    ) => {
+                                        await updateUser(
+                                            supabase,
+                                            {
+                                                personality_id,
+                                            },
+                                            selectedUser.user_id
+                                        );
+                                    }}
                                     allPersonalities={allPersonalities}
                                     selectedPersonalityId={
                                         selectedUser.personality_id
@@ -106,7 +119,15 @@ const Playground: React.FC<PlaygroundProps> = ({
                                     isDisabled={isSelectDisabled}
                                 />
                                 <PickVoice
-                                    onVoicePicked={() => {}}
+                                    onVoicePicked={async (toy_id: string) => {
+                                        await updateUser(
+                                            supabase,
+                                            {
+                                                toy_id,
+                                            },
+                                            selectedUser.user_id
+                                        );
+                                    }}
                                     allToys={allToys}
                                     selectedToyId={selectedUser.toy_id}
                                     isDisabled={isSelectDisabled}
