@@ -25,20 +25,14 @@ unsigned long lastPulseTime = 0;
 int ledBrightness = 0;
 int fadeAmount = 5;
 
-#define BUTTON_PIN 26
+#define BUTTON_PIN 0
 #define LED_PIN 2
 
 // I2S pins for Audio Input (INMP441 MEMS microphone)
-#define I2S_SD 13
+#define I2S_SD 19
 #define I2S_WS 5
 #define I2S_SCK 18
-#define I2S_PORT_IN I2S_NUM_0
-
-// I2S pins for Audio Output (MAX98357A amplifier)
-#define I2S_WS_OUT 32
-#define I2S_BCK_OUT 33
-#define I2S_DATA_OUT 25
-#define I2S_PORT_OUT I2S_NUM_1
+#define I2S_PORT I2S_NUM_0
 
 #define SAMPLE_RATE 16000
 #define bufferCnt 10
@@ -47,37 +41,44 @@ int16_t sBuffer[bufferLen];
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define BUFFER_SIZE 1024
+int16_t audioBuffer[BUFFER_SIZE];
+
+// Flags to control audio mode
+enum AudioMode
+{
+    MODE_IDLE,
+    MODE_RECORDING,
+    MODE_PLAYING
+};
+volatile AudioMode currentMode = MODE_IDLE;
 
 // WiFi credentials
-const char *ssid = "<your-wifi-name>";
-const char *password = "<your-wifi-password>";
+const char *ssid = "launchlab";
+const char *password = "LaunchLabRocks";
 
 // WebSocket server details
-const char *websocket_server_host = "<192.168.1.1.your-server-host>";
-const uint16_t websocket_server_port = 443;
-const char *websocket_server_path = "/<your-server-path-here>";
-const char *auth_token = "<your-auth-token-here>";
+const char *websocket_server_host = "192.168.2.236";
+const uint16_t websocket_server_port = 8000;
+const char *websocket_server_path = "/starmoon";
+const char *auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1bnJ1eGlvbmdAZ21haWwuY29tIiwidXNlcl9pZCI6IjAwNzljZWU5LTE4MjAtNDQ1Ni05MGE0LWU4YzI1MzcyZmUyOSIsImNyZWF0ZWRfdGltZSI6IjIwMjQtMDktMDZUMTY6NDU6MzQuMDQyMTU5In0.D7zgHF5qS1HiH4tRZ4XBpvd5_O-pjjg-tEngJt51MW4";
 String authMessage;
-
-// Flag to control when to play audio
-bool shouldPlayAudio = false;
 
 // ISR to handle button press
 void IRAM_ATTR buttonISR()
 {
-  buttonPressed = true;
+    buttonPressed = true;
 }
 
 // Function to create JSON message with the authentication token
 String createAuthTokenMessage(const char *token)
 {
-  JsonDocument doc;
-  doc["token"] = token;
-  doc["device"] = "esp";
-  doc["user_id"] = NULL;
-  String jsonString;
-  serializeJson(doc, jsonString);
-  return jsonString;
+    JsonDocument doc;
+    doc["token"] = token;
+    doc["device"] = "esp";
+    doc["user_id"] = NULL;
+    String jsonString;
+    serializeJson(doc, jsonString);
+    return jsonString;
 }
 
 using namespace websockets;
@@ -106,376 +107,309 @@ void ledControlTask(void *parameter);
 
 void onWSConnectionOpened()
 {
-  authMessage = createAuthTokenMessage(auth_token);
-  Serial.println(authMessage);
-  client.send(authMessage);
-  Serial.println("Connnection Opened");
-  analogWrite(LED_PIN, 250);
-  isWebSocketConnected = true;
+    currentMode = MODE_RECORDING;
+    authMessage = createAuthTokenMessage(auth_token);
+    Serial.println(authMessage);
+    client.send(authMessage);
+    Serial.println("Connnection Opened");
+    analogWrite(LED_PIN, 250);
+    isWebSocketConnected = true;
 }
 
 void onWSConnectionClosed()
 {
-  analogWrite(LED_PIN, 0);
-  Serial.println("Connnection Closed");
-  isWebSocketConnected = false;
+    currentMode = MODE_IDLE;
+    analogWrite(LED_PIN, 0);
+    Serial.println("Connnection Closed");
+    isWebSocketConnected = false;
 }
 
 void onEventsCallback(WebsocketsEvent event, String data)
 {
-  if (event == WebsocketsEvent::ConnectionOpened)
-  {
-    onWSConnectionOpened();
-  }
-  else if (event == WebsocketsEvent::ConnectionClosed)
-  {
-    onWSConnectionClosed();
-  }
-  else if (event == WebsocketsEvent::GotPing)
-  {
-    Serial.println("Got a Ping!");
-  }
-  else if (event == WebsocketsEvent::GotPong)
-  {
-    Serial.println("Got a Pong!");
-  }
+    if (event == WebsocketsEvent::ConnectionOpened)
+    {
+        onWSConnectionOpened();
+    }
+    else if (event == WebsocketsEvent::ConnectionClosed)
+    {
+        onWSConnectionClosed();
+    }
+    else if (event == WebsocketsEvent::GotPing)
+    {
+        Serial.println("Got a Ping!");
+    }
+    else if (event == WebsocketsEvent::GotPong)
+    {
+        Serial.println("Got a Pong!");
+    }
 }
 
 void sendAcknowledgment()
 {
-  JsonDocument doc;
-  doc["speaker"] = "user";
-  doc["is_replying"] = false;
-  String response;
-  serializeJson(doc, response);
-  client.send(response);
+    JsonDocument doc;
+    doc["speaker"] = "user";
+    doc["is_replying"] = false;
+    String response;
+    serializeJson(doc, response);
+    client.send(response);
 }
 
 void i2s_install()
 {
-  // Set up I2S Processor configuration
-  const i2s_config_t i2s_config = {
-      .mode = i2s_mode_t(I2S_MODE_MASTER | I2S_MODE_RX),
-      .sample_rate = SAMPLE_RATE,
-      .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
-      .channel_format = I2S_CHANNEL_FMT_ONLY_LEFT,
-      .communication_format = i2s_comm_format_t(I2S_COMM_FORMAT_STAND_I2S),
-      .intr_alloc_flags = 0,
-      .dma_buf_count = bufferCnt,
-      .dma_buf_len = bufferLen,
-      .use_apll = false};
+    // Set up I2S Processor configuration
+    const i2s_config_t i2s_config = {
+        .mode = i2s_mode_t(I2S_MODE_MASTER | I2S_MODE_RX | I2S_MODE_TX),
+        .sample_rate = SAMPLE_RATE,
+        .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
+        .channel_format = I2S_CHANNEL_FMT_ONLY_LEFT,
+        .communication_format = i2s_comm_format_t(I2S_COMM_FORMAT_STAND_I2S),
+        .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
+        .dma_buf_count = bufferCnt,
+        .dma_buf_len = bufferLen,
+        .use_apll = false,
+        .tx_desc_auto_clear = true,
+        .fixed_mclk = 0};
 
-  esp_err_t err = i2s_driver_install(I2S_PORT_IN, &i2s_config, 0, NULL);
-  Serial.printf("I2S mic driver install: %s\n", esp_err_to_name(err));
+    esp_err_t err = i2s_driver_install(I2S_PORT, &i2s_config, 0, NULL);
+    Serial.printf("I2S mic driver install: %s\n", esp_err_to_name(err));
 }
 
 void i2s_setpin()
 {
-  // Set I2S pin configuration
-  const i2s_pin_config_t pin_config = {
-      .bck_io_num = I2S_SCK,
-      .ws_io_num = I2S_WS,
-      .data_out_num = -1,
-      .data_in_num = I2S_SD};
+    // Set I2S pin configuration
+    const i2s_pin_config_t pin_config = {
+        .bck_io_num = I2S_SCK,
+        .ws_io_num = I2S_WS,
+        .data_out_num = I2S_SD,
+        .data_in_num = I2S_SD};
 
-  i2s_set_pin(I2S_PORT_IN, &pin_config);
-}
-
-void i2s_speaker_install()
-{
-  // Set up I2S Processor configuration for speaker
-  const i2s_config_t i2s_config = {
-      .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_TX),
-      .sample_rate = SAMPLE_RATE,
-      .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
-      .channel_format = I2S_CHANNEL_FMT_ONLY_LEFT, // Mono audio
-      .communication_format = I2S_COMM_FORMAT_I2S_MSB,
-      .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
-      .dma_buf_count = 10,
-      .dma_buf_len = 1024,
-      .use_apll = false,
-      .tx_desc_auto_clear = true,
-      .fixed_mclk = 0};
-
-  esp_err_t err = i2s_driver_install(I2S_PORT_OUT, &i2s_config, 0, NULL); // Install the I2S driver on I2S_NUM_1
-  Serial.printf("I2S speaker driver install: %s\n", esp_err_to_name(err));
-}
-
-void i2s_speaker_setpin()
-{
-  // Set I2S pin configuration for speaker
-  const i2s_pin_config_t pin_config = {
-      .bck_io_num = I2S_BCK_OUT,    // Bit Clock (BCK)
-      .ws_io_num = I2S_WS_OUT,      // Word Select (LRCK)
-      .data_out_num = I2S_DATA_OUT, // Data Out (DIN)
-      .data_in_num = -1};           // Not used, so set to -1
-
-  i2s_set_pin(I2S_PORT_OUT, &pin_config); // Set the I2S pins on I2S_NUM_1
+    i2s_set_pin(I2S_PORT, &pin_config);
 }
 
 void connectWiFi()
 {
-  WiFi.begin(ssid, password);
+    WiFi.begin(ssid, password);
 
-  while (WiFi.status() != WL_CONNECTED)
-  {
-    delay(500);
-    Serial.print("|");
-  }
-  Serial.println("");
-  Serial.println("WiFi connected");
-
-  WiFi.setSleep(false);
-}
-
-void micTask(void *parameter)
-{
-  i2s_start(I2S_PORT_IN);
-
-  size_t bytesIn = 0;
-  Serial.println("Mic task started");
-
-  while (1)
-  {
-    // Check if the WebSocket connection is still active
-    if (isWebSocketConnected)
+    while (WiFi.status() != WL_CONNECTED)
     {
-      esp_err_t result = i2s_read(I2S_PORT_IN, &sBuffer, bufferLen, &bytesIn, portMAX_DELAY);
-      if (result == ESP_OK)
-      {
-        client.sendBinary((const char *)sBuffer, bytesIn);
-      }
-      else
-      {
-        Serial.printf("Error reading from I2S: %d\n", result);
-      }
+        delay(500);
+        Serial.print("|");
     }
+    Serial.println("");
+    Serial.println("WiFi connected");
 
-    // Add a small delay to prevent watchdog issues
-    vTaskDelay(10 / portTICK_PERIOD_MS);
-  }
-
-  // If the task is ending, ensure I2S is stopped and buffer is cleared
-  i2s_stop(I2S_PORT_IN);
-  i2s_zero_dma_buffer(I2S_PORT_IN);
-  Serial.println("Mic task ended");
-  vTaskDelete(NULL); // Delete the task if it's no longer needed
+    WiFi.setSleep(false);
 }
 
-void startSpeaker()
+void audioTask(void *parameter)
 {
-  shouldPlayAudio = true;
+    size_t bytesRead = 0;
+    size_t bytesWritten = 0;
 
-  // Start the I2S interface when the audio stream starts
-  esp_err_t err = i2s_start(I2S_PORT_OUT);
-  if (err != ESP_OK)
-  {
-    Serial.printf("Failed to start I2S: %d\n", err);
-  }
-  else
-  {
-    Serial.println("I2S started");
-  }
-}
+    while (1)
+    {
+        if (isWebSocketConnected)
+        {
+            switch (currentMode)
+            {
+            case MODE_RECORDING:
+                esp_err_t result = i2s_read(I2S_PORT, &sBuffer, bufferLen, &bytesRead, portMAX_DELAY);
+                if (result == ESP_OK)
+                {
+                    client.sendBinary((const char *)sBuffer, bytesRead);
+                }
+                else
+                {
+                    Serial.printf("Error reading from I2S: %d\n", result);
+                }
 
-void stopSpeaker()
-{
-  shouldPlayAudio = false;
-
-  // Stop the I2S interface when the audio stream ends
-  esp_err_t err = i2s_stop(I2S_PORT_OUT);
-
-  if (err != ESP_OK)
-  {
-    Serial.printf("Failed to stop I2S: %d\n", err);
-  }
-  else
-  {
-    Serial.println("I2S stopped");
-  }
-  i2s_zero_dma_buffer(I2S_PORT_OUT);
+                break;
+            }
+        }
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+    }
 }
 
 void handleTextMessage(const char *msgText)
 {
-  Serial.printf("Received message: %s\n", msgText);
+    Serial.printf("Received message: %s\n", msgText);
 
-  JsonDocument doc;
-  DeserializationError error = deserializeJson(doc, msgText);
+    JsonDocument doc;
+    DeserializationError error = deserializeJson(doc, msgText);
 
-  if (error)
-  {
-    Serial.println("Failed to parse JSON");
-    return;
-  }
+    if (error)
+    {
+        Serial.println("Failed to parse JSON");
+        return;
+    }
 
-  const char *type = doc["type"];
-  if (strcmp(type, "start_of_audio") == 0)
-  {
-    Serial.println("Received start_of_audio");
-    startSpeaker();
-  }
-  else if (strcmp(type, "end_of_audio") == 0)
-  {
-    Serial.println("Received end_of_audio");
-
-    // Clear any remaining buffers or resources here if necessary
-    stopSpeaker();
-
-    // Send acknowledgment to the server
-    sendAcknowledgment();
-  }
+    const char *type = doc["type"];
+    if (strcmp(type, "start_of_audio") == 0)
+    {
+        Serial.println("Received start_of_audio");
+        currentMode = MODE_PLAYING;
+    }
+    else if (strcmp(type, "end_of_audio") == 0)
+    {
+        Serial.println("Received end_of_audio");
+        currentMode = MODE_RECORDING;
+        sendAcknowledgment();
+    }
 }
 
 void connectWSServer()
 {
-  if (client.connect(websocket_server_host, websocket_server_port, websocket_server_path))
-  {
-    Serial.println("Connected to WebSocket server");
-  }
-  else
-  {
-    Serial.println("Failed to connect to WebSocket server");
-  }
+    if (client.connect(websocket_server_host, websocket_server_port, websocket_server_path))
+    {
+        Serial.println("Connected to WebSocket server");
+    }
+    else
+    {
+        Serial.println("Failed to connect to WebSocket server");
+    }
 }
 
 void disconnectWSServer()
 {
-  client.close();
-  vTaskDelay(100 / portTICK_PERIOD_MS); // Delay to ensure the connection is closed
-  onWSConnectionClosed();
+    client.close();
+    vTaskDelay(100 / portTICK_PERIOD_MS); // Delay to ensure the connection is closed
+    onWSConnectionClosed();
 }
 
 void handleBinaryAudio(const char *payload, size_t length)
 {
-  size_t bytesWritten = 0;
-  esp_err_t result = i2s_write(I2S_PORT_OUT, payload, length, &bytesWritten, portMAX_DELAY);
-  if (result != ESP_OK)
-  {
-    Serial.printf("Error in i2s_write: %d\n", result);
-  }
-  else if (bytesWritten != length)
-  {
-    Serial.printf("Warning: only %d bytes written out of %d\n", bytesWritten, length);
-  }
+    if (currentMode == MODE_PLAYING)
+    {
+        size_t bytesWritten = 0;
+        esp_err_t result = i2s_write(I2S_PORT, payload, length, &bytesWritten, portMAX_DELAY);
+        if (result != ESP_OK)
+        {
+            Serial.printf("Error in i2s_write: %d\n", result);
+        }
+    }
 }
 
 void onMessageCallback(WebsocketsMessage message)
 {
-  if (message.isText())
-  {
-    handleTextMessage(message.c_str());
-  }
-  else if (message.isBinary() && shouldPlayAudio)
-  {
-    // Handle binary audio data
-    handleBinaryAudio(message.c_str(), message.length());
-  }
+    if (message.isText())
+    {
+        handleTextMessage(message.c_str());
+    }
+    else if (message.isBinary() && currentMode == MODE_PLAYING)
+    {
+        handleBinaryAudio(message.c_str(), message.length());
+    }
 }
 
 void buttonTask(void *parameter)
 {
-  while (1)
-  {
-    if (buttonPressed && (millis() - lastDebounceTime > DEBOUNCE_TIME))
+    while (1)
     {
-      buttonPressed = false;
-      lastDebounceTime = millis();
+        if (buttonPressed && (millis() - lastDebounceTime > DEBOUNCE_TIME))
+        {
+            buttonPressed = false;
+            lastDebounceTime = millis();
 
-      Serial.println("Button pressed");
-      Serial.printf("isWebSocketConnected: %d\n", isWebSocketConnected);
+            Serial.println("Button pressed");
+            Serial.printf("isWebSocketConnected: %d\n", isWebSocketConnected);
 
-      if (isWebSocketConnected)
-      {
-        disconnectWSServer();
-      }
-      else
-      {
-        Serial.println("Attempting to connect to WebSocket server...");
-        shouldConnectWebSocket = true;
-      }
+            if (isWebSocketConnected)
+            {
+                if (currentMode == MODE_RECORDING)
+                {
+                    disconnectWSServer();
+                    Serial.println("Stopping recording");
+                }
+                else if (currentMode == MODE_PLAYING)
+                {
+                    currentMode = MODE_RECORDING;
+                    Serial.println("Starting recording");
+                }
+            }
+            else
+            {
+                Serial.println("Attempting to connect to WebSocket server...");
+                shouldConnectWebSocket = true;
+            }
+        }
+        vTaskDelay(pdMS_TO_TICKS(10)); // Small delay to prevent task starvation
     }
-    vTaskDelay(pdMS_TO_TICKS(10)); // Small delay to prevent task starvation
-  }
 }
 
 void ledControlTask(void *parameter)
 {
-  unsigned long lastPulseTime = 0;
-  int ledBrightness = MIN_BRIGHTNESS;
-  int fadeAmount = 5;
+    unsigned long lastPulseTime = 0;
+    int ledBrightness = MIN_BRIGHTNESS;
+    int fadeAmount = 5;
 
-  while (1)
-  {
-    if (!isWebSocketConnected)
+    while (1)
     {
-      analogWrite(LED_PIN, 0); // LED off when not connected
-    }
-    else if (shouldPlayAudio)
-    {
-      // Pulse LED while playing audio
-      unsigned long currentMillis = millis();
-      if (currentMillis - lastPulseTime >= 30)
-      {
-        lastPulseTime = currentMillis;
-
-        ledBrightness += fadeAmount;
-        if (ledBrightness <= MIN_BRIGHTNESS || ledBrightness >= MAX_BRIGHTNESS)
+        if (!isWebSocketConnected)
         {
-          fadeAmount = -fadeAmount;
+            analogWrite(LED_PIN, 0); // LED off when not connected
+        }
+        else if (currentMode == MODE_PLAYING)
+        {
+            // Pulse LED while playing audio
+            unsigned long currentMillis = millis();
+            if (currentMillis - lastPulseTime >= 30)
+            {
+                lastPulseTime = currentMillis;
+
+                ledBrightness += fadeAmount;
+                if (ledBrightness <= MIN_BRIGHTNESS || ledBrightness >= MAX_BRIGHTNESS)
+                {
+                    fadeAmount = -fadeAmount;
+                }
+
+                analogWrite(LED_PIN, ledBrightness);
+            }
+        }
+        else
+        {
+            // Fixed brightness when connected but not playing audio
+            analogWrite(LED_PIN, MAX_BRIGHTNESS);
         }
 
-        analogWrite(LED_PIN, ledBrightness);
-      }
+        // Small delay to prevent task from hogging CPU
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
-    else
-    {
-      // Fixed brightness when connected but not playing audio
-      analogWrite(LED_PIN, MAX_BRIGHTNESS);
-    }
-
-    // Small delay to prevent task from hogging CPU
-    vTaskDelay(pdMS_TO_TICKS(10));
-  }
 }
 
 void setup()
 {
-  Serial.begin(115200);
+    Serial.begin(115200);
 
-  connectWiFi();
-  client.onEvent(onEventsCallback);
-  client.onMessage(onMessageCallback);
+    connectWiFi();
+    client.onEvent(onEventsCallback);
+    client.onMessage(onMessageCallback);
 
-  i2s_install();
-  i2s_setpin();
+    i2s_install();
+    i2s_setpin();
 
-  i2s_speaker_install();
-  i2s_speaker_setpin();
+    xTaskCreatePinnedToCore(audioTask, "micTask", 10000, NULL, 1, &micTaskHandle, 0);
+    xTaskCreatePinnedToCore(ledControlTask, "ledControlTask", 2048, NULL, 1, &ledTaskHandle, 1);
+    xTaskCreate(buttonTask, "buttonTask", 2048, NULL, 1, &buttonTaskHandle);
 
-  xTaskCreatePinnedToCore(micTask, "micTask", 10000, NULL, 1, &micTaskHandle, 0);
-  xTaskCreatePinnedToCore(ledControlTask, "ledControlTask", 2048, NULL, 1, &ledTaskHandle, 1);
-  xTaskCreate(buttonTask, "buttonTask", 2048, NULL, 1, &buttonTaskHandle);
+    pinMode(BUTTON_PIN, INPUT_PULLUP);
+    pinMode(LED_PIN, OUTPUT);
 
-  pinMode(BUTTON_PIN, INPUT_PULLUP);
-  pinMode(LED_PIN, OUTPUT);
-
-  attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), buttonISR, FALLING);
+    attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), buttonISR, FALLING);
 }
 
 void loop()
 {
-  if (shouldConnectWebSocket && !isWebSocketConnected)
-  {
-    connectWSServer();
-    shouldConnectWebSocket = false;
-  }
+    if (shouldConnectWebSocket && !isWebSocketConnected)
+    {
+        connectWSServer();
+        shouldConnectWebSocket = false;
+    }
 
-  if (client.available())
-  {
-    client.poll();
-  }
+    if (client.available())
+    {
+        client.poll();
+    }
 
-  // Delay to avoid watchdog issues
-  delay(10);
+    // Delay to avoid watchdog issues
+    delay(10);
 }
