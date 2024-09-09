@@ -2,22 +2,25 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { SidebarNav } from "../components/SidebarNavItems";
 import Footer from "../components/Footer";
+import { AudioLines, ChartSpline, Drum, Settings } from "lucide-react";
+
+const ICON_SIZE = 20;
 
 const sidebarNavItems = [
     {
         title: "Playground",
         href: "/home",
-        icon: "🎡",
+        icon: <AudioLines size={ICON_SIZE} />,
     },
     {
         title: "Insights",
         href: "/home/track",
-        icon: "📊",
+        icon: <ChartSpline size={ICON_SIZE} />,
     },
     {
         title: "Settings",
         href: "/home/settings",
-        icon: "⚙️",
+        icon: <Settings size={ICON_SIZE} />,
     },
 ];
 

@@ -4,14 +4,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { Dot } from "lucide-react";
 
 interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
     items: {
         href: string;
         title: string;
-        icon: string;
+        icon: React.ReactNode;
     }[];
 }
 
@@ -37,7 +37,7 @@ export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
                             "justify-start rounded-full text-md sm:text-xl text-normal text-stone-700"
                         )}
                     >
-                        <span className="mr-1">{item.icon}</span>
+                        <span className="mr-2">{item.icon}</span>
                         {item.title}
                         {pathname === item.href && (
                             <Dot className="hidden sm:block" size={48} />
