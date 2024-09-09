@@ -114,7 +114,7 @@ export default async function RootLayout({
                                         </Link>
 
                                         <Link href="/docs">
-                                            <div className="flex flex-row gap-2 py-[6px] items-center text-stone-800 dark:text-stone-50 hover:text-stone-700 bg-stone-50- hover:bg-stone-100 dark:hover:bg-stone-900 bg-nav-bar rounded-full">
+                                            <div className="flex flex-row gap-2 py-[6px] px-2 items-center text-stone-800 dark:text-stone-50 hover:text-stone-700 bg-stone-50- hover:bg-stone-100 dark:hover:bg-stone-900 bg-nav-bar rounded-full">
                                                 <BookOpenText />
                                                 <p className=" hidden sm:flex font-medium">
                                                     Docs
