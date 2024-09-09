@@ -19,12 +19,14 @@ interface PickPersonalityProps {
     onPersonalityPicked: (personalityId: string) => void;
     allPersonalities: IPersonality[];
     selectedPersonalityId: string;
+    isDisabled?: boolean;
 }
 
 const PickPersonality: React.FC<PickPersonalityProps> = ({
     onPersonalityPicked,
     allPersonalities,
     selectedPersonalityId,
+    isDisabled,
 }) => {
     const selectedPersonality = allPersonalities.find(
         (personality) => personality.personality_id === selectedPersonalityId
@@ -33,7 +35,7 @@ const PickPersonality: React.FC<PickPersonalityProps> = ({
     return (
         <div className="flex flex-col gap-2">
             <Popover>
-                <PopoverTrigger asChild>
+                <PopoverTrigger asChild disabled={isDisabled}>
                     <Button variant="outline">
                         {selectedPersonality?.title}{" "}
                         <ChevronDownIcon className="ml-2 h-4 w-4 text-muted-foreground" />

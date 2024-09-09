@@ -60,6 +60,8 @@ const Playground: React.FC<PlaygroundProps> = ({
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
+    const isSelectDisabled = connectionStatus === "Open";
+
     const handleScroll = () => {
         if (scrollContainerRef.current) {
             const { scrollTop, scrollHeight, clientHeight } =
@@ -94,22 +96,22 @@ const Playground: React.FC<PlaygroundProps> = ({
                             {creditsRemaining} credits remaining
                         </p>
                         <div className="flex flex-col max-h-[300px] items-start gap-2 my-4 transition-colors duration-200 ease-in-out">
-                            {connectionStatus !== "Open" && (
-                                <div className="flex flex-row items-start gap-4">
-                                    <PickPersonality
-                                        onPersonalityPicked={() => {}}
-                                        allPersonalities={allPersonalities}
-                                        selectedPersonalityId={
-                                            selectedUser.personality_id
-                                        }
-                                    />
-                                    <PickVoice
-                                        onVoicePicked={() => {}}
-                                        allToys={allToys}
-                                        selectedToyId={selectedUser.toy_id}
-                                    />
-                                </div>
-                            )}
+                            <div className="flex flex-row items-start gap-4">
+                                <PickPersonality
+                                    onPersonalityPicked={() => {}}
+                                    allPersonalities={allPersonalities}
+                                    selectedPersonalityId={
+                                        selectedUser.personality_id
+                                    }
+                                    isDisabled={isSelectDisabled}
+                                />
+                                <PickVoice
+                                    onVoicePicked={() => {}}
+                                    allToys={allToys}
+                                    selectedToyId={selectedUser.toy_id}
+                                    isDisabled={isSelectDisabled}
+                                />
+                            </div>
                             <div className="flex flex-row items-center self-center">
                                 <div className="max-w-[200px] transition-transform duration-300 ease-in-out scale-90 hover:scale-100">
                                     <Image

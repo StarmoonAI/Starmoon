@@ -20,18 +20,20 @@ interface PickPersonalityProps {
     onVoicePicked: (toyId: string) => void;
     allToys: IToy[];
     selectedToyId: string;
+    isDisabled?: boolean;
 }
 
 const PickVoice: React.FC<PickPersonalityProps> = ({
     onVoicePicked,
     allToys,
     selectedToyId,
+    isDisabled,
 }) => {
     const selectedToy = allToys.find((toy) => toy.toy_id === selectedToyId);
     return (
         <div className="flex flex-col gap-2">
             <Popover>
-                <PopoverTrigger asChild>
+                <PopoverTrigger asChild disabled={isDisabled}>
                     <Button variant="outline">
                         {selectedToy?.name}{" "}
                         <ChevronDownIcon className="ml-2 h-4 w-4 text-muted-foreground" />
