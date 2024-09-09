@@ -21,7 +21,7 @@ interface LoginProps {
 
 export default async function Login({ searchParams }: LoginProps) {
   const toy_id = searchParams?.toy_id as string | undefined;
-  const isGoogleOAuthEnabled = process.env.GOOGLE_OAUTH === "true";
+  const isGoogleOAuthEnabled = process.env.GOOGLE_OAUTH === "True";
 
   const signInOrSignUp = async (formData: FormData) => {
     "use server";
