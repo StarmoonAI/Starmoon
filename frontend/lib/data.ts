@@ -2,6 +2,9 @@ export const defaultToyId: string = "56224f7f-250d-4351-84ee-e4a13b881c7b";
 export const defaultPersonalityId: string =
     "a1c073e6-653d-40cf-acc1-891331689409";
 
+export const INITIAL_CREDITS = 50;
+export const SECONDS_PER_CREDIT = (30 * 60) / INITIAL_CREDITS; // 30 minutes equals 50 credits
+
 export const toys: IToy[] = [
     {
         toy_id: "6c3eb71a-8d68-4fc6-85c5-27d283ecabc8",

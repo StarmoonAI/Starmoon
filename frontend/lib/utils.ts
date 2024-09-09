@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import jwt from "jsonwebtoken";
+import { INITIAL_CREDITS, SECONDS_PER_CREDIT } from "./data";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -50,11 +51,10 @@ export const getAssistantAvatar = (imageSrc: string) => {
     return "/" + imageSrc + ".png";
 };
 
-export const getCreditsRemaining = (user: IUser) => {
-    // starts with 50 credits
-    // max session time is 10 minutes or 600 seconds
-
-    return Math.max(Math.round(50 - (5 * user.session_time) / 60), 0);
+export const getCreditsRemaining = (user: IUser): number => {
+    const usedCredits = user.session_time / SECONDS_PER_CREDIT;
+    const remainingCredits = Math.round(INITIAL_CREDITS - usedCredits);
+    return Math.max(0, remainingCredits); // Ensure credits don't go below 0
 };
 
 export const constructUserPrompt = (

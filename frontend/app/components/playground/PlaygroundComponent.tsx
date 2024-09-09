@@ -178,12 +178,6 @@ const Playground: React.FC<PlaygroundProps> = ({
                                 </Button>
                             </motion.div>
                         </AnimatePresence>
-                        {/* <PickCharacter
-                            allToys={allToys}
-                            allPersonalities={allPersonalities}
-                            selectedToy={selectedToy}
-                            selectedUser={selectedUser}
-                        /> */}
                     </div>
                 ) : null}
             </div>
