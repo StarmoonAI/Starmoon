@@ -107,7 +107,7 @@ Video
   - Click "Pick a folder"
   - Select the location of the `firmware` folder in the current project.
 
-- **Step 2**: Update the WiFi credentials and WebSocket server details in `src/main.cpp`
+- **Step 2**: Update the WiFi (only support 2.4Ghz) credentials and WebSocket server details in `src/main.cpp`
   - Find the following lines in the code and update them with your information:
   - Find the WIFI host by command `ipconfig` (under `Default Gateway`) in Windows or `ifconfig` (under `inet xxx.x.x.x netmask 0xff000000`) in Linux/MacOS
 

@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   frontend:
-    image: starmoon/starmoon-frontend:latest
+    image: joeyhsiung/starmoon-frontend:latest
     pull_policy: if_not_present
     build:
       context: frontend
@@ -29,7 +29,7 @@ services:
       GOOGLE_OAUTH: ${GOOGLE_OAUTH}
 
   backend-core:
-    image: starmoon/starmoon-backend:latest
+    image: joeyhsiung/starmoon-backend:latest
     pull_policy: if_not_present
     env_file:
       - .env
@@ -69,7 +69,7 @@ services:
 
   worker:
     pull_policy: if_not_present
-    image: starmoon/starmoon-backend:latest
+    image: joeyhsiung/starmoon-backend:latest
     env_file:
       - .env
     build:
@@ -84,7 +84,7 @@ services:
       - redis
 
   beat:
-    image: starmoon/starmoon-backend:latest
+    image: joeyhsiung/starmoon-backend:latest
     pull_policy: if_not_present
     env_file:
       - .env
@@ -100,7 +100,7 @@ services:
       - redis
 
   flower:
-    image: starmoon/starmoon-backend:latest
+    image: joeyhsiung/starmoon-backend:latest
     pull_policy: if_not_present
     env_file:
       - .env
