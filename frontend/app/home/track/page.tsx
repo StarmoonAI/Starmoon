@@ -16,7 +16,7 @@ export default async function Home() {
     const dbUser = user ? await getUserById(supabase, user.id) : undefined;
 
     return (
-        <div className="pb-12 flex flex-col gap-2 font-baloo2">
+        <div className="pb-12 flex flex-col gap-2">
             <div className="flex flex-row items-center gap-4">
                 <h1 className="text-4xl font-semibold">Insights</h1>
             </div>

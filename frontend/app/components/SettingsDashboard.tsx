@@ -80,26 +80,14 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
         });
     }
 
-    const pickToy = async (toy: IToy) => {
-        // chooseToy(toy);
-        await updateUser(
-            supabase,
-            { toy_id: toy.toy_id },
-            selectedUser!.user_id
-        );
-        toast({
-            description: "Your toy has been saved.",
-        });
-    };
-
     return (
-        <div className="overflow-hidden w-full flex-auto flex flex-col font-quicksand pl-1">
+        <div className="overflow-hidden w-full flex-auto flex flex-col pl-1">
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
                     className="flex flex-col gap-8 mb-4"
                 >
-                    <div className="flex flex-col gap-2 font-baloo2">
+                    <div className="flex flex-col gap-2">
                         <div className="flex flex-row gap-4 items-center">
                             <h1 className="text-4xl font-semibold">
                                 Preferences
