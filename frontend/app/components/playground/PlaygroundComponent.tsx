@@ -86,18 +86,11 @@ const Playground: React.FC<PlaygroundProps> = ({
         <div className="flex flex-col">
             <div className="flex-none">
                 {messageHistory.length === 0 ? (
-                    <div className="w-full items-center justify-center">
-                        <p className="text-2xl text-gray-800">
-                            Talking to{" "}
-                            <span className="font-bold">
-                                {selectedToy?.name}
-                            </span>
-                        </p>
-
-                        <p className="text-sm text-gray-400">
+                    <div className="flex flex-col w-full justify-center gap-2">
+                        <h1 className="text-3xl font-normal">Playground</h1>
+                        <p className="text-sm text-gray-600">
                             {creditsRemaining} credits remaining
                         </p>
-
                         <div className="flex flex-col max-h-[300px] gap-2 mb-4 items-center justify-center transition-colors duration-200 ease-in-out">
                             <div className="flex flex-row items-center">
                                 <div className="max-w-[200px] transition-transform duration-300 ease-in-out scale-90 hover:scale-100">

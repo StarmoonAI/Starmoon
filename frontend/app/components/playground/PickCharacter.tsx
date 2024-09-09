@@ -23,10 +23,6 @@ interface PickCharacterProps {
     allPersonalities: IPersonality[];
 }
 
-const isPersonalitySelected = (personalityId: string, selectedUser: IUser) => {
-    return selectedUser.personality_id === personalityId;
-};
-
 export default function PickCharacter({
     selectedUser,
     selectedToy,
@@ -35,6 +31,10 @@ export default function PickCharacter({
 }: PickCharacterProps) {
     const supabase = createClient();
     const { toast } = useToast();
+
+    const isPersonalitySelected = (personality: IPersonality) => {
+        return selectedUser.personality_id === personality.personality_id;
+    };
 
     const pickToy = async (toy: IToy) => {
         // chooseToy(toy);
@@ -121,7 +121,9 @@ export default function PickCharacter({
                                         key={personality.personality_id}
                                         className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
                                     >
-                                        <Card className="overflow-hidden rounded-lg">
+                                        <Card
+                                            className={`overflow-hidden rounded-lg ${isPersonalitySelected(personality) ? "border-2 border-blue-500" : ""}`}
+                                        >
                                             <div className="h-[370px] relative">
                                                 <img
                                                     src={`/aria.png`}
@@ -164,8 +166,7 @@ export default function PickCharacter({
                                                         </p>
                                                     </div>
                                                     {isPersonalitySelected(
-                                                        personality.personality_id,
-                                                        selectedUser
+                                                        personality
                                                     ) && (
                                                         <span className="text-xs flex-end text-gray-400">
                                                             Selected

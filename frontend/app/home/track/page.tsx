@@ -18,7 +18,7 @@ export default async function Home() {
     return (
         <div className="pb-12 flex flex-col gap-2">
             <div className="flex flex-row items-center gap-4">
-                <h1 className="text-4xl font-semibold">Insights</h1>
+                <h1 className="text-3xl font-normal">Insights</h1>
             </div>
             {dbUser && (
                 <p className="text-sm text-gray-600">
