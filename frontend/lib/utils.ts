@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import jwt from "jsonwebtoken";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
@@ -9,6 +10,36 @@ export const getBaseUrl = () => {
     return process.env.NEXT_PUBLIC_VERCEL_ENV === "production"
         ? "https://starmoon.app"
         : "http://localhost:3000";
+};
+
+const ALGORITHM = "HS256";
+
+interface TokenPayload {
+    [key: string]: any;
+}
+
+export const createAccessToken = (
+    jwtSecretKey: string,
+    data: TokenPayload,
+    expireDays?: number | null
+): string => {
+    const toEncode = { ...data };
+
+    if (expireDays) {
+        const expire = new Date();
+        expire.setDate(expire.getDate() + expireDays);
+        toEncode.exp = Math.floor(expire.getTime() / 1000); // JWT expects 'exp' in seconds since epoch
+    }
+
+    // Convert created_time to ISO format string
+    if (toEncode.created_time) {
+        toEncode.created_time = new Date(toEncode.created_time).toISOString();
+    }
+
+    const encodedJwt = jwt.sign(toEncode, jwtSecretKey, {
+        algorithm: ALGORITHM,
+    });
+    return encodedJwt;
 };
 
 export const getUserAvatar = (email: string) => {

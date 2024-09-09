@@ -89,9 +89,7 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
                 >
                     <div className="flex flex-col gap-2">
                         <div className="flex flex-row gap-4 items-center">
-                            <h1 className="text-3xl font-normal">
-                                Preferences
-                            </h1>
+                            <h1 className="text-3xl font-normal">Settings</h1>
                             <div className="flex flex-row gap-2 justify-between items-center">
                                 <Button
                                     variant="default"

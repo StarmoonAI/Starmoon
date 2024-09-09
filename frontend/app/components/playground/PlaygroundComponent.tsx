@@ -14,6 +14,8 @@ import { getAssistantAvatar, getUserAvatar } from "@/lib/utils";
 import { MoonStar, MoonStarIcon } from "lucide-react";
 import Image from "next/image";
 import PickCharacter from "./PickCharacter";
+import PickPersonality from "./PickPersonality";
+import PickVoice from "./PickVoice";
 
 interface PlaygroundProps {
     selectedUser: IUser;
@@ -91,8 +93,24 @@ const Playground: React.FC<PlaygroundProps> = ({
                         <p className="text-sm text-gray-600">
                             {creditsRemaining} credits remaining
                         </p>
-                        <div className="flex flex-col max-h-[300px] gap-2 mb-4 items-center justify-center transition-colors duration-200 ease-in-out">
-                            <div className="flex flex-row items-center">
+                        <div className="flex flex-col max-h-[300px] items-start gap-2 my-4 transition-colors duration-200 ease-in-out">
+                            {connectionStatus !== "Open" && (
+                                <div className="flex flex-row items-start gap-4">
+                                    <PickPersonality
+                                        onPersonalityPicked={() => {}}
+                                        allPersonalities={allPersonalities}
+                                        selectedPersonalityId={
+                                            selectedUser.personality_id
+                                        }
+                                    />
+                                    <PickVoice
+                                        onVoicePicked={() => {}}
+                                        allToys={allToys}
+                                        selectedToyId={selectedUser.toy_id}
+                                    />
+                                </div>
+                            )}
+                            <div className="flex flex-row items-center self-center">
                                 <div className="max-w-[200px] transition-transform duration-300 ease-in-out scale-90 hover:scale-100">
                                     <Image
                                         src={getAssistantAvatar(
@@ -158,12 +176,12 @@ const Playground: React.FC<PlaygroundProps> = ({
                                 </Button>
                             </motion.div>
                         </AnimatePresence>
-                        <PickCharacter
+                        {/* <PickCharacter
                             allToys={allToys}
                             allPersonalities={allPersonalities}
                             selectedToy={selectedToy}
                             selectedUser={selectedUser}
-                        />
+                        /> */}
                     </div>
                 ) : null}
             </div>

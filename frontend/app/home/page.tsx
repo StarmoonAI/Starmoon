@@ -6,52 +6,8 @@ import { User } from "@supabase/supabase-js";
 import { dbGetRecentMessages } from "@/db/conversations";
 import Playground from "../components/playground/PlaygroundComponent";
 import { defaultToyId } from "@/lib/data";
-import jwt from "jsonwebtoken";
 import { getAllPersonalities } from "@/db/personalities";
-
-const ALGORITHM = "HS256";
-
-interface TokenPayload {
-    [key: string]: any;
-}
-
-const createAccessToken = (
-    jwtSecretKey: string,
-    data: TokenPayload,
-    expireDays?: number | null
-): string => {
-    const toEncode = { ...data };
-
-    if (expireDays) {
-        const expire = new Date();
-        expire.setDate(expire.getDate() + expireDays);
-        toEncode.exp = Math.floor(expire.getTime() / 1000); // JWT expects 'exp' in seconds since epoch
-    }
-
-    // Convert created_time to ISO format string
-    if (toEncode.created_time) {
-        toEncode.created_time = new Date(toEncode.created_time).toISOString();
-    }
-
-    const encodedJwt = jwt.sign(toEncode, jwtSecretKey, {
-        algorithm: ALGORITHM,
-    });
-    return encodedJwt;
-};
-
-async function getData(user: User) {
-    const supabase = createClient();
-    const dbUser = await getUserById(supabase, user!.id);
-    // The return value is *not* serialized
-    // You can return Date, Map, Set, etc.
-
-    if (!dbUser) {
-        // This will activate the closest `error.js` Error Boundary
-        throw new Error("Failed to fetch data");
-    }
-
-    return dbUser;
-}
+import { createAccessToken } from "@/lib/utils";
 
 export default async function Home() {
     const supabase = createClient();
