@@ -77,14 +77,12 @@ export default async function Home() {
 
     const dbUser = await getUserById(supabase, user!.id);
     const allToys = await getAllToys(supabase);
-    const allPersonalities = [] as IPersonality[];
-    // await getAllPersonalities(supabase);
+    const allPersonalities = await getAllPersonalities(supabase);
 
     // const accessToken =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1bnJ1eGlvbmdAZ21haWwuY29tIiwidXNlcl9pZCI6ImZkYWY1NWI2LTFkY2QtNDE0OC1iZDVjLTA0MDI0MDQxM2E0MiIsImNyZWF0ZWRfdGltZSI6IjIwMjQtMDktMDNUMTI6Mzg6NTIuNzAyNDUxIn0.91BWSMx69KdUIuS2lHmdnJu70J3Zu4fBpkMoGw4iOY8";
 
     const jwtSecretKey = process.env.JWT_SECRET_KEY || null;
-    console.log("JWT Secret Key:", jwtSecretKey);
 
     let accessToken = null;
 
@@ -93,7 +91,6 @@ export default async function Home() {
             user_id: user!.id,
             email: user!.email,
         });
-        console.log("JWT Secret Key:", jwtSecretKey);
     } else {
         console.error("JWT Secret Key is null");
     }

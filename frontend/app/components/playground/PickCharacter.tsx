@@ -23,6 +23,10 @@ interface PickCharacterProps {
     allPersonalities: IPersonality[];
 }
 
+const isPersonalitySelected = (personalityId: string, selectedUser: IUser) => {
+    return selectedUser.personality_id === personalityId;
+};
+
 export default function PickCharacter({
     selectedUser,
     selectedToy,
@@ -102,7 +106,7 @@ export default function PickCharacter({
                     />
                 </TabsContent>
                 <TabsContent value="personality">
-                    <div className="w-full mx-auto pl-10">
+                    <div className="w-full mx-auto px-10">
                         <Carousel
                             setApi={setApi}
                             opts={{
@@ -111,40 +115,62 @@ export default function PickCharacter({
                             }}
                             className="w-full"
                         >
-                            <CarouselContent className="-ml-2 md:-ml-4">
+                            <CarouselContent>
                                 {allPersonalities.map((personality) => (
                                     <CarouselItem
                                         key={personality.personality_id}
-                                        className="pl-2 md:pl-4 sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
+                                        className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
                                     >
                                         <Card className="overflow-hidden rounded-lg">
-                                            <div className="h-[400px] relative">
+                                            <div className="h-[370px] relative">
                                                 <img
-                                                    src={personality.image_src}
+                                                    src={`/aria.png`}
                                                     alt={personality.title}
-                                                    className="w-full h-2/3 object-cover"
+                                                    className="w-full h-2/3 object-cover transition-transform duration-300 ease-in-out transform hover:scale-110"
                                                 />
                                                 <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-white p-4 flex flex-col justify-between">
-                                                    <div className="flex justify-between items-start mb-2">
-                                                        <div>
-                                                            <h3 className="font-semibold text-lg">
-                                                                {
-                                                                    personality.title
-                                                                }
-                                                            </h3>
-                                                            <p className="text-sm text-gray-600">
-                                                                {
-                                                                    personality.subtitle
-                                                                }
-                                                            </p>
+                                                    <div>
+                                                        <div className="flex justify-between items-start mb-2">
+                                                            <div>
+                                                                <h3 className="font-semibold text-lg">
+                                                                    {
+                                                                        personality.title
+                                                                    }
+                                                                </h3>
+                                                            </div>
+                                                            <Button
+                                                                size="icon"
+                                                                className="w-6 h-6 ml-1 flex-shrink-0"
+                                                                onClick={async () => {
+                                                                    await updateUser(
+                                                                        supabase,
+                                                                        {
+                                                                            personality_id:
+                                                                                personality.personality_id,
+                                                                        },
+                                                                        selectedUser.user_id
+                                                                    );
+                                                                }}
+                                                            >
+                                                                <Check
+                                                                    size={14}
+                                                                />
+                                                            </Button>
                                                         </div>
-                                                        <Button
-                                                            size="icon"
-                                                            className="w-6 h-6 ml-1 flex-shrink-0"
-                                                        >
-                                                            <Check size={14} />
-                                                        </Button>
+                                                        <p className="text-sm text-gray-600">
+                                                            {
+                                                                personality.subtitle
+                                                            }
+                                                        </p>
                                                     </div>
+                                                    {isPersonalitySelected(
+                                                        personality.personality_id,
+                                                        selectedUser
+                                                    ) && (
+                                                        <span className="text-xs flex-end text-gray-400">
+                                                            Selected
+                                                        </span>
+                                                    )}
                                                 </div>
                                             </div>
                                         </Card>
