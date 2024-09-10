@@ -9,7 +9,6 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
-import ToyPicker from "./ToyPicker";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { Input } from "@/components/ui/input";
@@ -22,9 +21,12 @@ import { Separator } from "@/components/ui/separator";
 import { updateUser } from "@/db/users";
 import { getCreditsRemaining } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
+import { Copy } from "lucide-react";
+import React from "react";
 
 interface SettingsDashboardProps {
     selectedUser: IUser;
+    accessToken: string;
 }
 
 export const settingsDashboardSchema = z.object({
@@ -61,6 +63,7 @@ export type SettingsFormInput = z.infer<typeof settingsDashboardSchema>;
 
 const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
     selectedUser,
+    accessToken,
 }) => {
     const supabase = createClient();
     const { toast } = useToast();
@@ -302,6 +305,46 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
                     />
                 </form>
             </Form>
+            <Separator className="mt-4 mb-6" />
+            <Label className="flex flex-row gap-4 items-center">
+                Generate Hardware Auth Token
+            </Label>
+            <div className="flex flex-row items-center gap-2 mt-2">
+                {/* <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={() => {
+                        setAccessToken(
+                            createAccessToken(process.env.JWT_SECRET_KEY!, {
+                                user_id: selectedUser!.user_id,
+                                email: selectedUser!.email,
+                            })
+                        );
+                    }}
+                >
+                    <span>Generate</span>
+                </Button> */}
+                <Button
+                    size="icon"
+                    variant="ghost"
+                    className="w-9 h-9"
+                    disabled={!accessToken}
+                    onClick={() => {
+                        navigator.clipboard.writeText(accessToken!);
+                        toast({
+                            description: "Copied to clipboard",
+                        });
+                    }}
+                >
+                    <Copy size={16} />
+                </Button>
+                <Input
+                    disabled
+                    value={accessToken ?? ""}
+                    className="w-full h-9"
+                    placeholder="Click Generate to generate your new auth token for your device"
+                />
+            </div>
         </div>
     );
 };

@@ -132,13 +132,13 @@ const Playground: React.FC<PlaygroundProps> = ({
 
     return (
         <div className="flex flex-col">
-            <div className="flex-none">
+            <div className="flex flex-col w-full gap-2">
+                <h1 className="text-3xl font-normal">Playground</h1>
+                <p className="text-sm text-gray-600">
+                    {creditsRemaining} credits remaining
+                </p>
                 {messageHistory.length === 0 ? (
                     <div className="flex flex-col w-full justify-center gap-2">
-                        <h1 className="text-3xl font-normal">Playground</h1>
-                        <p className="text-sm text-gray-600">
-                            {creditsRemaining} credits remaining
-                        </p>
                         <div className="flex flex-col max-h-[300px] items-start gap-2 my-4 transition-colors duration-200 ease-in-out">
                             <div className="flex flex-row items-start gap-8">
                                 <PickVoice

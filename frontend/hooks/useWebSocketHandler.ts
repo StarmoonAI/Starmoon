@@ -8,6 +8,7 @@ import {
 } from "./useAudioService";
 import { updateUser } from "@/db/users";
 import { createClient } from "@/utils/supabase/client";
+import _ from "lodash";
 
 export const useWebSocketHandler = (
     accessToken: string,
@@ -86,7 +87,9 @@ export const useWebSocketHandler = (
                     await updateUser(
                         supabase,
                         {
-                            session_time: connectionDuration,
+                            ..._.omit(selectedUser, ["toy", "personality"]),
+                            session_time:
+                                selectedUser.session_time + connectionDuration,
                         },
                         selectedUser.user_id
                     );

@@ -37,6 +37,7 @@ export const createAccessToken = (
     data: TokenPayload,
     expireDays?: number | null
 ): string => {
+    console.log(jwtSecretKey);
     const toEncode = { ...data };
 
     if (expireDays) {
