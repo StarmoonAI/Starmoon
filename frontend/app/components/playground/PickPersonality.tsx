@@ -1,87 +1,71 @@
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
+
+import { PersonStanding } from "lucide-react";
 import {
-    Command,
-    CommandEmpty,
-    CommandGroup,
-    CommandInput,
-    CommandItem,
-    CommandList,
-} from "@/components/ui/command";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
-import { ChevronDownIcon } from "lucide-react";
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+} from "@/components/ui/select";
 
 interface PickPersonalityProps {
-    onPersonalityPicked: (personalityId: string) => void;
+    onPersonalityPicked: (personalityPicked: IPersonality) => void;
     allPersonalities: IPersonality[];
-    selectedPersonalityId: string;
+    personalityState: IPersonality;
     isDisabled?: boolean;
 }
 
 const PickPersonality: React.FC<PickPersonalityProps> = ({
     onPersonalityPicked,
     allPersonalities,
-    selectedPersonalityId,
+    personalityState,
     isDisabled,
 }) => {
-    const selectedPersonality = allPersonalities.find(
-        (personality) => personality.personality_id === selectedPersonalityId
-    );
-
     return (
         <div className="flex flex-col gap-2">
-            <Popover>
-                <PopoverTrigger asChild disabled={isDisabled}>
-                    <Button variant="outline">
-                        {selectedPersonality?.title}{" "}
-                        <ChevronDownIcon className="ml-2 h-4 w-4 text-muted-foreground" />
-                    </Button>
-                </PopoverTrigger>
-                <PopoverContent className="p-0" align="start">
-                    <Command>
-                        <CommandInput placeholder="Select new personality..." />
-                        <CommandList>
-                            <CommandEmpty>No roles found.</CommandEmpty>
-                            <CommandGroup>
-                                {allPersonalities.map((personality) => (
-                                    <CommandItem
-                                        key={personality.personality_id}
-                                        onClick={() =>
-                                            onPersonalityPicked(
-                                                personality.personality_id
-                                            )
-                                        }
-                                        className="teamaspace-y-1 px-4 py-2 flex flex-row"
-                                    >
-                                        <div className="w-1/4">
-                                            <Image
-                                                src={"/aria.png"}
-                                                width={100}
-                                                height={100}
-                                                alt={personality.title}
-                                                className="w-full h-auto"
-                                            />
-                                        </div>
-                                        <div className="w-3/4 flex flex-col items-start p-2">
-                                            <p>{personality.title}</p>
-                                            <p className="text-sm text-muted-foreground">
-                                                {personality.subtitle}
-                                            </p>
-                                        </div>
-                                    </CommandItem>
-                                ))}
-                            </CommandGroup>
-                        </CommandList>
-                    </Command>
-                </PopoverContent>
-            </Popover>
-            <p className="text-sm text-gray-500 self-start">
-                Choose a personality
-            </p>
+            <p className="text-sm text-gray-600 self-start flex flex-row items-center gap-2">
+                <span>Pick personality</span>
+            </p>{" "}
+            <Select
+                onValueChange={(value: string) => {
+                    const personalityPicked = allPersonalities.find(
+                        (personality) => personality.personality_id === value
+                    )!;
+                    onPersonalityPicked(personalityPicked);
+                }}
+                defaultValue={personalityState?.personality_id}
+            >
+                <SelectTrigger disabled={isDisabled} className="gap-2">
+                    <PersonStanding size={18} />
+                    {personalityState?.title}{" "}
+                </SelectTrigger>
+                <SelectContent>
+                    {allPersonalities.map((personality) => (
+                        <SelectItem
+                            key={personality.personality_id}
+                            value={personality.personality_id}
+                        >
+                            <div className="flex flex-row items-center">
+                                <div className="w-1/4">
+                                    <Image
+                                        src={"/aria.png"}
+                                        width={100}
+                                        height={100}
+                                        alt={personality.title}
+                                        className="w-full h-auto"
+                                    />
+                                </div>
+                                <div className="w-3/4 flex flex-col items-start p-2">
+                                    <p>{personality.title}</p>
+                                    <p className="text-sm text-muted-foreground">
+                                        {personality.subtitle}
+                                    </p>
+                                </div>
+                            </div>
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
         </div>
     );
 };

@@ -62,7 +62,6 @@ export default async function Home() {
                     <Playground
                         allPersonalities={allPersonalities}
                         selectedUser={dbUser}
-                        selectedToy={dbUser.toy!}
                         allToys={allToys}
                         accessToken={accessToken}
                     />

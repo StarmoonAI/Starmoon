@@ -21,7 +21,7 @@ export default function Footer() {
             <Label className="font-normal text-xs text-gray-500">
                 Starmoon AI © {new Date().getFullYear()} All rights reserved.
             </Label>
-            <ThemeSwitcher />
+            {/* <ThemeSwitcher /> */}
         </footer>
     );
 }

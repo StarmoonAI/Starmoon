@@ -5,22 +5,19 @@ import { useWebSocketHandler } from "@/hooks/useWebSocketHandler";
 import { createClient } from "@/utils/supabase/client";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Mail, Mic, MicOff, Phone } from "lucide-react";
-import { cn, getCreditsRemaining, getMessageRoleName } from "@/lib/utils";
+import { cn, getCreditsRemaining } from "@/lib/utils";
 import ControlPanel from "./ControlPanel";
-import { Label } from "@radix-ui/react-label";
 import { Messages } from "./Messages";
 import { getAssistantAvatar, getUserAvatar } from "@/lib/utils";
-import { MoonStar, MoonStarIcon } from "lucide-react";
+import { MoonStar } from "lucide-react";
 import Image from "next/image";
-import PickCharacter from "./PickCharacter";
 import PickPersonality from "./PickPersonality";
 import PickVoice from "./PickVoice";
 import { updateUser } from "@/db/users";
+import _ from "lodash";
 
 interface PlaygroundProps {
     selectedUser: IUser;
-    selectedToy: IToy;
     allToys: IToy[];
     allPersonalities: IPersonality[];
     accessToken: string;
@@ -28,7 +25,6 @@ interface PlaygroundProps {
 
 const Playground: React.FC<PlaygroundProps> = ({
     selectedUser,
-    selectedToy,
     allToys,
     accessToken,
     allPersonalities,
@@ -49,6 +45,27 @@ const Playground: React.FC<PlaygroundProps> = ({
         isMuted,
     } = useWebSocketHandler(accessToken, selectedUser);
 
+    const selectedToy = selectedUser.toy!;
+    const selectedPersonality = selectedUser.personality!;
+
+    // Debounced function to update the user on the server
+    const debouncedUpdateUser = _.debounce(
+        async ({
+            personality_id,
+            toy_id,
+        }: {
+            personality_id: string;
+            toy_id: string;
+        }) => {
+            await updateUser(
+                supabase,
+                { personality_id, toy_id },
+                selectedUser.user_id
+            );
+        },
+        1000
+    ); // Adjust the debounce delay as needed
+
     const [userState, setUserState] = useState<IUser>(selectedUser);
     const creditsRemaining = getCreditsRemaining(userState);
     // const ref: any = useRef<ComponentRef<typeof Messages> | null>(null);
@@ -56,8 +73,6 @@ const Playground: React.FC<PlaygroundProps> = ({
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const [isScrolledToBottom, setIsScrolledToBottom] = useState(true);
-
-    const user = selectedUser;
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -89,6 +104,32 @@ const Playground: React.FC<PlaygroundProps> = ({
         }
     }, []);
 
+    const [personalityState, setPersonalityState] =
+        useState<IPersonality>(selectedPersonality);
+    const [toyState, setToyState] = useState<IToy>(selectedToy);
+
+    const onPersonalityPicked = (personalitySelected: IPersonality) => {
+        // Instantaneously update the state variable
+        setPersonalityState(personalitySelected);
+
+        // Debounce the server update
+        debouncedUpdateUser({
+            personality_id: personalitySelected.personality_id,
+            toy_id: toyState.toy_id,
+        });
+    };
+
+    const onVoicePicked = (toySelected: IToy) => {
+        // Instantaneously update the state variable
+        setToyState(toySelected);
+
+        // Debounce the server update
+        debouncedUpdateUser({
+            personality_id: personalityState.personality_id,
+            toy_id: toySelected.toy_id,
+        });
+    };
+
     return (
         <div className="flex flex-col">
             <div className="flex-none">
@@ -99,37 +140,17 @@ const Playground: React.FC<PlaygroundProps> = ({
                             {creditsRemaining} credits remaining
                         </p>
                         <div className="flex flex-col max-h-[300px] items-start gap-2 my-4 transition-colors duration-200 ease-in-out">
-                            <div className="flex flex-row items-start gap-4">
+                            <div className="flex flex-row items-start gap-8">
                                 <PickPersonality
-                                    onPersonalityPicked={async (
-                                        personality_id: string
-                                    ) => {
-                                        await updateUser(
-                                            supabase,
-                                            {
-                                                personality_id,
-                                            },
-                                            selectedUser.user_id
-                                        );
-                                    }}
+                                    onPersonalityPicked={onPersonalityPicked}
                                     allPersonalities={allPersonalities}
-                                    selectedPersonalityId={
-                                        selectedUser.personality_id
-                                    }
+                                    personalityState={personalityState}
                                     isDisabled={isSelectDisabled}
                                 />
                                 <PickVoice
-                                    onVoicePicked={async (toy_id: string) => {
-                                        await updateUser(
-                                            supabase,
-                                            {
-                                                toy_id,
-                                            },
-                                            selectedUser.user_id
-                                        );
-                                    }}
+                                    onVoicePicked={onVoicePicked}
                                     allToys={allToys}
-                                    selectedToyId={selectedUser.toy_id}
+                                    toyState={toyState}
                                     isDisabled={isSelectDisabled}
                                 />
                             </div>
@@ -137,11 +158,11 @@ const Playground: React.FC<PlaygroundProps> = ({
                                 <div className="max-w-[200px] transition-transform duration-300 ease-in-out scale-90 hover:scale-100">
                                     <Image
                                         src={getAssistantAvatar(
-                                            selectedToy.image_src!
+                                            toyState.image_src!
                                         )}
                                         width={200}
                                         height={200}
-                                        alt={selectedToy.name}
+                                        alt={toyState.name}
                                         className="w-full h-auto" // Make image responsive within container
                                     />
                                 </div>
@@ -151,10 +172,10 @@ const Playground: React.FC<PlaygroundProps> = ({
                                 />
                                 <div className="max-w-[150px]  transition-transform duration-300 ease-in-out scale-90 hover:scale-100">
                                     <Image
-                                        src={getUserAvatar(user.email)}
+                                        src={getUserAvatar(userState.email)}
                                         width={200}
                                         height={200}
-                                        alt={user.supervisee_name}
+                                        alt={userState.supervisee_name}
                                         className="w-full h-auto" // Make image responsive within container
                                     />
                                 </div>
@@ -206,7 +227,7 @@ const Playground: React.FC<PlaygroundProps> = ({
             <Messages
                 messageHistory={messageHistory}
                 selectedUser={selectedUser}
-                selectedToy={selectedToy}
+                selectedToy={toyState}
                 emotionDictionary={emotionDictionary}
                 handleScroll={handleScroll}
                 isScrolledToBottom={isScrolledToBottom}

@@ -18,6 +18,7 @@ declare global {
         toy_id: string;
         personality_id: string;
         toy?: IToy;
+        personality?: IPersonality;
         modules: Module[];
         most_recent_chat_group_id: string | null;
         session_time: number;

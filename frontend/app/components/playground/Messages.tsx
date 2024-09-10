@@ -73,7 +73,7 @@ export const Messages: React.FC<MessagesProps> = ({
                                             "border border-border rounded-lg my-4",
                                             msg.type === "input"
                                                 ? "ml-auto"
-                                                : "",
+                                                : ""
                                         )}
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
@@ -88,13 +88,13 @@ export const Messages: React.FC<MessagesProps> = ({
                                             <div>
                                                 <div
                                                     className={cn(
-                                                        "text-xs capitalize font-medium leading-none opacity-50 px-3",
+                                                        "text-xs capitalize font-medium leading-none opacity-50 px-3"
                                                     )}
                                                 >
                                                     {getMessageRoleName(
                                                         msg!.type,
                                                         selectedUser,
-                                                        selectedToy,
+                                                        selectedToy
                                                     )}
                                                 </div>
                                                 <div className={"pb-3 px-3"}>
