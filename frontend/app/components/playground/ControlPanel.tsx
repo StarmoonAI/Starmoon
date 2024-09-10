@@ -37,7 +37,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         <div
             className={cn(
                 "fixed bottom-4 left-0 w-full p-6 flex items-center justify-center",
-                "from-card via-card/90 to-card/0",
+                "from-card via-card/90 to-card/0"
             )}
         >
             <AnimatePresence>

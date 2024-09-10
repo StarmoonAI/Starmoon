@@ -6,11 +6,14 @@ import {
     stopAudioPlayback,
     playAudio,
 } from "./useAudioService";
+import { updateUser } from "@/db/users";
+import { createClient } from "@/utils/supabase/client";
 
 export const useWebSocketHandler = (
     accessToken: string,
     selectedUser: IUser
 ) => {
+    const supabase = createClient();
     const [socketUrl, setSocketUrl] = useState<string | null>(null);
     const [messageHistory, setMessageHistory] = useState<MessageHistoryType[]>(
         []
@@ -57,7 +60,7 @@ export const useWebSocketHandler = (
                     sendMessage
                 );
             },
-            onClose: () => {
+            onClose: async () => {
                 console.log("closed");
                 setConnectionStatus("Closed");
                 stopRecording(
@@ -79,6 +82,13 @@ export const useWebSocketHandler = (
                     connectionDurationRef.current = connectionDuration;
                     console.log(
                         `Connection duration: ${connectionDuration} seconds`
+                    );
+                    await updateUser(
+                        supabase,
+                        {
+                            session_time: connectionDuration,
+                        },
+                        selectedUser.user_id
                     );
                 }
                 setMessageHistory([]);
