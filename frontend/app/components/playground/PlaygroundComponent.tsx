@@ -141,16 +141,16 @@ const Playground: React.FC<PlaygroundProps> = ({
                         </p>
                         <div className="flex flex-col max-h-[300px] items-start gap-2 my-4 transition-colors duration-200 ease-in-out">
                             <div className="flex flex-row items-start gap-8">
-                                <PickPersonality
-                                    onPersonalityPicked={onPersonalityPicked}
-                                    allPersonalities={allPersonalities}
-                                    personalityState={personalityState}
-                                    isDisabled={isSelectDisabled}
-                                />
                                 <PickVoice
                                     onVoicePicked={onVoicePicked}
                                     allToys={allToys}
                                     toyState={toyState}
+                                    isDisabled={isSelectDisabled}
+                                />
+                                <PickPersonality
+                                    onPersonalityPicked={onPersonalityPicked}
+                                    allPersonalities={allPersonalities}
+                                    personalityState={personalityState}
                                     isDisabled={isSelectDisabled}
                                 />
                             </div>

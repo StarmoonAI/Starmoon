@@ -7,6 +7,7 @@ import {
     SelectItem,
     SelectTrigger,
 } from "@/components/ui/select";
+import { isDefaultPersonality } from "@/lib/utils";
 
 interface PickPersonalityProps {
     onPersonalityPicked: (personalityPicked: IPersonality) => void;
@@ -56,7 +57,11 @@ const PickPersonality: React.FC<PickPersonalityProps> = ({
                                     />
                                 </div>
                                 <div className="w-3/4 flex flex-col items-start p-2">
-                                    <p>{personality.title}</p>
+                                    <p>
+                                        {personality.title}
+                                        {isDefaultPersonality(personality) &&
+                                            " (default)"}
+                                    </p>
                                     <p className="text-sm text-muted-foreground">
                                         {personality.subtitle}
                                     </p>

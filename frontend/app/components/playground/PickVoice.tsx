@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { AudioWaveform } from "lucide-react";
-import { getAssistantAvatar } from "@/lib/utils";
+import { getAssistantAvatar, isDefaultVoice } from "@/lib/utils";
 import {
     Select,
     SelectContent,
@@ -63,7 +63,10 @@ const PickVoice: React.FC<PickPersonalityProps> = ({
                                     />
                                 </div>
                                 <div className="w-3/4 flex flex-col items-start p-2">
-                                    <p>{toy.name}</p>
+                                    <p>
+                                        {toy.name}
+                                        {isDefaultVoice(toy) && " (default)"}
+                                    </p>
                                     <p className="text-sm text-muted-foreground">
                                         {toy.prompt}
                                     </p>

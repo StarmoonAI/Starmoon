@@ -1,11 +1,24 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import jwt from "jsonwebtoken";
-import { INITIAL_CREDITS, SECONDS_PER_CREDIT } from "./data";
+import {
+    defaultPersonalityId,
+    defaultToyId,
+    INITIAL_CREDITS,
+    SECONDS_PER_CREDIT,
+} from "./data";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
+
+export const isDefaultPersonality = (personality: IPersonality) => {
+    return personality.personality_id === defaultPersonalityId;
+};
+
+export const isDefaultVoice = (toy: IToy) => {
+    return toy.toy_id === defaultToyId;
+};
 
 export const getBaseUrl = () => {
     return process.env.NEXT_PUBLIC_VERCEL_ENV === "production"
