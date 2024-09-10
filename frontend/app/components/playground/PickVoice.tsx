@@ -30,7 +30,7 @@ const PickVoice: React.FC<PickPersonalityProps> = ({
     return (
         <div className="flex flex-col gap-2">
             <p className="text-sm text-gray-600 self-start flex flex-row items-center gap-2">
-                <span>Pick character voice</span>
+                <span>Character voice</span>
             </p>
             <Select
                 onValueChange={(value: string) => {

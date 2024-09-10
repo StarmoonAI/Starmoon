@@ -34,7 +34,7 @@ export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
                         className={cn(
                             buttonVariants({ variant: "ghost" }),
                             pathname === item.href ? "bg-muted" : "",
-                            "justify-start rounded-full text-md sm:text-xl text-normal text-stone-700"
+                            "justify-start rounded-full text-sm sm:text-xl text-normal text-stone-700"
                         )}
                     >
                         <span className="mr-2">{item.icon}</span>

@@ -24,7 +24,7 @@ const PickPersonality: React.FC<PickPersonalityProps> = ({
     return (
         <div className="flex flex-col gap-2">
             <p className="text-sm text-gray-600 self-start flex flex-row items-center gap-2">
-                <span>Pick personality</span>
+                <span>Personality</span>
             </p>{" "}
             <Select
                 onValueChange={(value: string) => {
