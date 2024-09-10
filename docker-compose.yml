@@ -1,124 +1,121 @@
-version: "3.8"
-
 services:
-  frontend:
-    image: joeyhsiung/starmoon-frontend:latest
-    pull_policy: if_not_present
-    build:
-      context: frontend
-      dockerfile: Dockerfile
-      args:
-        - NEXT_PUBLIC_SUPABASE_URL
-        - NEXT_PUBLIC_SUPABASE_ANON_KEY
-        - JWT_SECRET_KEY
-        - OPENAI_API_KEY
-        - GOOGLE_OAUTH
-    container_name: web
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    depends_on:
-      - backend-core
-    restart: always
-    ports:
-      - 3000:3000
-    environment:
-      NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
-      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
-      GOOGLE_OAUTH: ${GOOGLE_OAUTH}
+    frontend:
+        image: joeyhsiung/starmoon-frontend:latest
+        pull_policy: if_not_present
+        build:
+            context: frontend
+            dockerfile: Dockerfile
+            args:
+                - NEXT_PUBLIC_SUPABASE_URL
+                - NEXT_PUBLIC_SUPABASE_ANON_KEY
+                - JWT_SECRET_KEY
+                - OPENAI_API_KEY
+                - GOOGLE_OAUTH
+        container_name: web
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        depends_on:
+            - backend-core
+        restart: always
+        ports:
+            - 3000:3000
+        environment:
+            NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+            NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+            JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+            OPENAI_API_KEY: ${OPENAI_API_KEY}
+            GOOGLE_OAUTH: ${GOOGLE_OAUTH}
 
-  backend-core:
-    image: joeyhsiung/starmoon-backend:latest
-    pull_policy: if_not_present
-    env_file:
-      - .env
-    build:
-      context: backend
-      dockerfile: Dockerfile
-    container_name: backend-core
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    # healthcheck:
-    #   test: [ "CMD", "curl", "http://localhost:8000/healthz" ]
-    command:
-      - "poetry"
-      - "run"
-      - "uvicorn"
-      - "app.main:app"
-      - "--host"
-      - "0.0.0.0"
-      - "--port"
-      - "8000"
-      - "--ws-ping-interval"
-      - "600"
-      - "--ws-ping-timeout"
-      - "600"
-    restart: always
-    volumes:
-      - ./backend/:/app/
-    ports:
-      - 8000:8000
+    backend-core:
+        image: joeyhsiung/starmoon-backend:latest
+        pull_policy: if_not_present
+        env_file:
+            - .env
+        build:
+            context: backend
+            dockerfile: Dockerfile
+        container_name: backend-core
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        # healthcheck:
+        #   test: [ "CMD", "curl", "http://localhost:8000/healthz" ]
+        command:
+            - "poetry"
+            - "run"
+            - "uvicorn"
+            - "app.main:app"
+            - "--host"
+            - "0.0.0.0"
+            - "--port"
+            - "8000"
+            - "--ws-ping-interval"
+            - "600"
+            - "--ws-ping-timeout"
+            - "600"
+        restart: always
+        volumes:
+            - ./backend/:/app/
+        ports:
+            - 8000:8000
 
-  redis:
-    image: redis:7-alpine
-    container_name: redis
-    restart: always
-    ports:
-      - 6379:6379
+    redis:
+        image: redis:7-alpine
+        container_name: redis
+        restart: always
+        ports:
+            - 6379:6379
 
-  worker:
-    pull_policy: if_not_present
-    image: joeyhsiung/starmoon-backend:latest
-    env_file:
-      - .env
-    build:
-      context: backend
-      dockerfile: Dockerfile
-    container_name: worker
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    command: poetry run celery -A app.celery.worker.celery_app worker -l info
-    restart: always
-    depends_on:
-      - redis
+    worker:
+        pull_policy: if_not_present
+        image: joeyhsiung/starmoon-backend:latest
+        env_file:
+            - .env
+        build:
+            context: backend
+            dockerfile: Dockerfile
+        container_name: worker
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        command: poetry run celery -A app.celery.worker.celery_app worker -l info
+        restart: always
+        depends_on:
+            - redis
 
-  beat:
-    image: joeyhsiung/starmoon-backend:latest
-    pull_policy: if_not_present
-    env_file:
-      - .env
-    build:
-      context: backend
-      dockerfile: Dockerfile
-    container_name: beat
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    command: poetry run celery -A app.celery.worker.celery_app beat -l info
-    restart: always
-    depends_on:
-      - redis
+    beat:
+        image: joeyhsiung/starmoon-backend:latest
+        pull_policy: if_not_present
+        env_file:
+            - .env
+        build:
+            context: backend
+            dockerfile: Dockerfile
+        container_name: beat
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        command: poetry run celery -A app.celery.worker.celery_app beat -l info
+        restart: always
+        depends_on:
+            - redis
 
-  flower:
-    image: joeyhsiung/starmoon-backend:latest
-    pull_policy: if_not_present
-    env_file:
-      - .env
-    build:
-      context: backend
-      dockerfile: Dockerfile
-    container_name: flower
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-    command: poetry run celery -A app.celery.worker.celery_app flower -l info --port=5555
-    restart: always
-    depends_on:
-      - redis
-      - worker
-      - beat
-    ports:
-      - 5555:5555
-
+    flower:
+        image: joeyhsiung/starmoon-backend:latest
+        pull_policy: if_not_present
+        env_file:
+            - .env
+        build:
+            context: backend
+            dockerfile: Dockerfile
+        container_name: flower
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
+        command: poetry run celery -A app.celery.worker.celery_app flower -l info --port=5555
+        restart: always
+        depends_on:
+            - redis
+            - worker
+            - beat
+        ports:
+            - 5555:5555
 # networks:
 #   starmoon-network:
 #     driver: bridge
