@@ -9,13 +9,14 @@ import { cn, getCreditsRemaining } from "@/lib/utils";
 import ControlPanel from "./ControlPanel";
 import { Messages } from "./Messages";
 import { getAssistantAvatar, getUserAvatar } from "@/lib/utils";
-import { MoonStar } from "lucide-react";
+import { MoonStar, Sparkles } from "lucide-react";
 import Image from "next/image";
 import PickPersonality from "./PickPersonality";
 import PickVoice from "./PickVoice";
 import { updateUser } from "@/db/users";
 import _ from "lodash";
 import CreditsRemaining from "../CreditsRemaining";
+import AddCreditsModal from "../Upsell/AddCreditsModal";
 
 interface PlaygroundProps {
     selectedUser: IUser;
@@ -194,27 +195,44 @@ const Playground: React.FC<PlaygroundProps> = ({
                                     exit: { opacity: 0 },
                                 }}
                             >
-                                <Button
-                                    disabled={
-                                        creditsRemaining <= 0 ||
-                                        !selectedUser ||
-                                        !selectedToy
-                                    }
-                                    className={"z-50 flex items-center gap-1.5"}
-                                    onClick={handleClickOpenConnection}
-                                    size="sm"
-                                >
-                                    <span>
+                                {creditsRemaining <= 0 ? (
+                                    <AddCreditsModal>
+                                        <Button
+                                            className={
+                                                "z-50 flex items-center gap-1.5"
+                                            }
+                                            size="sm"
+                                            variant={"upsell_primary"}
+                                        >
+                                            <Sparkles
+                                                size={16}
+                                                strokeWidth={3}
+                                                stroke={"currentColor"}
+                                            />
+                                            <span className="text-md font-semibold">
+                                                Add credits
+                                            </span>
+                                        </Button>
+                                    </AddCreditsModal>
+                                ) : (
+                                    <Button
+                                        disabled={!selectedUser}
+                                        className={
+                                            "z-50 flex items-center gap-1.5"
+                                        }
+                                        onClick={handleClickOpenConnection}
+                                        size="sm"
+                                    >
                                         <MoonStar
                                             size={16}
                                             strokeWidth={3}
                                             stroke={"currentColor"}
                                         />
-                                    </span>
-                                    <span className="text-md font-semibold">
-                                        Play
-                                    </span>
-                                </Button>
+                                        <span className="text-md font-semibold">
+                                            Play
+                                        </span>
+                                    </Button>
+                                )}
                             </motion.div>
                         </AnimatePresence>
                     </div>

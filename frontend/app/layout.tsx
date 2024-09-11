@@ -18,6 +18,8 @@ import Footer from "./components/Footer";
 import NavbarButtons from "./components/NavbarButtons";
 import StarmoonLogo from "./components/StarmoonLogo";
 import { BookOpenText, ShoppingCart } from "lucide-react";
+import PreorderModal from "./components/Upsell/PreorderModal";
+import { Button } from "@/components/ui/button";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -102,17 +104,18 @@ export default async function RootLayout({
 
                                 <div className="flex flex-row md:gap-4 gap-2 items-center font-bold md:text-sm text-sm">
                                     <div className="flex flex-row gap-2 items-center">
-                                        <Link
-                                            href="https://buy.stripe.com/4gweUX6Po6Hx6oEeUZ"
-                                            className="w-full"
-                                        >
-                                            <div className="flex flex-row md:px-4 px-2 py-[6px] items-center text-stone-800 dark:text-stone-50 hover:text-stone-700 bg-stone-50- hover:bg-stone-100 dark:hover:bg-stone-900 bg-nav-bar rounded-full">
+                                        <PreorderModal>
+                                            <Button
+                                                size="sm"
+                                                variant="ghost"
+                                                className="flex flex-row md:px-4 px-2 py-[6px] items-center text-stone-800 dark:text-stone-50 hover:text-stone-700 bg-stone-50- hover:bg-stone-100 dark:hover:bg-stone-900 bg-nav-bar rounded-full"
+                                            >
                                                 <ShoppingCart size={18} />
                                                 <p className="pl-2 hidden sm:flex font-medium">
                                                     Preorder
                                                 </p>
-                                            </div>
-                                        </Link>
+                                            </Button>
+                                        </PreorderModal>
 
                                         {/* <Link href="/docs">
                                             <div className="flex flex-row gap-2 py-[6px] px-2 items-center text-stone-800 dark:text-stone-50 hover:text-stone-700 bg-stone-50- hover:bg-stone-100 dark:hover:bg-stone-900 bg-nav-bar rounded-full">
@@ -129,7 +132,7 @@ export default async function RootLayout({
                                             rel="noopener noreferrer"
                                             title="Visit our GitHub"
                                         >
-                                            <div className="flex flex-row gap-2 md:px-4 px-2 py-[6px] items-center text-stone-800 dark:text-stone-50 hover:text-stone-700 bg-stone-50- hover:bg-stone-100 dark:hover:bg-stone-900 bg-nav-bar rounded-full">
+                                            <div className="flex flex-row gap-2 md:px-4 p-2 items-center text-stone-800 dark:text-stone-50 hover:text-stone-700 bg-stone-50- hover:bg-stone-100 dark:hover:bg-stone-900 bg-nav-bar rounded-full">
                                                 <FaGithub className="text-xl" />
                                                 <p className="hidden sm:flex font-medium">
                                                     GitHub
