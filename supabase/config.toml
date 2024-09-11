@@ -1,6 +1,6 @@
 # A string used to distinguish different Supabase projects on the same host. Defaults to the
 # working directory name when running `supabase init`.
-project_id = "Starmoon"
+project_id = "starmoon-private"
 
 [api]
 enabled = true
@@ -109,6 +109,8 @@ enable_signup = true
 double_confirm_changes = true
 # If enabled, users need to confirm their email address before signing in.
 enable_confirmations = false
+# If enabled, users will need to reauthenticate or have logged in recently to change their password.
+secure_password_change = false
 # Controls the minimum amount of time that must pass before sending another signup confirmation or password reset email.
 max_frequency = "1s"
 
