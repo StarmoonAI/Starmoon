@@ -36,21 +36,21 @@ Video
 1. API keys and services:
 
     - [Docker](https://docs.docker.com/get-started/get-docker/)
-    - Supabase CLI: Follow the instructions [here](supabase-setup.md) to install if you haven't installed
+    - Supabase CLI: Follow the instructions [here](https://supabase.com/docs/guides/cli/getting-started) to install if you haven't installed
     - Vscode and [PlatformIO](https://platformio.org/install/ide?install=vscode) plugin: For firmware burning
     - [OpenAI API key](https://platform.openai.com/api-keys): For AI language models
     - [Deepgram API key](https://developers.deepgram.com/docs/create-additional-api-keys): For speech-to-text
     - [Azure speech API keys](https://vitalpbx.com/blog/how-to-create-microsoft-azure-tts-api-key/): For text-to-speech
     - [Huggingface API key](https://huggingface.co/docs/api-inference/en/quicktour#get-your-api-token): For emotion recognition
 
-1. Hardware list (Tax and shipping rates may vary by region)
-    - [Seeed Studio Xiao ESP32S3](https://www.aliexpress.us/item/1005007341749305.html) - $6.23/unit
-    - [Microphone (INMP441)](https://www.aliexpress.us/item/3256806674485209.html) - $1.67/unit
-    - [Amplifier (MAX98357A)](https://www.aliexpress.us/item/3256806524695775.html) - $1.52/unit
-    - [Speaker (3525)](https://www.aliexpress.us/item/3256805515112434.html) - $0.64/unit
-    - [LED light](https://www.aliexpress.us/item/3256805384408000.html) - $0.01/unit
-    - [Button](https://www.aliexpress.us/item/3256803815119722.html) - $0.01/unit
-    - [PCB prototype board](https://www.aliexpress.us/item/3256806179554884.html) - $0.13/unit
+2. Hardware list (Tax and shipping rates may vary by region)
+    - [Seeed Studio Xiao ESP32S3](https://www.aliexpress.us/item/1005007341749305.html)
+    - [Microphone (INMP441)](https://www.aliexpress.us/item/3256806674485209.html)
+    - [Amplifier (MAX98357A)](https://www.aliexpress.us/item/3256806524695775.html)
+    - [Speaker (3525)](https://www.aliexpress.us/item/3256805515112434.html)
+    - [LED light](https://www.aliexpress.us/item/3256805384408000.html)
+    - [Button](https://www.aliexpress.us/item/3256803815119722.html)
+    - [PCB prototype board](https://www.aliexpress.us/item/3256806179554884.html)
     - 3D printed case (link)
     - Tools: [28AWG wires](https://www.aliexpress.us/item/3256801511896966.html) + [soldering toolset](https://www.aliexpress.com/item/1005007010143403.html) + [flux](https://www.aliexpress.com/item/1005007003481283.html)
 
@@ -126,7 +126,7 @@ Video
         const char *websocket_server_host = "<your-server-host-ip>"; // Wifi settings -> Your Wifi I.P.
         const uint16_t websocket_server_port = 8000;
         const char *websocket_server_path = "/starmoon";
-        const char *auth_token = "<your-auth-token-here>"; // generate auth-token in your starmoon account settings page
+        const char *auth_token = "<your-auth-token-here>"; // generate your auth-token in your starmoon account settings page
         ```
 
 -   **Step 3**: Build the firmware
