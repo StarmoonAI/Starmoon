@@ -15,6 +15,7 @@ import PickPersonality from "./PickPersonality";
 import PickVoice from "./PickVoice";
 import { updateUser } from "@/db/users";
 import _ from "lodash";
+import CreditsRemaining from "../CreditsRemaining";
 
 interface PlaygroundProps {
     selectedUser: IUser;
@@ -134,9 +135,7 @@ const Playground: React.FC<PlaygroundProps> = ({
         <div className="flex flex-col">
             <div className="flex flex-col w-full gap-2">
                 <h1 className="text-3xl font-normal">Playground</h1>
-                <p className="text-sm text-gray-600">
-                    {creditsRemaining} credits remaining
-                </p>
+                <CreditsRemaining user={userState} />
                 {messageHistory.length === 0 ? (
                     <div className="flex flex-col w-full justify-center gap-2">
                         <div className="flex flex-col max-h-[300px] items-start gap-2 my-4 transition-colors duration-200 ease-in-out">

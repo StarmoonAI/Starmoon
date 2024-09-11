@@ -76,14 +76,12 @@ export const useWebSocketHandler = (
                 // audioQueueRef.current = [];
                 const connectionEndTime = new Date();
                 if (connectionStartTimeRef.current) {
-                    const connectionDuration =
+                    const connectionDuration = Math.round(
                         (connectionEndTime.getTime() -
                             connectionStartTimeRef.current.getTime()) /
-                        1000;
-                    connectionDurationRef.current = connectionDuration;
-                    console.log(
-                        `Connection duration: ${connectionDuration} seconds`
+                            1000
                     );
+                    connectionDurationRef.current = connectionDuration;
                     await updateUser(
                         supabase,
                         {

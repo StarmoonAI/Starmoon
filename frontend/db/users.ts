@@ -46,7 +46,6 @@ export const updateUser = async (
     user: Partial<IUser>,
     userId: string
 ) => {
-    console.log("updating user", user);
     const { error } = await supabase
         .from("users")
         .update(user)

@@ -23,6 +23,7 @@ import { getCreditsRemaining } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
 import { Copy } from "lucide-react";
 import React from "react";
+import CreditsRemaining from "./CreditsRemaining";
 
 interface SettingsDashboardProps {
     selectedUser: IUser;
@@ -103,10 +104,7 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
                                 </Button>
                             </div>
                         </div>
-                        <p className="text-sm text-gray-600">
-                            {getCreditsRemaining(selectedUser)} credits
-                            remaining
-                        </p>
+                        <CreditsRemaining user={selectedUser} />
                     </div>
                     <FormField
                         control={form.control}

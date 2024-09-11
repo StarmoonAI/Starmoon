@@ -5,6 +5,7 @@ import { defaultToyId } from "@/lib/data";
 import { getAllToys, getToyById } from "@/db/toys";
 import { getCreditsRemaining } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/server";
+import CreditsRemaining from "@/app/components/CreditsRemaining";
 
 export default async function Home() {
     const supabase = createClient();
@@ -20,11 +21,7 @@ export default async function Home() {
             <div className="flex flex-row items-center gap-4">
                 <h1 className="text-3xl font-normal">Insights</h1>
             </div>
-            {dbUser && (
-                <p className="text-sm text-gray-600">
-                    {getCreditsRemaining(dbUser)} credits remaining
-                </p>
-            )}
+            {dbUser && <CreditsRemaining user={dbUser} />}
 
             <div className="">
                 <Charts user={dbUser!} toy={dbUser?.toy!} filter="days" />
