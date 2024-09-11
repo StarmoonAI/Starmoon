@@ -32,10 +32,6 @@ interface TokenPayload {
     [key: string]: any;
 }
 
-export const usedUpAllCredits = (user: IUser) => {
-    return user.session_time / SECONDS_PER_CREDIT >= INITIAL_CREDITS;
-};
-
 export const createAccessToken = (
     jwtSecretKey: string,
     data: TokenPayload,

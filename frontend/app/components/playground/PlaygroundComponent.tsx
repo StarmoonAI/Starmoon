@@ -21,13 +21,11 @@ interface PlaygroundProps {
     selectedUser: IUser;
     allToys: IToy[];
     allPersonalities: IPersonality[];
-    accessToken: string;
 }
 
 const Playground: React.FC<PlaygroundProps> = ({
     selectedUser,
     allToys,
-    accessToken,
     allPersonalities,
 }) => {
     const supabase = createClient();
@@ -44,7 +42,7 @@ const Playground: React.FC<PlaygroundProps> = ({
         muteMicrophone,
         unmuteMicrophone,
         isMuted,
-    } = useWebSocketHandler(accessToken, selectedUser);
+    } = useWebSocketHandler(selectedUser);
 
     const selectedToy = selectedUser.toy!;
     const selectedPersonality = selectedUser.personality!;

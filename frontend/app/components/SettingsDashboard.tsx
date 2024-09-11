@@ -24,10 +24,11 @@ import { createClient } from "@/utils/supabase/client";
 import { Copy } from "lucide-react";
 import React from "react";
 import CreditsRemaining from "./CreditsRemaining";
+import { generateStarmoonAuthKey } from "../actions";
+import AuthTokenModal from "./AuthTokenModal";
 
 interface SettingsDashboardProps {
     selectedUser: IUser;
-    accessToken: string;
 }
 
 export const settingsDashboardSchema = z.object({
@@ -64,7 +65,6 @@ export type SettingsFormInput = z.infer<typeof settingsDashboardSchema>;
 
 const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
     selectedUser,
-    accessToken,
 }) => {
     const supabase = createClient();
     const { toast } = useToast();
@@ -304,44 +304,16 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
                 </form>
             </Form>
             <Separator className="mt-4 mb-6" />
-            <Label className="flex flex-row gap-4 items-center">
-                Generate Hardware Auth Token
-            </Label>
-            <div className="flex flex-row items-center gap-2 mt-2">
-                {/* <Button
-                    size="sm"
-                    variant="secondary"
-                    onClick={() => {
-                        setAccessToken(
-                            createAccessToken(process.env.JWT_SECRET_KEY!, {
-                                user_id: selectedUser!.user_id,
-                                email: selectedUser!.email,
-                            })
-                        );
-                    }}
-                >
-                    <span>Generate</span>
-                </Button> */}
-                <Button
-                    size="icon"
-                    variant="ghost"
-                    className="w-9 h-9"
-                    disabled={!accessToken}
-                    onClick={() => {
-                        navigator.clipboard.writeText(accessToken!);
-                        toast({
-                            description: "Copied to clipboard",
-                        });
-                    }}
-                >
-                    <Copy size={16} />
-                </Button>
-                <Input
-                    disabled
-                    value={accessToken ?? ""}
-                    className="w-full h-9"
-                    placeholder="Click Generate to generate your new auth token for your device"
-                />
+            <div className="flex flex-col gap-2">
+                <Label className="flex flex-row gap-4 items-center">
+                    Generate Starmoon API Key
+                </Label>
+                <div className="flex flex-row items-center gap-2 mt-2">
+                    <AuthTokenModal user={selectedUser} />
+                </div>
+                <p className="text-xs text-gray-400">
+                    This key must be kept secret and should not be shared.
+                </p>
             </div>
         </div>
     );

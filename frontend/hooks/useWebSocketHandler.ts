@@ -9,11 +9,9 @@ import {
 import { updateUser } from "@/db/users";
 import { createClient } from "@/utils/supabase/client";
 import _ from "lodash";
+import { generateStarmoonAuthKey } from "@/app/actions";
 
-export const useWebSocketHandler = (
-    accessToken: string,
-    selectedUser: IUser
-) => {
+export const useWebSocketHandler = (selectedUser: IUser) => {
     const supabase = createClient();
     const [socketUrl, setSocketUrl] = useState<string | null>(null);
     const [messageHistory, setMessageHistory] = useState<MessageHistoryType[]>(
@@ -38,7 +36,7 @@ export const useWebSocketHandler = (
     const connectionStartTimeRef = useRef<Date | null>(null);
     const connectionDurationRef = useRef<number | null>(null);
 
-    const onOpenAuth = () => {
+    const onOpenAuth = (accessToken: string) => {
         sendJsonMessage({
             token: accessToken,
             device: "web",
@@ -50,8 +48,9 @@ export const useWebSocketHandler = (
 
     const { sendMessage, sendJsonMessage, lastJsonMessage, readyState } =
         useWebSocket(socketUrl, {
-            onOpen: () => {
-                onOpenAuth();
+            onOpen: async () => {
+                const accessToken = await generateStarmoonAuthKey(selectedUser);
+                onOpenAuth(accessToken);
                 setConnectionStatus("Open");
                 startRecording(
                     setMicrophoneStream,
