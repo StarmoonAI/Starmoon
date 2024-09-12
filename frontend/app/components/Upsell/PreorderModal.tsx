@@ -30,6 +30,7 @@ interface AddCreditsModalProps {
 }
 
 function ProfileForm({ className }: React.ComponentProps<"form">) {
+    const buttonText = "Proceed to your Starmoon Kit - $59";
     return (
         <form className={cn("grid items-start gap-4", className)}>
             <div className="grid gap-2">
@@ -44,7 +45,9 @@ function ProfileForm({ className }: React.ComponentProps<"form">) {
                 <Label htmlFor="username">Username</Label>
                 <Input id="username" defaultValue="@shadcn" />
             </div>
-            <Button type="submit">Save changes</Button>
+            <Button type="submit" variant="upsell_primary">
+                {buttonText}
+            </Button>
         </form>
     );
 }
@@ -52,14 +55,14 @@ function ProfileForm({ className }: React.ComponentProps<"form">) {
 const PreorderModal: React.FC<AddCreditsModalProps> = ({ children }) => {
     const [open, setOpen] = React.useState(false);
     const isDesktop = useMediaQuery("(min-width: 768px)");
-    const title = "Preorder a Starmoon Toy";
+    const title = "Preorder a Starmoon Kit";
     const subtitle = "Get early access to our latest product.";
 
     if (isDesktop) {
         return (
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>{children}</DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
+                <DialogContent className="sm:max-w-[560px]">
                     <DialogHeader>
                         <DialogTitle>{title}</DialogTitle>
                         <DialogDescription>{subtitle}</DialogDescription>

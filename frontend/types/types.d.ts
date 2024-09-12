@@ -10,6 +10,7 @@ declare global {
     interface IUser {
         user_id: string;
         avatar_url: string;
+        is_premium: boolean;
         supervisor_name: string;
         email: string;
         supervisee_name: string;
