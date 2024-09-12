@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import AnimatedText from "./AnimatedText";
 import PreorderModal from "./Upsell/PreorderModal";
 import BookDemoModal from "./BookDemoModal";
+import { CalendarCheck, Store } from "lucide-react";
+import { FaDiscord } from "react-icons/fa";
+import Link from "next/link";
 
 export default function EndingSection() {
     return (
@@ -34,17 +37,28 @@ export default function EndingSection() {
                 </h1>
             </div>
 
-            <div className="my-20 flex items-center justify-center gap-x-8">
+            <div className="my-20 flex items-center justify-center gap-8 flex-wrap">
                 <PreorderModal>
-                    <Button className="font-medium text-base bg-stone-800 leading-8 rounded-full">
-                        Preorder Now
+                    <Button className="flex flex-row items-center gap-2 font-medium text-base bg-stone-800 leading-8 rounded-full">
+                        <Store size={20} />
+                        <span>Preorder Now</span>
                     </Button>
                 </PreorderModal>
                 <BookDemoModal>
-                    <Button className="font-medium text-base text-stone-800 leading-8 rounded-full bg-transparent border-2 border-stone-900 hover:bg-stone-500 hover:bg-opacity-5">
-                        Book a Demo
+                    <Button className="flex flex-row items-center gap-2 font-medium text-base text-stone-800 leading-8 rounded-full bg-transparent border-2 border-stone-900 hover:bg-stone-500 hover:bg-opacity-5">
+                        <CalendarCheck size={20} />
+                        <span>Book a Demo</span>
                     </Button>
                 </BookDemoModal>
+                <Link href="https://discord.gg/BtaybK5dvU">
+                    <Button
+                        variant="link"
+                        className="flex flex-row items-center gap-2 font-medium text-base text-stone-800 leading-8 rounded-full bg-transparent"
+                    >
+                        <FaDiscord className="text-2xl" />
+                        <span>Join our Discord</span>
+                    </Button>
+                </Link>
             </div>
         </section>
     );

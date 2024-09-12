@@ -13,6 +13,7 @@ import FeaturesSection from "./components/FeaturesSection";
 import EndingSection from "./components/EndingSection";
 import Link from "next/link";
 import PreorderModal from "./components/Upsell/PreorderModal";
+import { Gamepad2, Joystick, Store } from "lucide-react";
 
 export default async function Index() {
     const supabase = createClient();
@@ -60,22 +61,24 @@ export default async function Index() {
                 <AnimatedText></AnimatedText>
 
                 <p className="font-inter font-light mt-14 text-lg sm:text-xl leading-8 text-stone-800">
-                    Starmoon is an affordable tiny voiced-enabled AI device. It
-                    can analyse human-speech and emotion and respond with
-                    empathy, offering supportive conversations and personalized
-                    learning assistance.
+                    Starmoon is an affordable, compact, voiced-enabled AI
+                    device. It can analyse human-speech and emotion and respond
+                    with empathy, offering supportive conversations through
+                    personalized AI characters.
                 </p>
             </div>
 
             <div className="mt-10 flex items-center justify-center gap-x-8">
                 <PreorderModal>
-                    <Button className="font-medium text-base bg-stone-800 leading-8 rounded-full">
-                        Preorder
+                    <Button className="flex flex-row items-center gap-2 font-medium text-base bg-stone-800 leading-8 rounded-full">
+                        <Store size={20} />
+                        <span>Preorder</span>
                     </Button>
                 </PreorderModal>
                 <Link href="/login">
-                    <Button className="font-medium text-base text-stone-800 leading-8 rounded-full bg-transparent border-2 border-stone-900 hover:bg-stone-500 hover:bg-opacity-5">
-                        Play Online
+                    <Button className="flex flex-row items-center gap-2 font-medium text-base text-stone-800 leading-8 rounded-full bg-transparent border-2 border-stone-900 hover:bg-stone-500 hover:bg-opacity-5">
+                        <Gamepad2 size={20} />
+                        <span>Play Online</span>
                     </Button>
                 </Link>
             </div>
