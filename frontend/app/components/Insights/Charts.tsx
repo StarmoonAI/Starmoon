@@ -39,13 +39,26 @@ const Charts: React.FC<ChartsProps> = async ({ user, filter }) => {
     const { cardData, barData, lineData, pieData, suggestions } =
       await processedData;
 
+    console.log("cardData", cardData);
+    console.log("barData", barData);
+    console.log("lineData", lineData);
+
+    // loop pieData and print data key
+    for (let i = 0; i < lineData.length; i++) {
+      console.log("pieData", lineData[i].data);
+    }
+
+    console.log("pieData", pieData);
+
+    console.log("suggestions", suggestions);
+
     return (
       <div>
         <div className="mt-2 mb-4 text-gray-800">{suggestions}</div>
         <div className="flex flex-col md:flex-row md:space-x-3">
           <div className="w-full">
             <h2 className="my-4 text-lg font-bold text-gray-700">
-              Main Emotions
+              Today Main Emotions
             </h2>
             <div className="flex space-x-3">
               <div className="flex-grow">
@@ -112,7 +125,7 @@ const Charts: React.FC<ChartsProps> = async ({ user, filter }) => {
 
           <div className="w-full order-1 md:order-2 md:w-72 md:flex-shrink-0">
             <h2 className="mt-6 text-lg font-bold text-gray-700">
-              Current Sentiment Proportions
+              Today Sentiment Proportions
             </h2>
             <div className="h-[300px] lg:h-96">
               {isEmpty(pieData) ? (

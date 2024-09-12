@@ -61,12 +61,16 @@
     "react-use-websocket": "^4.8.1",
     "remeda": "^2.11.0",
     "sharp": "^0.33.5",
+    "swiper": "^11.1.12",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
+    "typed-js": "^0.2.3",
+    "typed.js": "^2.1.0",
     "vaul": "^0.9.1",
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@tailwindcss/aspect-ratio": "^0.4.2",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/lodash": "^4.17.7",
     "@types/node": "20.10.6",

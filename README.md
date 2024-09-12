@@ -24,7 +24,7 @@ Video
 ## Key features 🎯
 
 -   **Low-cost**: Assemble the device yourself with off-the-shelf components cost in $10.
--   **Voice-enabled emotional intelligence**: Understands and analyse your emotions according to your voice.
+-   **Voice-enabled emotional intelligence**: Understands and analyse your emotions according to your conversation in real time.
 -   **Open-source**: Fully open-scourced, you can deploy locally and self-host to ensure the privacy of your data.
 -   **Tiny size device**: As small as the Apple Watch, you can carry the device anywhere.
 -   **Reduce screen time**: Many AI companion are screen-based, and our intention is to give your eyes a rest.
