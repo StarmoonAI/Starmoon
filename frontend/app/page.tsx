@@ -75,7 +75,7 @@ export default async function Index() {
                         <span>Preorder</span>
                     </Button>
                 </PreorderModal>
-                <Link href="/login">
+                <Link href={user ? "/home" : "/login"}>
                     <Button className="flex flex-row items-center gap-2 font-medium text-base text-stone-800 leading-8 rounded-full bg-transparent border-2 border-stone-900 hover:bg-stone-500 hover:bg-opacity-5">
                         <Gamepad2 size={20} />
                         <span>Play Online</span>
