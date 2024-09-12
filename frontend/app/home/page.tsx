@@ -5,7 +5,7 @@ import { createClient } from "@/utils/supabase/server";
 import { User } from "@supabase/supabase-js";
 import { dbGetRecentMessages } from "@/db/conversations";
 import Playground from "../components/playground/PlaygroundComponent";
-import { defaultToyId } from "@/lib/data";
+import { defaultPersonalityId, defaultToyId } from "@/lib/data";
 import { getAllPersonalities } from "@/db/personalities";
 import { createAccessToken } from "@/lib/utils";
 
@@ -26,6 +26,8 @@ export default async function Home() {
             // Create user if they don't exist
             await createUser(supabase, user, {
                 toy_id: user?.user_metadata?.toy_id ?? defaultToyId,
+                personality_id:
+                    user?.user_metadata?.personality_id ?? defaultPersonalityId,
             });
             redirect("/onboard");
         }

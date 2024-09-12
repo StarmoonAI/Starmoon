@@ -14,7 +14,8 @@ export const createUser = async (
             supervisee_name: "",
             supervisee_age: 5,
             supervisee_persona: "",
-            toy_id: userProps.toy_id, // selecting whisker
+            toy_id: userProps.toy_id, // selecting default toy
+            personality_id: userProps.personality_id, // selecting default personality
             most_recent_chat_group_id: null,
             modules: ["general_trivia"],
             session_time: 0,

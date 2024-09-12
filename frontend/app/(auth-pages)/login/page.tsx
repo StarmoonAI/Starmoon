@@ -21,6 +21,7 @@ interface LoginProps {
 
 export default async function Login({ searchParams }: LoginProps) {
     const toy_id = searchParams?.toy_id as string | undefined;
+    const personality_id = searchParams?.personality_id as string | undefined;
     const isGoogleOAuthEnabled = process.env.GOOGLE_OAUTH === "True";
 
     const signInOrSignUp = async (formData: FormData) => {
@@ -49,6 +50,7 @@ export default async function Login({ searchParams }: LoginProps) {
             options: {
                 data: {
                     toy_id: toy_id,
+                    personality_id: personality_id,
                 },
                 emailRedirectTo: `${origin}/auth/callback`,
             },
@@ -85,7 +87,10 @@ export default async function Login({ searchParams }: LoginProps) {
                     {/* <ToyPreview /> */}
 
                     {isGoogleOAuthEnabled && (
-                        <GoogleLoginButton toy_id={toy_id} />
+                        <GoogleLoginButton
+                            toy_id={toy_id}
+                            personality_id={personality_id}
+                        />
                     )}
 
                     <Separator className="mt-2" />
