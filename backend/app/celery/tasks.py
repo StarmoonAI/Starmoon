@@ -68,6 +68,7 @@ def emotion_detection(
     # ! update the supabase emotion scores
     add_msg(
         toy_id=user["toy_id"],
+        personality_id=user["personality_id"],
         user_id=user["user_id"],
         role=role,
         content=text,

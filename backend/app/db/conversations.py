@@ -23,6 +23,7 @@ async def get_msgs(user_id: str, toy_id: str):
 
 def add_msg(
     toy_id: str,
+    personality_id: str,
     user_id: str,
     role: str,
     content: str,
@@ -36,6 +37,7 @@ def add_msg(
         supabase.table("conversations").insert(
             {
                 "toy_id": toy_id,
+                "personality_id": personality_id,
                 "user_id": user_id,
                 "role": role,
                 "content": content,

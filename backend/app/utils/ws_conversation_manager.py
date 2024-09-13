@@ -183,45 +183,6 @@ class ConversationManager:
 
         return previous_sentence
 
-        # except Exception as e:
-        #     print(f"Error in speech_stream_response: {e}")
-
-        #     task_id = create_emotion_detection_task(
-        #         utterance,
-        #         user,
-        #         "assistant",
-        #         session_id,
-        #         True,
-        #     )
-        #     if device == "web":
-        #         task = asyncio.create_task(check_task_result(task_id, websocket))
-        #         self.check_task_result_tasks.append(task)
-
-        #     error_message = "Oops, it looks like we encountered some sensitive content, how about we talk about other topics?"
-        #     task_id = create_emotion_detection_task(
-        #         error_message,
-        #         user,
-        #         "assistant",
-        #         session_id,
-        #         True,
-        #     )
-        #     await azure_send_response_and_speech(
-        #         error_message,
-        #         "end",
-        #         websocket,
-        #         task_id,
-        #         user["toy_id"],
-        #         device,
-        #     )
-        #     await asyncio.sleep(0)
-        #     task = asyncio.create_task(check_task_result(task_id, websocket))
-        #     self.check_task_result_tasks.append(task)
-
-        #     # TODO don't add this message to the messages list
-        #     messages.pop()
-
-        #     return None
-
     async def get_transcript(
         self,
         data_stream: asyncio.Queue,

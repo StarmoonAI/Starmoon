@@ -1,13 +1,10 @@
 import { createUser, doesUserExist, getUserById } from "@/db/users";
-import { getAllToys, getToyById } from "@/db/toys";
+import { getAllToys } from "@/db/toys";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
-import { User } from "@supabase/supabase-js";
-import { dbGetRecentMessages } from "@/db/conversations";
 import Playground from "../components/playground/PlaygroundComponent";
 import { defaultPersonalityId, defaultToyId } from "@/lib/data";
 import { getAllPersonalities } from "@/db/personalities";
-import { createAccessToken } from "@/lib/utils";
 
 export default async function Home() {
     const supabase = createClient();
