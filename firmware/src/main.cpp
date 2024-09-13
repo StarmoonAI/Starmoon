@@ -40,19 +40,19 @@ int fadeAmount = 5;
 // #define I2S_DATA_OUT 25
 // #define I2S_PORT_OUT I2S_NUM_1
 
-#define BUTTON_PIN 0 // Built-in BOOT button (GPIO 0)
-#define LED_PIN 10   // Built-in LED (GPIO 10)
+#define BUTTON_PIN D6       // Built-in BOOT button (GPIO 0)
+#define LED_PIN LED_BUILTIN // Built-in LED (GPIO 10)
 
 // I2S pins for Audio Input (INMP441 MEMS microphone)
-#define I2S_SD 4
-#define I2S_WS 1
-#define I2S_SCK 3
+#define I2S_SD D4
+#define I2S_WS D1
+#define I2S_SCK D3
 #define I2S_PORT_IN I2S_NUM_0
 
 // I2S pins for Audio Output (MAX98357A amplifier)
-#define I2S_WS_OUT 5
-#define I2S_BCK_OUT 2
-#define I2S_DATA_OUT 0
+#define I2S_WS_OUT D5
+#define I2S_BCK_OUT D2
+#define I2S_DATA_OUT D0
 #define I2S_PORT_OUT I2S_NUM_1
 
 #define SAMPLE_RATE 16000
@@ -71,7 +71,7 @@ const char *password = "LaunchLabRocks";
 const char *websocket_server_host = "192.168.2.236";
 const uint16_t websocket_server_port = 8000;
 const char *websocket_server_path = "/starmoon";
-const char *auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiOGMzYWYwODctOGQ4MC00NTM2LThjNzYtMDYyNjc3NDQ4MDMzIiwiZW1haWwiOiJha2FkM2JAZ21haWwuY29tIiwiaWF0IjoxNzI2MjIzOTQ1fQ.Y4ocwEOalQ0i3sKg_MZWjsxSQ0glQGQejRgZFJ3Fzdk";
+const char *auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNWFmNjJiMGUtM2RhNC00YzQ0LWFkZjctNWIxYjdjOWM0Y2I2IiwiZW1haWwiOiJhZG1pbkBzdGFybW9vbi5hcHAiLCJpYXQiOjE3MjYyMzY1Njl9.5Ble6393MS2yPPzxlONh2GGP1aI5v1R6TjLPWQ1eHY0";
 String authMessage;
 
 // Flag to control when to play audio
@@ -89,7 +89,7 @@ String createAuthTokenMessage(const char *token)
     JsonDocument doc;
     doc["token"] = token;
     doc["device"] = "esp";
-    doc["user_id"] = "8c3af087-8d80-4536-8c76-062677448033";
+    doc["user_id"] = NULL;
     String jsonString;
     serializeJson(doc, jsonString);
     return jsonString;
@@ -206,8 +206,8 @@ void i2s_speaker_install()
         .channel_format = I2S_CHANNEL_FMT_ONLY_LEFT, // Mono audio
         .communication_format = I2S_COMM_FORMAT_I2S_MSB,
         .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
-        .dma_buf_count = 10,
-        .dma_buf_len = 1024,
+        .dma_buf_count = 8,
+        .dma_buf_len = 64,
         .use_apll = false,
         .tx_desc_auto_clear = true,
         .fixed_mclk = 0};
@@ -258,6 +258,10 @@ void micTask(void *parameter)
             esp_err_t result = i2s_read(I2S_PORT_IN, &sBuffer, bufferLen, &bytesIn, portMAX_DELAY);
             if (result == ESP_OK)
             {
+                // time sending audio data
+                unsigned long currentMillis = millis();
+                Serial.printf("Sending audio at %lu\n", currentMillis);
+
                 client.sendBinary((const char *)sBuffer, bytesIn);
             }
             else
@@ -364,6 +368,11 @@ void disconnectWSServer()
 void handleBinaryAudio(const char *payload, size_t length)
 {
     size_t bytesWritten = 0;
+
+    // time received audio
+    unsigned long currentMillis = millis();
+    Serial.printf("Received audio at %lu\n", currentMillis);
+
     esp_err_t result = i2s_write(I2S_PORT_OUT, payload, length, &bytesWritten, portMAX_DELAY);
     if (result != ESP_OK)
     {
