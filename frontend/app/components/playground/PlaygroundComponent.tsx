@@ -130,8 +130,6 @@ const Playground: React.FC<PlaygroundProps> = ({
         });
     };
 
-    console.log("personalityState!!!!", personalityState);
-
     return (
         <div className="flex flex-col">
             <div className="flex flex-col w-full gap-2">
@@ -167,63 +165,62 @@ const Playground: React.FC<PlaygroundProps> = ({
                                     />
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                ) : null}
-
-                {connectionStatus !== "Open" ? (
-                    <div className="w-full flex flex-col gap-8 items-center justify-center">
-                        <AnimatePresence>
-                            <motion.div
-                                initial="initial"
-                                animate="enter"
-                                exit="exit"
-                                variants={{
-                                    initial: { opacity: 0 },
-                                    enter: { opacity: 1 },
-                                    exit: { opacity: 0 },
-                                }}
-                            >
-                                {creditsRemaining <= 0 ? (
-                                    <AddCreditsModal>
-                                        <Button
-                                            className={
-                                                "z-50 flex items-center gap-1.5"
-                                            }
-                                            size="sm"
-                                            variant={"upsell_primary"}
-                                        >
-                                            <Sparkles
-                                                size={16}
-                                                strokeWidth={3}
-                                                stroke={"currentColor"}
-                                            />
-                                            <span className="text-md font-semibold">
-                                                Add credits
-                                            </span>
-                                        </Button>
-                                    </AddCreditsModal>
-                                ) : (
-                                    <Button
-                                        disabled={!selectedUser}
-                                        className={
-                                            "z-50 flex items-center gap-1.5 rounded-full"
-                                        }
-                                        onClick={handleClickOpenConnection}
-                                        size="sm"
+                            <div className="w-full flex flex-col gap-8 items-center justify-center">
+                                <AnimatePresence>
+                                    <motion.div
+                                        initial="initial"
+                                        animate="enter"
+                                        exit="exit"
+                                        variants={{
+                                            initial: { opacity: 0 },
+                                            enter: { opacity: 1 },
+                                            exit: { opacity: 0 },
+                                        }}
                                     >
-                                        <MoonStar
-                                            size={16}
-                                            strokeWidth={3}
-                                            stroke={"currentColor"}
-                                        />
-                                        <span className="text-md font-semibold">
-                                            Play
-                                        </span>
-                                    </Button>
-                                )}
-                            </motion.div>
-                        </AnimatePresence>
+                                        {creditsRemaining <= 0 ? (
+                                            <AddCreditsModal>
+                                                <Button
+                                                    className={
+                                                        "z-50 flex items-center gap-1.5"
+                                                    }
+                                                    size="sm"
+                                                    variant={"upsell_primary"}
+                                                >
+                                                    <Sparkles
+                                                        size={16}
+                                                        strokeWidth={3}
+                                                        stroke={"currentColor"}
+                                                    />
+                                                    <span className="text-md font-semibold">
+                                                        Add credits
+                                                    </span>
+                                                </Button>
+                                            </AddCreditsModal>
+                                        ) : (
+                                            <Button
+                                                disabled={!selectedUser}
+                                                className={
+                                                    "z-50 flex items-center gap-1.5 rounded-full"
+                                                }
+                                                onClick={
+                                                    handleClickOpenConnection
+                                                }
+                                                size="sm"
+                                            >
+                                                <MoonStar
+                                                    size={16}
+                                                    strokeWidth={3}
+                                                    stroke={"currentColor"}
+                                                />
+                                                <span className="text-md font-semibold">
+                                                    Play
+                                                </span>
+                                            </Button>
+                                        )}
+                                    </motion.div>
+                                </AnimatePresence>
+                            </div>
+                        </div>
                     </div>
                 ) : null}
             </div>

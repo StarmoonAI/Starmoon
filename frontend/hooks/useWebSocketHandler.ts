@@ -258,6 +258,7 @@ export const useWebSocketHandler = (selectedUser: IUser) => {
             process.env.NEXT_PUBLIC_VERCEL_ENV === "production"
                 ? "wss://api.starmoon.app/starmoon"
                 : "ws://localhost:8000/starmoon";
+        // console.log("opening ws connection", wsUrl);
         setSocketUrl(wsUrl);
         // setSocketUrl("wss://api.starmoon.app/starmoon");
     }, []);
