@@ -123,8 +123,8 @@ export default async function RootLayout({
                                         <PreorderModal>
                                             <Button
                                                 size="sm"
-                                                variant="ghost"
-                                                className="flex flex-row md:px-4 px-2 py-[6px] items-center text-stone-800 dark:text-stone-50 hover:text-stone-700 bg-stone-50- hover:bg-stone-100 dark:hover:bg-stone-900 bg-nav-bar rounded-full"
+                                                variant="primary"
+                                                className="flex flex-row md:px-4 px-2 py-[6px] items-center rounded-full"
                                             >
                                                 <Store size={18} />
                                                 <p className="pl-2 hidden sm:flex font-medium">
@@ -146,12 +146,16 @@ export default async function RootLayout({
                                             rel="noopener noreferrer"
                                             title="Visit our GitHub"
                                         >
-                                            <div className="flex flex-row gap-2 md:px-4 p-2 items-center text-stone-800 dark:text-stone-50 hover:text-stone-700 bg-stone-50- hover:bg-stone-100 dark:hover:bg-stone-900 bg-nav-bar rounded-full">
+                                            <Button
+                                                size="sm"
+                                                variant="link"
+                                                className="flex flex-row gap-2 md:px-4 px-2 py-[6px] items-center rounded-full"
+                                            >
                                                 <FaGithub className="text-xl" />
                                                 <p className="hidden sm:flex font-medium">
                                                     GitHub
                                                 </p>
-                                            </div>
+                                            </Button>
                                         </Link>
                                     </div>
                                     <NavbarButtons user={user} />
