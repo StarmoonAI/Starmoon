@@ -25,35 +25,14 @@ unsigned long lastPulseTime = 0;
 int ledBrightness = 0;
 int fadeAmount = 5;
 
-// #define BUTTON_PIN 26
-// #define LED_PIN 2
-
-// // I2S pins for Audio Input (INMP441 MEMS microphone)
-// #define I2S_SD 13
-// #define I2S_WS 5
-// #define I2S_SCK 18
-// #define I2S_PORT_IN I2S_NUM_0
-
-// // I2S pins for Audio Output (MAX98357A amplifier)
-// #define I2S_WS_OUT 32
-// #define I2S_BCK_OUT 33
-// #define I2S_DATA_OUT 25
-// #define I2S_PORT_OUT I2S_NUM_1
-
-#define BUTTON_PIN 0 // Built-in BOOT button (GPIO 0)
-#define LED_PIN 10   // Built-in LED (GPIO 10)
+#define BUTTON_PIN 0
+#define LED_PIN 2
 
 // I2S pins for Audio Input (INMP441 MEMS microphone)
-#define I2S_SD 4
-#define I2S_WS 1
-#define I2S_SCK 3
-#define I2S_PORT_IN I2S_NUM_0
-
-// I2S pins for Audio Output (MAX98357A amplifier)
-#define I2S_WS_OUT 5
-#define I2S_BCK_OUT 2
-#define I2S_DATA_OUT 0
-#define I2S_PORT_OUT I2S_NUM_1
+#define I2S_SD 19
+#define I2S_WS 5
+#define I2S_SCK 18
+#define I2S_PORT I2S_NUM_0
 
 #define SAMPLE_RATE 16000
 #define bufferCnt 10
@@ -62,6 +41,16 @@ int16_t sBuffer[bufferLen];
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define BUFFER_SIZE 1024
+int16_t audioBuffer[BUFFER_SIZE];
+
+// Flags to control audio mode
+enum AudioMode
+{
+    MODE_IDLE,
+    MODE_RECORDING,
+    MODE_PLAYING
+};
+volatile AudioMode currentMode = MODE_IDLE;
 
 // WiFi credentials
 const char *ssid = "launchlab";
@@ -71,11 +60,8 @@ const char *password = "LaunchLabRocks";
 const char *websocket_server_host = "192.168.2.236";
 const uint16_t websocket_server_port = 8000;
 const char *websocket_server_path = "/starmoon";
-const char *auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiOGMzYWYwODctOGQ4MC00NTM2LThjNzYtMDYyNjc3NDQ4MDMzIiwiZW1haWwiOiJha2FkM2JAZ21haWwuY29tIiwiaWF0IjoxNzI2MjIzOTQ1fQ.Y4ocwEOalQ0i3sKg_MZWjsxSQ0glQGQejRgZFJ3Fzdk";
+const char *auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imp1bnJ1eGlvbmdAZ21haWwuY29tIiwidXNlcl9pZCI6IjAwNzljZWU5LTE4MjAtNDQ1Ni05MGE0LWU4YzI1MzcyZmUyOSIsImNyZWF0ZWRfdGltZSI6IjIwMjQtMDktMDZUMTY6NDU6MzQuMDQyMTU5In0.D7zgHF5qS1HiH4tRZ4XBpvd5_O-pjjg-tEngJt51MW4";
 String authMessage;
-
-// Flag to control when to play audio
-bool shouldPlayAudio = false;
 
 // ISR to handle button press
 void IRAM_ATTR buttonISR()
@@ -89,7 +75,7 @@ String createAuthTokenMessage(const char *token)
     JsonDocument doc;
     doc["token"] = token;
     doc["device"] = "esp";
-    doc["user_id"] = "8c3af087-8d80-4536-8c76-062677448033";
+    doc["user_id"] = NULL;
     String jsonString;
     serializeJson(doc, jsonString);
     return jsonString;
@@ -121,6 +107,7 @@ void ledControlTask(void *parameter);
 
 void onWSConnectionOpened()
 {
+    currentMode = MODE_RECORDING;
     authMessage = createAuthTokenMessage(auth_token);
     Serial.println(authMessage);
     client.send(authMessage);
@@ -131,6 +118,7 @@ void onWSConnectionOpened()
 
 void onWSConnectionClosed()
 {
+    currentMode = MODE_IDLE;
     analogWrite(LED_PIN, 0);
     Serial.println("Connnection Closed");
     isWebSocketConnected = false;
@@ -170,17 +158,19 @@ void i2s_install()
 {
     // Set up I2S Processor configuration
     const i2s_config_t i2s_config = {
-        .mode = i2s_mode_t(I2S_MODE_MASTER | I2S_MODE_RX),
+        .mode = i2s_mode_t(I2S_MODE_MASTER | I2S_MODE_RX | I2S_MODE_TX),
         .sample_rate = SAMPLE_RATE,
         .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
         .channel_format = I2S_CHANNEL_FMT_ONLY_LEFT,
         .communication_format = i2s_comm_format_t(I2S_COMM_FORMAT_STAND_I2S),
-        .intr_alloc_flags = 0,
+        .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
         .dma_buf_count = bufferCnt,
         .dma_buf_len = bufferLen,
-        .use_apll = false};
+        .use_apll = false,
+        .tx_desc_auto_clear = true,
+        .fixed_mclk = 0};
 
-    esp_err_t err = i2s_driver_install(I2S_PORT_IN, &i2s_config, 0, NULL);
+    esp_err_t err = i2s_driver_install(I2S_PORT, &i2s_config, 0, NULL);
     Serial.printf("I2S mic driver install: %s\n", esp_err_to_name(err));
 }
 
@@ -190,42 +180,10 @@ void i2s_setpin()
     const i2s_pin_config_t pin_config = {
         .bck_io_num = I2S_SCK,
         .ws_io_num = I2S_WS,
-        .data_out_num = -1,
+        .data_out_num = I2S_SD,
         .data_in_num = I2S_SD};
 
-    i2s_set_pin(I2S_PORT_IN, &pin_config);
-}
-
-void i2s_speaker_install()
-{
-    // Set up I2S Processor configuration for speaker
-    const i2s_config_t i2s_config = {
-        .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_TX),
-        .sample_rate = SAMPLE_RATE,
-        .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
-        .channel_format = I2S_CHANNEL_FMT_ONLY_LEFT, // Mono audio
-        .communication_format = I2S_COMM_FORMAT_I2S_MSB,
-        .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
-        .dma_buf_count = 10,
-        .dma_buf_len = 1024,
-        .use_apll = false,
-        .tx_desc_auto_clear = true,
-        .fixed_mclk = 0};
-
-    esp_err_t err = i2s_driver_install(I2S_PORT_OUT, &i2s_config, 0, NULL); // Install the I2S driver on I2S_NUM_1
-    Serial.printf("I2S speaker driver install: %s\n", esp_err_to_name(err));
-}
-
-void i2s_speaker_setpin()
-{
-    // Set I2S pin configuration for speaker
-    const i2s_pin_config_t pin_config = {
-        .bck_io_num = I2S_BCK_OUT,    // Bit Clock (BCK)
-        .ws_io_num = I2S_WS_OUT,      // Word Select (LRCK)
-        .data_out_num = I2S_DATA_OUT, // Data Out (DIN)
-        .data_in_num = -1};           // Not used, so set to -1
-
-    i2s_set_pin(I2S_PORT_OUT, &pin_config); // Set the I2S pins on I2S_NUM_1
+    i2s_set_pin(I2S_PORT, &pin_config);
 }
 
 void connectWiFi()
@@ -243,72 +201,33 @@ void connectWiFi()
     WiFi.setSleep(false);
 }
 
-void micTask(void *parameter)
+void audioTask(void *parameter)
 {
-    i2s_start(I2S_PORT_IN);
-
-    size_t bytesIn = 0;
-    Serial.println("Mic task started");
+    size_t bytesRead = 0;
+    size_t bytesWritten = 0;
 
     while (1)
     {
-        // Check if the WebSocket connection is still active
         if (isWebSocketConnected)
         {
-            esp_err_t result = i2s_read(I2S_PORT_IN, &sBuffer, bufferLen, &bytesIn, portMAX_DELAY);
-            if (result == ESP_OK)
+            switch (currentMode)
             {
-                client.sendBinary((const char *)sBuffer, bytesIn);
-            }
-            else
-            {
-                Serial.printf("Error reading from I2S: %d\n", result);
+            case MODE_RECORDING:
+                esp_err_t result = i2s_read(I2S_PORT, &sBuffer, bufferLen, &bytesRead, portMAX_DELAY);
+                if (result == ESP_OK)
+                {
+                    client.sendBinary((const char *)sBuffer, bytesRead);
+                }
+                else
+                {
+                    Serial.printf("Error reading from I2S: %d\n", result);
+                }
+
+                break;
             }
         }
-
-        // Add a small delay to prevent watchdog issues
         vTaskDelay(10 / portTICK_PERIOD_MS);
     }
-
-    // If the task is ending, ensure I2S is stopped and buffer is cleared
-    i2s_stop(I2S_PORT_IN);
-    i2s_zero_dma_buffer(I2S_PORT_IN);
-    Serial.println("Mic task ended");
-    vTaskDelete(NULL); // Delete the task if it's no longer needed
-}
-
-void startSpeaker()
-{
-    shouldPlayAudio = true;
-
-    // Start the I2S interface when the audio stream starts
-    esp_err_t err = i2s_start(I2S_PORT_OUT);
-    if (err != ESP_OK)
-    {
-        Serial.printf("Failed to start I2S: %d\n", err);
-    }
-    else
-    {
-        Serial.println("I2S started");
-    }
-}
-
-void stopSpeaker()
-{
-    shouldPlayAudio = false;
-
-    // Stop the I2S interface when the audio stream ends
-    esp_err_t err = i2s_stop(I2S_PORT_OUT);
-
-    if (err != ESP_OK)
-    {
-        Serial.printf("Failed to stop I2S: %d\n", err);
-    }
-    else
-    {
-        Serial.println("I2S stopped");
-    }
-    i2s_zero_dma_buffer(I2S_PORT_OUT);
 }
 
 void handleTextMessage(const char *msgText)
@@ -328,16 +247,12 @@ void handleTextMessage(const char *msgText)
     if (strcmp(type, "start_of_audio") == 0)
     {
         Serial.println("Received start_of_audio");
-        startSpeaker();
+        currentMode = MODE_PLAYING;
     }
     else if (strcmp(type, "end_of_audio") == 0)
     {
         Serial.println("Received end_of_audio");
-
-        // Clear any remaining buffers or resources here if necessary
-        stopSpeaker();
-
-        // Send acknowledgment to the server
+        currentMode = MODE_RECORDING;
         sendAcknowledgment();
     }
 }
@@ -363,15 +278,14 @@ void disconnectWSServer()
 
 void handleBinaryAudio(const char *payload, size_t length)
 {
-    size_t bytesWritten = 0;
-    esp_err_t result = i2s_write(I2S_PORT_OUT, payload, length, &bytesWritten, portMAX_DELAY);
-    if (result != ESP_OK)
+    if (currentMode == MODE_PLAYING)
     {
-        Serial.printf("Error in i2s_write: %d\n", result);
-    }
-    else if (bytesWritten != length)
-    {
-        Serial.printf("Warning: only %d bytes written out of %d\n", bytesWritten, length);
+        size_t bytesWritten = 0;
+        esp_err_t result = i2s_write(I2S_PORT, payload, length, &bytesWritten, portMAX_DELAY);
+        if (result != ESP_OK)
+        {
+            Serial.printf("Error in i2s_write: %d\n", result);
+        }
     }
 }
 
@@ -381,9 +295,8 @@ void onMessageCallback(WebsocketsMessage message)
     {
         handleTextMessage(message.c_str());
     }
-    else if (message.isBinary() && shouldPlayAudio)
+    else if (message.isBinary() && currentMode == MODE_PLAYING)
     {
-        // Handle binary audio data
         handleBinaryAudio(message.c_str(), message.length());
     }
 }
@@ -402,7 +315,16 @@ void buttonTask(void *parameter)
 
             if (isWebSocketConnected)
             {
-                disconnectWSServer();
+                if (currentMode == MODE_RECORDING)
+                {
+                    disconnectWSServer();
+                    Serial.println("Stopping recording");
+                }
+                else if (currentMode == MODE_PLAYING)
+                {
+                    currentMode = MODE_RECORDING;
+                    Serial.println("Starting recording");
+                }
             }
             else
             {
@@ -426,7 +348,7 @@ void ledControlTask(void *parameter)
         {
             analogWrite(LED_PIN, 0); // LED off when not connected
         }
-        else if (shouldPlayAudio)
+        else if (currentMode == MODE_PLAYING)
         {
             // Pulse LED while playing audio
             unsigned long currentMillis = millis();
@@ -465,10 +387,7 @@ void setup()
     i2s_install();
     i2s_setpin();
 
-    i2s_speaker_install();
-    i2s_speaker_setpin();
-
-    xTaskCreatePinnedToCore(micTask, "micTask", 10000, NULL, 1, &micTaskHandle, 0);
+    xTaskCreatePinnedToCore(audioTask, "micTask", 10000, NULL, 1, &micTaskHandle, 0);
     xTaskCreatePinnedToCore(ledControlTask, "ledControlTask", 2048, NULL, 1, &ledTaskHandle, 1);
     xTaskCreate(buttonTask, "buttonTask", 2048, NULL, 1, &buttonTaskHandle);
 

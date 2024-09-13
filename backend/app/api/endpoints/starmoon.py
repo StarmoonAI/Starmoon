@@ -52,7 +52,10 @@ async def websocket_endpoint(websocket: WebSocket):
         supervisee_age = user["supervisee_age"]
         supervisee_name = user["supervisee_name"]
 
-        # personality = await get_personality(user["personality_id"])
+        # print("starmoon", user)
+        # personality = await get_personality(user["personality_id"]);
+        # print("personality", personality)
+        
         # title = personality["title"]
         # subtitle = personality["subtitle"]
         # trait = personality["trait"]

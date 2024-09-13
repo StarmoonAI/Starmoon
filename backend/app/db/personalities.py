@@ -1,5 +1,3 @@
-from email import message
-
 from app.db.supabase import create_supabase_client
 
 async def get_personality(personality_id: str):
@@ -10,7 +8,7 @@ async def get_personality(personality_id: str):
             supabase.table("personalities")
             .select("*")
             .eq("personality_id", personality_id)
-            .single()
+            .single().execute()
         )
         return personality
     except Exception as e:
