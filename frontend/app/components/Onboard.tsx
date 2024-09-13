@@ -180,7 +180,7 @@ const Onboard: React.FC<OnboardProps> = ({ selectedUser }) => {
               </FormItem>
             )}
           />
-          <FormField
+          {/* <FormField
             control={form.control}
             name="modules"
             render={() => (
@@ -227,7 +227,7 @@ const Onboard: React.FC<OnboardProps> = ({ selectedUser }) => {
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
           <Button
             variant="primary"
             className="w-fit flex flex-row items-center gap-4 font-semibold"

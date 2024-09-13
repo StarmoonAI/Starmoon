@@ -37,28 +37,32 @@ export default function EndingSection() {
         </h1>
       </div>
 
-      <div className="my-20 flex items-center justify-center gap-8 flex-wrap">
-        <PreorderModal>
-          <Button className="flex flex-row items-center gap-2 font-medium text-base bg-stone-800 leading-8 rounded-full">
-            <Store size={20} />
-            <span>Preorder Now</span>
-          </Button>
-        </PreorderModal>
-        <BookDemoModal>
-          <Button className="flex flex-row items-center gap-2 font-medium text-base text-stone-800 leading-8 rounded-full bg-transparent border-2 border-stone-900 hover:bg-stone-500 hover:bg-opacity-5">
-            <CalendarCheck size={20} />
-            <span>Book a Demo</span>
-          </Button>
-        </BookDemoModal>
-        <Link href="https://discord.gg/BtaybK5dvU">
-          <Button
-            variant="link"
-            className="flex flex-row items-center gap-2 font-medium text-base text-stone-800 leading-8 rounded-full bg-transparent"
-          >
-            <FaDiscord className="text-2xl" />
-            <span>Join our Discord</span>
-          </Button>
-        </Link>
+      <div className="my-20 flex flex-col items-center justify-center gap-8">
+        <div className="flex items-center justify-center gap-8 flex-wrap">
+          <PreorderModal>
+            <Button className="flex flex-row items-center gap-2 font-medium text-base bg-stone-800 leading-8 rounded-full">
+              <Store size={20} />
+              <span>Preorder Now</span>
+            </Button>
+          </PreorderModal>
+          <BookDemoModal>
+            <Button className="flex flex-row items-center gap-2 font-medium text-base text-stone-800 leading-8 rounded-full bg-transparent border-2 border-stone-900 hover:bg-stone-500 hover:bg-opacity-5">
+              <CalendarCheck size={20} />
+              <span>Book a Demo</span>
+            </Button>
+          </BookDemoModal>
+        </div>
+        <div className="w-full flex justify-center">
+          <Link href="https://discord.gg/BtaybK5dvU">
+            <Button
+              variant="link"
+              className="flex flex-row items-center gap-2 font-medium text-base text-stone-800 leading-8 rounded-full bg-transparent"
+            >
+              <FaDiscord className="text-2xl" />
+              <span>Join our Discord</span>
+            </Button>
+          </Link>
+        </div>
       </div>
     </section>
   );

@@ -157,7 +157,8 @@ const Playground: React.FC<PlaygroundProps> = ({
               <div className="flex flex-row items-center self-center">
                 <div className="max-w-[200px] transition-transform duration-300 ease-in-out scale-90 hover:scale-100">
                   <Image
-                    src={getAssistantAvatar(toyState.image_src!)}
+                    // src={getAssistantAvatar(toyState.image_src!)}
+                    src={`/personality/${toyState?.image_src}_${personalityState.title.toLowerCase().replace(/\s+/g, "_")}.png`}
                     width={200}
                     height={200}
                     alt={toyState.name}
@@ -210,7 +211,7 @@ const Playground: React.FC<PlaygroundProps> = ({
                 ) : (
                   <Button
                     disabled={!selectedUser}
-                    className={"z-50 flex items-center gap-1.5"}
+                    className={"z-50 flex items-center gap-1.5 rounded-full"}
                     onClick={handleClickOpenConnection}
                     size="sm"
                   >

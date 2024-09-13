@@ -35,7 +35,7 @@ const PlaceOrder: React.FC<PlaceOrderProps> = ({
 }) => {
   const subText = (
     <>
-      {"You can now preorder a Starmoon toy for your child. Get "}
+      {"You can now preorder a Starmoon device. Get "}
       <span className="font-bold">25% off</span>
       {" when you order now. See a demo first →"}
     </>
