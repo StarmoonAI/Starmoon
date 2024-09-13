@@ -44,7 +44,7 @@ const PickPersonality: React.FC<PickPersonalityProps> = ({
         }}
         defaultValue={personalityState?.personality_id}
       >
-        <SelectTrigger disabled={isDisabled} className="gap-2">
+        <SelectTrigger disabled={isDisabled} className="focus:ring-0">
           <PersonStanding size={18} />
           {personalityState?.title}{" "}
         </SelectTrigger>
@@ -55,16 +55,18 @@ const PickPersonality: React.FC<PickPersonalityProps> = ({
               value={personality.personality_id}
             >
               <div className="flex flex-row items-center">
-                <div className="w-1/4">
+                <div className="w-20 h-20 flex-shrink-0">
                   <Image
-                    src={`/personality/${toyState?.image_src}_${personality.title.toLowerCase().replace(/\s+/g, "_")}.png`}
+                    src={`/personality/${toyState?.image_src}_${personality.title
+                      .toLowerCase()
+                      .replace(/\s+/g, "_")}.png`}
                     width={100}
                     height={100}
                     alt={personality.title}
-                    className="w-full h-auto"
+                    className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="w-3/4 flex flex-col items-start p-2">
+                <div className="flex flex-col items-start p-2">
                   <p>
                     {personality.title}
                     {isDefaultPersonality(personality) && " (default)"}
