@@ -27,6 +27,8 @@ import {
     userFormAgeDescription,
     userFormAgeLabel,
     userFormNameLabel,
+    userFormPersonaLabel,
+    userFormPersonaPlaceholder,
 } from "@/lib/data";
 
 interface OnboardProps {
@@ -89,16 +91,18 @@ const Onboard: React.FC<OnboardProps> = ({ selectedUser }) => {
     }
 
     return (
-        <div className="overflow-hidden w-full flex-auto flex flex-col font-quicksand pl-1">
+        <div className="overflow-hidden max-w-lg flex-auto flex flex-col gap-2 font-quicksand px-1">
             <Progress value={progress} />
             <p className="text-3xl font-bold mt-5">
-                To get started, enter supervision details to get your
-                child&apos;s companion set up
+                To get started, enter your details to get your companion set up
             </p>
             <p className="text-md text-gray-500 font-medium">
-                Parenting can be hard. It can be even harder when you&apos;re
+                {/* Parenting can be hard. It can be even harder when you&apos;re
                 trying to balance work, life, and your child&apos;s development.
-                Starmoon AI is here to help
+                Starmoon AI is here to help */}
+                Whether you are buying a Starmoon for yourself or for your loved
+                one, we want to make sure that your Starmoon is set up to
+                provide the best experience possible.
             </p>
             <Form {...form}>
                 <form
@@ -169,13 +173,12 @@ const Onboard: React.FC<OnboardProps> = ({ selectedUser }) => {
                         render={({ field }) => (
                             <FormItem className="w-full rounded-md">
                                 <FormLabel className="flex flex-row gap-4 items-center">
-                                    Briefly describe yourself and your
-                                    interests, personality, and learning style
+                                    {userFormPersonaLabel}
                                 </FormLabel>
                                 <FormControl>
                                     <Textarea
-                                        rows={4}
-                                        placeholder="e.g. I would like the AI to be friendly and encouraging, and to use positive reinforcement to help my child learn."
+                                        rows={6}
+                                        placeholder={userFormPersonaPlaceholder}
                                         {...field}
                                         className="max-w-screen-sm bg-white"
                                         autoComplete="on"

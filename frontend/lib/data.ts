@@ -4,6 +4,8 @@ export const defaultPersonalityId: string =
 
 export const userFormPersonaLabel =
     "Briefly describe yourself and your interests, personality, and learning style";
+export const userFormPersonaPlaceholder =
+    "I absolutely love playing soccer and learning about new developments in economics. Don't get me started on the guitar...I can shred it like Jimi Hendrix. I also like a good challenge. Challenge me to be better and I'll rise to the occasion.";
 export const userFormAgeLabel = "Your age";
 export const userFormAgeDescription =
     "Users under 13 years old must have a parent or guardian to setup Starmoon.";

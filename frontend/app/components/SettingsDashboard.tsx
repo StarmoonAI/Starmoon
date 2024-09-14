@@ -30,6 +30,7 @@ import {
     userFormAgeDescription,
     userFormAgeLabel,
     userFormPersonaLabel,
+    userFormPersonaPlaceholder,
 } from "@/lib/data";
 
 interface SettingsDashboardProps {
@@ -179,8 +180,8 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
                                 </FormLabel>
                                 <FormControl>
                                     <Textarea
-                                        rows={4}
-                                        placeholder="I like to play soccer, learn about new developments in economics and play the guitar. I also like being challenged."
+                                        rows={6}
+                                        placeholder={userFormPersonaPlaceholder}
                                         {...field}
                                         className="max-w-screen-sm bg-white"
                                         autoComplete="on"
