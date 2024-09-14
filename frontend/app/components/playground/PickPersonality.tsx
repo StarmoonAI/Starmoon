@@ -39,7 +39,10 @@ const PickPersonality: React.FC<PickPersonalityProps> = ({
                 }}
                 defaultValue={personalityState?.personality_id}
             >
-                <SelectTrigger disabled={isDisabled} className="focus:ring-0">
+                <SelectTrigger
+                    disabled={isDisabled}
+                    className="rounded-full gap-2"
+                >
                     <PersonStanding size={18} />
                     {personalityState?.title}{" "}
                 </SelectTrigger>

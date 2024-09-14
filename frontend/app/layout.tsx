@@ -120,19 +120,6 @@ export default async function RootLayout({
 
                                 <div className="flex flex-row md:gap-4 gap-2 items-center font-bold md:text-sm text-sm">
                                     <div className="flex flex-row gap-2 items-center">
-                                        <PreorderModal>
-                                            <Button
-                                                size="sm"
-                                                variant="primary"
-                                                className="flex flex-row md:px-4 px-2 py-[6px] items-center rounded-full"
-                                            >
-                                                <Store size={18} />
-                                                <p className="pl-2 hidden sm:flex font-medium">
-                                                    Preorder
-                                                </p>
-                                            </Button>
-                                        </PreorderModal>
-
                                         {/* <Link href="/docs">
                       <div className="flex flex-row gap-2 py-[6px] px-2 items-center text-stone-800 dark:text-stone-50 hover:text-stone-700 bg-stone-50- hover:bg-stone-100 dark:hover:bg-stone-900 bg-nav-bar rounded-full">
                         <BookOpenText size={18} />
@@ -159,6 +146,18 @@ export default async function RootLayout({
                                         </Link>
                                     </div>
                                     <NavbarButtons user={user} />
+                                    <PreorderModal>
+                                        <Button
+                                            size="sm"
+                                            variant="primary"
+                                            className="flex flex-row md:px-4 px-2 py-[6px] items-center rounded-full"
+                                        >
+                                            <Store size={18} />
+                                            <p className="pl-2 hidden sm:flex font-medium">
+                                                Preorder
+                                            </p>
+                                        </Button>
+                                    </PreorderModal>
                                 </div>
                             </nav>
                         </div>
