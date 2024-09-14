@@ -47,12 +47,12 @@ const NavbarButtons: React.FC<NavbarButtonsProps> = ({ user }) => {
     ) : (
         <Link href="/login">
             <Button
-                variant="primary"
+                variant="link"
                 size="sm"
                 className="font-medium flex flex-row items-center gap-2 rounded-full"
             >
                 <LogIn size={ICON_SIZE} strokeWidth={STROKE_WIDTH} />
-                <span className="hidden md:inline">Play Online</span>
+                <span className="hidden sm:block">Play Online</span>
             </Button>
         </Link>
     );

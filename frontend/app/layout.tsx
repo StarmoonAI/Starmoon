@@ -118,39 +118,30 @@ export default async function RootLayout({
                                     {/* <p className="text-xs text-gray-500">beta</p> */}
                                 </a>
 
-                                <div className="flex flex-row md:gap-4 gap-2 items-center font-bold md:text-sm text-sm">
-                                    <div className="flex flex-row gap-2 items-center">
-                                        {/* <Link href="/docs">
-                      <div className="flex flex-row gap-2 py-[6px] px-2 items-center text-stone-800 dark:text-stone-50 hover:text-stone-700 bg-stone-50- hover:bg-stone-100 dark:hover:bg-stone-900 bg-nav-bar rounded-full">
-                        <BookOpenText size={18} />
-                        <p className="hidden sm:flex font-medium">Docs</p>
-                      </div>
-                    </Link> */}
-
-                                        <Link
-                                            href="https://github.com/StarmoonAI/Starmoon"
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            title="Visit our GitHub"
+                                <div className="flex flex-row gap-4 items-center font-bold text-sm">
+                                    <Link
+                                        href="https://github.com/StarmoonAI/Starmoon"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        title="Visit our GitHub"
+                                    >
+                                        <Button
+                                            size="sm"
+                                            variant="link"
+                                            className="flex flex-row gap-2 px-0 py-[6px] items-center rounded-full"
                                         >
-                                            <Button
-                                                size="sm"
-                                                variant="link"
-                                                className="flex flex-row gap-2 md:px-4 px-2 py-[6px] items-center rounded-full"
-                                            >
-                                                <FaGithub className="text-xl" />
-                                                <p className="hidden sm:flex font-medium">
-                                                    GitHub
-                                                </p>
-                                            </Button>
-                                        </Link>
-                                    </div>
+                                            <FaGithub className="text-xl" />
+                                            <p className="hidden sm:flex font-medium">
+                                                GitHub
+                                            </p>
+                                        </Button>
+                                    </Link>
                                     <NavbarButtons user={user} />
                                     <PreorderModal>
                                         <Button
                                             size="sm"
                                             variant="primary"
-                                            className="flex flex-row md:px-4 px-2 py-[6px] items-center rounded-full"
+                                            className="flex flex-row px-3 py-[6px] items-center rounded-full"
                                         >
                                             <Store size={18} />
                                             <p className="pl-2 hidden sm:flex font-medium">
