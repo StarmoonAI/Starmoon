@@ -92,7 +92,7 @@ const Onboard: React.FC<OnboardProps> = ({ selectedUser }) => {
 
     return (
         <div className="overflow-hidden max-w-lg flex-auto flex flex-col gap-2 font-quicksand px-1">
-            <Progress value={progress} />
+            <Progress value={progress} className="bg-amber-200" />
             <p className="text-3xl font-bold mt-5">
                 To get started, enter your details to get your companion set up
             </p>
