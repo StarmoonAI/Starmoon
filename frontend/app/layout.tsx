@@ -112,7 +112,7 @@ export default async function RootLayout({
                                         width={33}
                                         height={33}
                                     ></StarmoonLogo>
-                                    <p className="flex items-center font-medium font-inter md:text-xl text-lg text-stone-800 dark:text-stone-100">
+                                    <p className="flex items-center font-chewy font-medium text-xl text-stone-800 dark:text-stone-100">
                                         Starmoon AI
                                     </p>
                                     {/* <p className="text-xs text-gray-500">beta</p> */}
