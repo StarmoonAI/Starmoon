@@ -37,7 +37,7 @@ const ToyPicker: React.FC<ToyPickerProps> = ({
                     return (
                         <div
                             key={toy.toy_id}
-                            className="flex flex-col gap-2 bg-gray-50- rounded-[15px]"
+                            className="flex flex-col gap-2 bg-gray-50"
                         >
                             <div
                                 className={`flex flex-col items-center max-w-[320px] max-h-[320px] gap-2 mb-4 rounded-2xl overflow-hidden cursor-pointer transition-colors duration-200 ease-in-out`}
@@ -65,7 +65,7 @@ const ToyPicker: React.FC<ToyPickerProps> = ({
                                                 chooseToy(toy);
                                             }}
                                             variant="primary"
-                                            className="font-medium text-lg flex flex-row gap-2 items-center rounded-full"
+                                            className="font-medium text-lg flex flex-row gap-2 items-center "
                                         >
                                             <span>{buttonText}</span>
                                             <ArrowRight

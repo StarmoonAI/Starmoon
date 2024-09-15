@@ -99,7 +99,7 @@ export default async function Login({ searchParams }: LoginProps) {
                             Email
                         </Label>
                         <input
-                            className="rounded-md px-4 py-2 bg-inherit border"
+                            className=" px-4 py-2 bg-inherit border"
                             name="email"
                             placeholder="you@example.com"
                             required
@@ -109,7 +109,7 @@ export default async function Login({ searchParams }: LoginProps) {
                         </Label>
 
                         <input
-                            className="rounded-md px-4 py-2 bg-inherit border"
+                            className=" px-4 py-2 bg-inherit border"
                             type="password"
                             name="password"
                             placeholder="••••••••"
@@ -134,13 +134,13 @@ export default async function Login({ searchParams }: LoginProps) {
 
                         <SubmitButton
                             formAction={signInOrSignUp}
-                            className="text-sm font-medium bg-gray-100 hover:bg-gray-50 dark:text-stone-900 border-[0.1px] rounded-md px-4 py-2 text-foreground my-2"
+                            className="text-sm font-medium bg-gray-100 hover:bg-gray-50 dark:text-stone-900 border-[0.1px]  px-4 py-2 text-foreground my-2"
                             pendingText="Signing In..."
                         >
                             Continue with Email
                         </SubmitButton>
                         {searchParams?.message && (
-                            <p className="p-4 rounded-md border bg-green-50 border-green-400 text-gray-900 text-center text-sm">
+                            <p className="p-4  border bg-green-50 border-green-400 text-gray-900 text-center text-sm">
                                 {searchParams.message}
                             </p>
                         )}

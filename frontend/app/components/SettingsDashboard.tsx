@@ -116,7 +116,7 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
                         control={form.control}
                         name="supervisee_name"
                         render={({ field }) => (
-                            <FormItem className="w-full rounded-md">
+                            <FormItem className="w-full ">
                                 <FormLabel className="flex flex-row gap-4 items-center">
                                     {"Your name"}
                                 </FormLabel>
@@ -146,7 +146,7 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
                         control={form.control}
                         name="supervisee_age"
                         render={({ field }) => (
-                            <FormItem className="w-full rounded-md">
+                            <FormItem className="w-full ">
                                 <FormLabel className="flex flex-row gap-4 items-center">
                                     {userFormAgeLabel}
                                 </FormLabel>
@@ -174,7 +174,7 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
                         control={form.control}
                         name="supervisee_persona"
                         render={({ field }) => (
-                            <FormItem className="w-full rounded-md">
+                            <FormItem className="w-full ">
                                 <FormLabel className="flex flex-row gap-4 items-center">
                                     {userFormPersonaLabel}
                                 </FormLabel>

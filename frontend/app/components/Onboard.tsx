@@ -113,7 +113,7 @@ const Onboard: React.FC<OnboardProps> = ({ selectedUser }) => {
                         control={form.control}
                         name="supervisee_name"
                         render={({ field }) => (
-                            <FormItem className="w-full rounded-md">
+                            <FormItem className="w-full ">
                                 <FormLabel className="flex flex-row gap-4 items-center">
                                     {userFormNameLabel}
                                 </FormLabel>
@@ -143,7 +143,7 @@ const Onboard: React.FC<OnboardProps> = ({ selectedUser }) => {
                         control={form.control}
                         name="supervisee_age"
                         render={({ field }) => (
-                            <FormItem className="w-full rounded-md">
+                            <FormItem className="w-full ">
                                 <FormLabel className="flex flex-row gap-4 items-center">
                                     {userFormAgeLabel}
                                 </FormLabel>
@@ -171,7 +171,7 @@ const Onboard: React.FC<OnboardProps> = ({ selectedUser }) => {
                         control={form.control}
                         name="supervisee_persona"
                         render={({ field }) => (
-                            <FormItem className="w-full rounded-md">
+                            <FormItem className="w-full ">
                                 <FormLabel className="flex flex-row gap-4 items-center">
                                     {userFormPersonaLabel}
                                 </FormLabel>

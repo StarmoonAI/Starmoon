@@ -27,7 +27,7 @@ const NavbarButtons: React.FC<NavbarButtonsProps> = ({ user }) => {
                 <Button
                     variant="link"
                     size="sm"
-                    className="font-medium flex flex-row items-center gap-2 rounded-full"
+                    className="font-medium flex flex-row items-center gap-2 "
                 >
                     <Home size={ICON_SIZE} strokeWidth={STROKE_WIDTH} />
                     <span className="hidden md:inline">Home</span>
@@ -37,7 +37,7 @@ const NavbarButtons: React.FC<NavbarButtonsProps> = ({ user }) => {
                 <Button
                     variant="link"
                     size="sm"
-                    className="font-medium flex flex-row items-center gap-2 rounded-full"
+                    className="font-medium flex flex-row items-center gap-2 "
                 >
                     <LogOut size={ICON_SIZE} strokeWidth={STROKE_WIDTH} />
                     <span className="hidden md:inline">Logout</span>
@@ -49,7 +49,7 @@ const NavbarButtons: React.FC<NavbarButtonsProps> = ({ user }) => {
             <Button
                 variant="link"
                 size="sm"
-                className="font-medium flex flex-row items-center gap-2 rounded-full"
+                className="font-medium flex flex-row items-center gap-2 "
             >
                 <LogIn size={ICON_SIZE} strokeWidth={STROKE_WIDTH} />
                 <span className="hidden sm:block">Play Online</span>

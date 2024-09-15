@@ -53,9 +53,7 @@ export const Messages: React.FC<MessagesProps> = ({
             <ul className="space-y-2">
                 <motion.div
                     layoutScroll
-                    className={
-                        "grow rounded-md overflow-auto px-2 pb-4 md:px-2 w-full"
-                    }
+                    className={"grow  overflow-auto px-2 pb-4 md:px-2 w-full"}
                     ref={ref}
                 >
                     <AnimatePresence mode={"popLayout"}>
@@ -70,7 +68,7 @@ export const Messages: React.FC<MessagesProps> = ({
                                         className={cn(
                                             "w-[80%]",
                                             "bg-card",
-                                            "border border-border rounded-lg my-4",
+                                            "border border-border  my-4",
                                             msg.type === "input"
                                                 ? "ml-auto"
                                                 : ""

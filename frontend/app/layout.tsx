@@ -128,7 +128,7 @@ export default async function RootLayout({
                                         <Button
                                             size="sm"
                                             variant="link"
-                                            className="flex flex-row gap-2 px-0 py-[6px] items-center rounded-full"
+                                            className="flex flex-row gap-2 px-0 py-[6px] items-center"
                                         >
                                             <FaGithub className="text-xl" />
                                             <p className="hidden sm:flex font-medium">
@@ -141,7 +141,7 @@ export default async function RootLayout({
                                         <Button
                                             size="sm"
                                             variant="primary"
-                                            className="flex flex-row px-3 py-[6px] items-center rounded-full"
+                                            className="flex flex-row px-3 py-[6px] items-center"
                                         >
                                             <Store size={18} />
                                             <p className="pl-2 hidden sm:flex font-medium">
