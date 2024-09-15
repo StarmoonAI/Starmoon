@@ -229,7 +229,7 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
                     className="font-medium flex flex-row items-center gap-2 "
                 >
                     <LogOut size={18} strokeWidth={2} />
-                    <span className="hidden md:inline">Logout</span>
+                    <span>Logout</span>
                 </Button>
             </form>
         </div>

@@ -94,7 +94,7 @@ const Onboard: React.FC<OnboardProps> = ({ selectedUser }) => {
         <div className="overflow-hidden max-w-lg flex-auto flex flex-col gap-2 font-quicksand px-1">
             <Progress value={progress} className="bg-amber-200" />
             <p className="text-3xl font-bold mt-5">
-                To get started, enter your details to get your companion set up
+                Let&apos;s get your Starmoon device & account set up
             </p>
             <p className="text-md text-gray-500 font-medium">
                 {/* Parenting can be hard. It can be even harder when you&apos;re
