@@ -21,7 +21,7 @@ export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
     return (
         <nav
             className={cn(
-                "flex space-x-2 justify-center sm:justify-start md:flex-col md:space-x-0 md:space-y-6 rounded-xl",
+                "flex space-x-2 justify-center sm:justify-start md:flex-col md:space-x-0 md:space-y-6 ",
                 className
             )}
             {...props}
@@ -34,7 +34,7 @@ export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
                         className={cn(
                             buttonVariants({ variant: "ghost" }),
                             pathname === item.href ? "bg-muted" : "",
-                            "justify-start rounded-full text-sm sm:text-xl text-normal text-stone-700"
+                            "justify-start  text-sm sm:text-xl text-normal text-stone-700"
                         )}
                     >
                         <span className="mr-2">{item.icon}</span>

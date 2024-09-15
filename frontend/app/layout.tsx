@@ -19,7 +19,7 @@ import { Analytics } from "@vercel/analytics/react";
 import Footer from "./components/Footer";
 import NavbarButtons from "./components/NavbarButtons";
 import StarmoonLogo from "./components/StarmoonLogo";
-import { Store } from "lucide-react";
+import { ShoppingCart, Store } from "lucide-react";
 import PreorderModal from "./components/Upsell/PreorderModal";
 import { Button } from "@/components/ui/button";
 
@@ -112,7 +112,7 @@ export default async function RootLayout({
                                         width={33}
                                         height={33}
                                     ></StarmoonLogo>
-                                    <p className="flex items-center font-medium font-inter md:text-xl text-lg text-stone-800 dark:text-stone-100">
+                                    <p className="flex items-center font-chewy font-medium text-xl text-stone-800 dark:text-stone-100">
                                         Starmoon AI
                                     </p>
                                     {/* <p className="text-xs text-gray-500">beta</p> */}
@@ -128,7 +128,7 @@ export default async function RootLayout({
                                         <Button
                                             size="sm"
                                             variant="link"
-                                            className="flex flex-row gap-2 px-0 py-[6px] items-center rounded-full"
+                                            className="flex flex-row gap-2 px-0 py-[6px] items-center"
                                         >
                                             <FaGithub className="text-xl" />
                                             <p className="hidden sm:flex font-medium">
@@ -141,9 +141,9 @@ export default async function RootLayout({
                                         <Button
                                             size="sm"
                                             variant="primary"
-                                            className="flex flex-row px-3 py-[6px] items-center rounded-full"
+                                            className="flex flex-row px-3 py-[6px] items-center"
                                         >
-                                            <Store size={18} />
+                                            <ShoppingCart size={18} />
                                             <p className="pl-2 hidden sm:flex font-medium">
                                                 Preorder
                                             </p>

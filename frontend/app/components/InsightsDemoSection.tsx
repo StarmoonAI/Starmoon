@@ -21,7 +21,7 @@ export default function InsightsDemoSection() {
             <div className="py-8 px-4 md:py-12">
                 <div className="max-w-3xl mx-auto text-center pb-12 md:pb-20">
                     <h2 className="font-inter-tight text-3xl md:text-4xl font-semibold text-stone-800">
-                        Get growth insights
+                        Get growth trends
                     </h2>
                     <p className="font-inter font-light mt-12 text-lg sm:text-xl leading-8 text-stone-800">
                         Our AI can analyse human-speech and emotion and respond
@@ -30,7 +30,7 @@ export default function InsightsDemoSection() {
                     </p>
                 </div>
                 <div className="max-w-[1120px] mx-auto px-6 sm:px-20 py-6 sm:py-12 bg-white shadow-custom_focus rounded-[40px] md:border-[22px] border-[12px] border-zinc-800">
-                    <InsightsDemo></InsightsDemo>
+                    <InsightsDemo />
                 </div>
             </div>
         </section>
