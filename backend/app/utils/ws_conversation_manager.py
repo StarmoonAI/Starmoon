@@ -112,8 +112,8 @@ class ConversationManager:
                 self.is_interrupted = False
                 # cancel check_task_result task
                 # Cancel all check_task_result tasks
-                for task in self.check_task_result_tasks:
-                    task.cancel()
+                # for task in self.check_task_result_tasks:
+                #     task.cancel()
                 self.check_task_result_tasks.clear()
                 break
             if self.connection_open == False:
