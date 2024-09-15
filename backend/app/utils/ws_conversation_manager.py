@@ -1,6 +1,5 @@
 import asyncio
 import json
-import multiprocessing
 import re
 import threading
 
@@ -114,6 +113,10 @@ class ConversationManager:
                 # Cancel all check_task_result tasks
                 for task in self.check_task_result_tasks:
                     task.cancel()
+                    try:
+                        await task
+                    except asyncio.CancelledError:
+                        pass
                 self.check_task_result_tasks.clear()
                 break
             if self.connection_open == False:
@@ -300,7 +303,16 @@ class ConversationManager:
                             break
 
                     transcription_task.cancel()
+                    try:
+                        await transcription_task
+                    except asyncio.CancelledError:
+                        pass
+
                     timeout_task.cancel()
+                    try:
+                        await timeout_task
+                    except asyncio.CancelledError:
+                        pass
 
                     if not self.connection_open:
                         break
