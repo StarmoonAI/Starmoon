@@ -29,7 +29,7 @@ export default function InsightsDemoSection() {
                         personalized learning assistance.
                     </p>
                 </div>
-                <div className="max-w-[1120px] mx-auto px-6 sm:px-20 py-6 sm:py-12 bg-white shadow-custom_focus rounded-3xl md:border-[22px] border-[12px] border-zinc-800">
+                <div className="max-w-[1120px] mx-auto px-6 sm:px-20 py-6 sm:py-12 bg-white shadow-custom_focus rounded-[40px] md:border-[22px] border-[12px] border-zinc-800">
                     <InsightsDemo />
                 </div>
             </div>

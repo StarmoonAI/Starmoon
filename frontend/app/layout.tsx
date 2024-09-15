@@ -19,7 +19,7 @@ import { Analytics } from "@vercel/analytics/react";
 import Footer from "./components/Footer";
 import NavbarButtons from "./components/NavbarButtons";
 import StarmoonLogo from "./components/StarmoonLogo";
-import { Store } from "lucide-react";
+import { ShoppingCart, Store } from "lucide-react";
 import PreorderModal from "./components/Upsell/PreorderModal";
 import { Button } from "@/components/ui/button";
 
@@ -143,7 +143,7 @@ export default async function RootLayout({
                                             variant="primary"
                                             className="flex flex-row px-3 py-[6px] items-center"
                                         >
-                                            <Store size={18} />
+                                            <ShoppingCart size={18} />
                                             <p className="pl-2 hidden sm:flex font-medium">
                                                 Preorder
                                             </p>

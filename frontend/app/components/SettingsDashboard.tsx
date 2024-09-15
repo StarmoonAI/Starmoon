@@ -16,15 +16,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { updateUser } from "@/db/users";
-import { getCreditsRemaining } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
-import { Copy } from "lucide-react";
 import React from "react";
 import CreditsRemaining from "./CreditsRemaining";
-import { generateStarmoonAuthKey } from "../actions";
 import AuthTokenModal from "./AuthTokenModal";
 import {
     userFormAgeDescription,
@@ -32,6 +28,8 @@ import {
     userFormPersonaLabel,
     userFormPersonaPlaceholder,
 } from "@/lib/data";
+import { LogOut } from "lucide-react";
+import { signOutAction } from "../actions";
 
 interface SettingsDashboardProps {
     selectedUser: IUser;
@@ -224,6 +222,16 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
                     }}
                 />
             </div>
+            <form action={signOutAction} className="mt-4">
+                <Button
+                    variant="destructive_outline"
+                    size="sm"
+                    className="font-medium flex flex-row items-center gap-2 "
+                >
+                    <LogOut size={18} strokeWidth={2} />
+                    <span className="hidden md:inline">Logout</span>
+                </Button>
+            </form>
         </div>
     );
 };

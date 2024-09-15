@@ -13,7 +13,7 @@ import FeaturesSection from "./components/FeaturesSection";
 import EndingSection from "./components/EndingSection";
 import Link from "next/link";
 import PreorderModal from "./components/Upsell/PreorderModal";
-import { Gamepad2, Joystick, Store } from "lucide-react";
+import { Gamepad2, Joystick, ShoppingCart, Store } from "lucide-react";
 
 export default async function Index() {
     const supabase = createClient();
@@ -70,7 +70,7 @@ export default async function Index() {
             <div className="flex items-center justify-center gap-x-8 mt-10">
                 <PreorderModal>
                     <Button className="flex flex-row items-center gap-2 font-medium text-base bg-stone-800 leading-8 ">
-                        <Store size={20} />
+                        <ShoppingCart size={20} />
                         <span>Preorder</span>
                     </Button>
                 </PreorderModal>

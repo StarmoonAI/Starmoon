@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import AnimatedText from "./AnimatedText";
 import PreorderModal from "./Upsell/PreorderModal";
 import BookDemoModal from "./BookDemoModal";
-import { CalendarCheck, Store } from "lucide-react";
+import { CalendarCheck, ShoppingCart, Store } from "lucide-react";
 import { FaDiscord } from "react-icons/fa";
 import Link from "next/link";
 
@@ -42,7 +42,7 @@ export default function EndingSection() {
                 <div className="flex items-center justify-center gap-8 flex-wrap">
                     <PreorderModal>
                         <Button className="flex flex-row items-center gap-2 font-medium text-base bg-stone-800 leading-8 ">
-                            <Store size={20} />
+                            <ShoppingCart size={20} />
                             <span>Preorder Now</span>
                         </Button>
                     </PreorderModal>

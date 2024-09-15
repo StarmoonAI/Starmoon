@@ -25,7 +25,6 @@ const TopCard: React.FC<CardProps> = ({
     filter,
     type,
 }) => {
-    console.log("TopCard", title, value, delta, filter, type);
     const isPositiveDelta = delta !== null && delta >= 0;
     // get the user data from the selected user and period
 
