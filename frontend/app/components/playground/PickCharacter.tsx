@@ -122,7 +122,7 @@ export default function PickCharacter({
                                         className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4"
                                     >
                                         <Card
-                                            className={`overflow-hidden  ${isPersonalitySelected(personality) ? "border-2 border-blue-500" : ""}`}
+                                            className={`overflow-hidden rounded-lg ${isPersonalitySelected(personality) ? "border-2 border-blue-500" : ""}`}
                                         >
                                             <div className="h-[370px] relative">
                                                 <img

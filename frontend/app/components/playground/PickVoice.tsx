@@ -41,7 +41,7 @@ const PickVoice: React.FC<PickPersonalityProps> = ({
                 }}
                 defaultValue={toyState?.toy_id}
             >
-                <SelectTrigger disabled={isDisabled} className=" gap-2">
+                <SelectTrigger disabled={isDisabled} className="rounded-full gap-2">
                     <AudioWaveform size={18} />
                     {toyState?.name}{" "}
                 </SelectTrigger>

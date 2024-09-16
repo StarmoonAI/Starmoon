@@ -41,13 +41,13 @@ export default function EndingSection() {
             <div className="my-20 flex flex-col items-center justify-center gap-8">
                 <div className="flex items-center justify-center gap-8 flex-wrap">
                     <PreorderModal>
-                        <Button className="flex flex-row items-center gap-2 font-medium text-base bg-stone-800 leading-8 ">
+                        <Button className="flex flex-row items-center gap-2 font-medium text-base bg-stone-800 leading-8 rounded-full">
                             <ShoppingCart size={20} />
                             <span>Preorder Now</span>
                         </Button>
                     </PreorderModal>
                     <BookDemoModal>
-                        <Button className="flex flex-row items-center gap-2 font-medium text-base text-stone-800 leading-8  bg-transparent border-2 border-stone-900 hover:bg-stone-500 hover:bg-opacity-5">
+                        <Button className="flex flex-row items-center gap-2 font-medium text-base text-stone-800 leading-8 rounded-full bg-transparent border-2 border-stone-900 hover:bg-stone-500 hover:bg-opacity-5">
                             <CalendarCheck size={20} />
                             <span>Book a Demo</span>
                         </Button>
@@ -57,7 +57,7 @@ export default function EndingSection() {
                     <Link href="https://discord.gg/BtaybK5dvU">
                         <Button
                             variant="link"
-                            className="flex flex-row items-center gap-2 font-medium text-base text-stone-800 leading-8  bg-transparent"
+                            className="flex flex-row items-center gap-2 font-medium text-base text-stone-800 leading-8 rounded-full bg-transparent"
                         >
                             <FaDiscord className="text-2xl" />
                             <span>Join our Discord</span>

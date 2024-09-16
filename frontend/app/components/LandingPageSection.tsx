@@ -24,7 +24,7 @@ const LandingPageSection: React.FC<LandingPageSectionProps> = ({
         >
             <Image
                 src={imageSrc}
-                className=""
+                className="rounded-lg"
                 alt="toy"
                 width={IMAGE_SIZE}
                 height={IMAGE_SIZE}

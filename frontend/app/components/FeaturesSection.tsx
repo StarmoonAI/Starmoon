@@ -81,8 +81,8 @@ export default function FeaturesSection() {
                 >
                     {features.map((feature) => (
                         <li key={feature.source} className="relative">
-                            <div className="bg-white p-[10px] shadow-custom_unfocus">
-                                <div className="cursor-pointer overflow-hidden relative group">
+                            <div className="bg-white p-[10px] rounded-[30px] shadow-custom_unfocus">
+                                <div className="cursor-pointer overflow-hidden rounded-[25px] relative group">
                                     <img
                                         alt=""
                                         src={feature.source}
@@ -101,7 +101,7 @@ export default function FeaturesSection() {
                                     </div>
 
                                     <div className="absolute bottom-0 left-0 text-stone-800 flex flex-col items-start">
-                                        <p className="text-xs font-light truncate ml-3 mb-4 px-2 py-[2px] border-[1px] border-stone-700 ">
+                                        <p className="text-xs font-light truncate ml-3 mb-4 px-2 py-[2px] border-[1px] border-stone-700 rounded-xl">
                                             {feature.progress}
                                         </p>
                                     </div>

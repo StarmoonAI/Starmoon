@@ -56,7 +56,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
                             opacity: 0,
                         }}
                         className={
-                            "p-4 bg-card border border-border  shadow-sm flex items-center gap-4"
+                            "p-4 bg-card border border-border rounded-lg shadow-sm flex items-center gap-4"
                         }
                     >
                         <Toggle
