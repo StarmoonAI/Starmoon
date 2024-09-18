@@ -5,7 +5,7 @@ export const positiveEmotions = [
   "joy",
   "surprise",
   "admiration",
-  "Amusement",
+  "amusement",
   "approval",
   "caring",
   "excitement",
