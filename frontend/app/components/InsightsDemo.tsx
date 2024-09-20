@@ -14,20 +14,20 @@ const suggestions =
   "Based on the recent data, maintaining a neutral emotional state is predominant. Although there is a slight emergence of negative emotions like disgust, sadness, and anger, they are balanced by an equal presence of joy and surprise. Encourage positive interactions and activities to enhance the joy and neutral emotions further.";
 
 const cardData = {
-  main_emotion_1: { title: "joy", value: 28.8, change: 28 },
-  main_emotion_2: { title: "suprise", value: 19.2, change: -12 },
-  change_1: { title: "anger", value: 12.1, change: 69 },
-  change_2: { title: "fear", value: 5.9, change: -52 },
+  main_emotion_1: { title: "Joy", value: 28.8, change: 28 },
+  main_emotion_2: { title: "Suprise", value: 19.2, change: -12 },
+  change_1: { title: "Anger", value: 12.1, change: 69 },
+  change_2: { title: "Fear", value: 5.9, change: -52 },
 };
 
 const barData = [
-  { emotion: "surprise", Today: 0.28, Yesterday: 0.25 },
-  { emotion: "joy", Today: 0.13, Yesterday: 0.22 },
-  { emotion: "sadness", Today: 0.12, Yesterday: 0.18 },
-  { emotion: "anger", Today: 0.12, Yesterday: 0.12 },
-  { emotion: "neutral", Today: 0.12, Yesterday: 0.1 },
-  { emotion: "fear", Today: 0.12, Yesterday: 0.1 },
-  { emotion: "disgust", Today: 0.12, Yesterday: 0.09 },
+  { emotion: "Surprise", Today: 0.28, Yesterday: 0.25 },
+  { emotion: "Joy", Today: 0.13, Yesterday: 0.22 },
+  { emotion: "Sadness", Today: 0.12, Yesterday: 0.18 },
+  { emotion: "Anger", Today: 0.12, Yesterday: 0.12 },
+  { emotion: "Neutral", Today: 0.12, Yesterday: 0.1 },
+  { emotion: "Fear", Today: 0.12, Yesterday: 0.1 },
+  { emotion: "Disgust", Today: 0.12, Yesterday: 0.09 },
 ];
 
 const lineData = [
