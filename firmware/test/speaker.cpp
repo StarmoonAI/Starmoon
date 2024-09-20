@@ -15,9 +15,11 @@
 #include "Audio.h"
 
 // Define I2S connections
-#define I2S_LRC D1
-#define I2S_BCLK D2
-#define I2S_DOUT D3
+#define I2S_LRC D0
+#define I2S_BCLK D1
+#define I2S_DOUT D2
+#define I2S_SD D3
+#define BUTTON_PIN 0
 
 // #define I2S_LRC 18
 // #define I2S_BCLK 21
@@ -32,6 +34,30 @@ String password = "LaunchLabRocks";
 
 // String ssid = "EE-P8CX8N";
 // String password = "xd6UrFLd4kf9x4";
+
+bool isPlaying = true;              // Track whether audio is playing or not
+unsigned long lastDebounceTime = 0; // for debouncing
+unsigned long debounceDelay = 50;   // debounce delay in ms
+int lastButtonState = HIGH;         // the previous button state
+int buttonState = HIGH;             // current button state
+
+// Toggle audio playback by controlling the SD pin
+void toggleAudio()
+{
+    if (isPlaying)
+    {
+        // Mute the amplifier (pull SD_PIN low)
+        digitalWrite(I2S_SD, LOW);
+        Serial.println("Audio Muted");
+    }
+    else
+    {
+        // Unmute the amplifier (pull SD_PIN high)
+        digitalWrite(I2S_SD, HIGH);
+        Serial.println("Audio Unmuted");
+    }
+    isPlaying = !isPlaying; // Toggle playback state
+}
 
 void setup()
 {
@@ -61,7 +87,7 @@ void setup()
     audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
 
     // Set thevolume (0-100)
-    audio.setVolume(90);
+    audio.setVolume(10);
 
     // Connect to an Internet radio station (select one as desired)
     // audio.connecttohost("http://vis.media-ice.musicradio.com/CapitalMP3");
@@ -70,6 +96,13 @@ void setup()
     // audio.connecttohost("stream.1a-webradio.de/deutsch/mp3-128/vtuner-1a");
     // audio.connecttohost("www.antenne.de/webradio/antenne.m3u");
     audio.connecttohost("0n-80s.radionetz.de:8000/0n-70s.mp3");
+
+    // Set SD_PIN as output and initialize to HIGH (unmuted)
+    pinMode(I2S_SD, OUTPUT);
+    digitalWrite(I2S_SD, HIGH);
+
+    // Set BUTTON_PIN as input with internal pull-up resistor
+    pinMode(BUTTON_PIN, INPUT_PULLUP);
 }
 
 void loop()
@@ -77,6 +110,31 @@ void loop()
 {
     // Run audio player
     audio.loop();
+
+    // Read the button state
+    int reading = digitalRead(BUTTON_PIN);
+
+    // Check for button press (debounced)
+    if (reading != lastButtonState)
+    {
+        lastDebounceTime = millis();
+    }
+
+    if ((millis() - lastDebounceTime) > debounceDelay)
+    {
+        // Check if the button was pressed (LOW) and change state
+        if (reading == LOW)
+        {
+            if (buttonState == HIGH)
+            { // Only toggle on button press, not release
+                toggleAudio();
+            }
+        }
+        buttonState = reading;
+    }
+
+    // Update the last button state
+    lastButtonState = reading;
 }
 
 // Audio status functions

@@ -11,11 +11,19 @@
 TaskHandle_t micTaskHandle = NULL;
 TaskHandle_t buttonTaskHandle = NULL;
 TaskHandle_t ledTaskHandle = NULL;
+TaskHandle_t speakerTaskHandle = NULL;
+TaskHandle_t webSocketTaskHandle = NULL;
+
+// Declare the variables as volatile
+volatile bool isWebSocketConnected = false;
+volatile bool shouldConnectWebSocket = false;
+
+// Define queues
+QueueHandle_t micToWsQueue;
+QueueHandle_t wsToSpeakerQueue;
 
 // BUTTON variables
 unsigned long lastDebounceTime = 0;
-bool isWebSocketConnected = false;
-bool shouldConnectWebSocket = false;
 volatile bool buttonPressed = false;
 
 // LED variables
@@ -230,44 +238,6 @@ void connectWiFi()
     WiFi.setSleep(false);
 }
 
-void micTask(void *parameter)
-{
-    i2s_start(I2S_PORT_IN);
-
-    size_t bytesIn = 0;
-    Serial.println("Mic task started");
-
-    while (1)
-    {
-        // Check if the WebSocket connection is still active
-        if (isWebSocketConnected)
-        {
-            esp_err_t result = i2s_read(I2S_PORT_IN, &sBuffer, bufferLen, &bytesIn, portMAX_DELAY);
-            if (result == ESP_OK)
-            {
-                // time sending audio data
-                unsigned long currentMillis = millis();
-                Serial.printf("Sending audio at %lu\n", currentMillis);
-
-                client.sendBinary((const char *)sBuffer, bytesIn);
-            }
-            else
-            {
-                Serial.printf("Error reading from I2S: %d\n", result);
-            }
-        }
-
-        // Add a small delay to prevent watchdog issues
-        vTaskDelay(10 / portTICK_PERIOD_MS);
-    }
-
-    // If the task is ending, ensure I2S is stopped and buffer is cleared
-    i2s_stop(I2S_PORT_IN);
-    i2s_zero_dma_buffer(I2S_PORT_IN);
-    Serial.println("Mic task ended");
-    vTaskDelete(NULL); // Delete the task if it's no longer needed
-}
-
 void startSpeaker()
 {
     shouldPlayAudio = true;
@@ -352,38 +322,8 @@ void disconnectWSServer()
     onWSConnectionClosed();
 }
 
-void handleBinaryAudio(const char *payload, size_t length)
-{
-    size_t bytesWritten = 0;
-
-    // time received audio
-    unsigned long currentMillis = millis();
-    Serial.printf("Received audio at %lu\n", currentMillis);
-
-    esp_err_t result = i2s_write(I2S_PORT_OUT, payload, length, &bytesWritten, portMAX_DELAY);
-    if (result != ESP_OK)
-    {
-        Serial.printf("Error in i2s_write: %d\n", result);
-    }
-    else if (bytesWritten != length)
-    {
-        Serial.printf("Warning: only %d bytes written out of %d\n", bytesWritten, length);
-    }
-}
-
-void onMessageCallback(WebsocketsMessage message)
-{
-    if (message.isText())
-    {
-        handleTextMessage(message.c_str());
-    }
-    else if (message.isBinary() && shouldPlayAudio)
-    {
-        // Handle binary audio data
-        handleBinaryAudio(message.c_str(), message.length());
-    }
-}
-
+// NEW CODE
+// In buttonTask, set shouldConnectWebSocket
 void buttonTask(void *parameter)
 {
     while (1)
@@ -394,10 +334,9 @@ void buttonTask(void *parameter)
             lastDebounceTime = millis();
 
             Serial.println("Button pressed");
-            Serial.printf("isWebSocketConnected: %d\n", isWebSocketConnected);
-
             if (isWebSocketConnected)
             {
+                // Set a flag to disconnect
                 disconnectWSServer();
             }
             else
@@ -407,6 +346,97 @@ void buttonTask(void *parameter)
             }
         }
         vTaskDelay(pdMS_TO_TICKS(10)); // Small delay to prevent task starvation
+    }
+}
+
+void speakerTask(void *parameter)
+{
+    while (1)
+    {
+        if (!xQueueIsQueueEmptyFromISR(wsToSpeakerQueue) && shouldPlayAudio)
+        {
+            char audioData[BUFFER_SIZE];
+            xQueueReceive(wsToSpeakerQueue, audioData, 0);
+            size_t bytesWritten = 0;
+            i2s_write(I2S_PORT_OUT, audioData, sizeof(audioData), &bytesWritten, portMAX_DELAY);
+        }
+
+        // Add a small delay
+        vTaskDelay(pdMS_TO_TICKS(10));
+    }
+}
+
+// micTask remains largely the same, but ensure it only reads from I2S and sends data to the queue
+void micTask(void *parameter)
+{
+    i2s_start(I2S_PORT_IN);
+    size_t bytesIn = 0;
+    Serial.println("Mic task started");
+
+    while (1)
+    {
+        esp_err_t result = i2s_read(I2S_PORT_IN, sBuffer, bufferLen * sizeof(int16_t), &bytesIn, portMAX_DELAY);
+        if (result == ESP_OK)
+        {
+            // Enqueue audio data
+            xQueueSend(micToWsQueue, sBuffer, portMAX_DELAY);
+        }
+        else
+        {
+            Serial.printf("Error reading from I2S: %d\n", result);
+        }
+
+        // Small delay
+        vTaskDelay(pdMS_TO_TICKS(10));
+    }
+}
+
+void onMessageCallback(WebsocketsMessage message)
+{
+    if (message.isText())
+    {
+        handleTextMessage(message.c_str());
+    }
+    else if (message.isBinary())
+    {
+        // Enqueue received audio data
+        xQueueSend(wsToSpeakerQueue, message.c_str(), portMAX_DELAY);
+    }
+}
+
+void webSocketTask(void *parameter)
+{
+    // Initialize the client
+    client.onEvent(onEventsCallback);
+    client.onMessage(onMessageCallback);
+
+    while (true)
+    {
+        // Handle connection
+        if (shouldConnectWebSocket && !isWebSocketConnected)
+        {
+            connectWSServer();
+            shouldConnectWebSocket = false;
+        }
+
+        // Handle outgoing data
+        if (uxQueueMessagesWaiting(micToWsQueue) > 0)
+        {
+            int16_t audioData[bufferLen];
+            if (xQueueReceive(micToWsQueue, audioData, 0) == pdPASS)
+            {
+                client.sendBinary((const char *)audioData, bufferLen * sizeof(int16_t));
+            }
+        }
+
+        // Poll for incoming messages
+        if (client.available())
+        {
+            client.poll();
+        }
+
+        // Small delay to prevent task starvation
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 }
 
@@ -455,42 +485,35 @@ void setup()
     Serial.begin(115200);
 
     connectWiFi();
-    client.onEvent(onEventsCallback);
-    client.onMessage(onMessageCallback);
 
+    // Initialize I2S and other peripherals as before
     i2s_install();
     i2s_setpin();
 
     i2s_speaker_install();
     i2s_speaker_setpin();
 
-    xTaskCreatePinnedToCore(micTask, "micTask", 10000, NULL, 1, &micTaskHandle, 0);
-    xTaskCreatePinnedToCore(ledControlTask, "ledControlTask", 2048, NULL, 1, &ledTaskHandle, 1);
-    xTaskCreate(buttonTask, "buttonTask", 2048, NULL, 1, &buttonTaskHandle);
+    // In setup()
+    micToWsQueue = xQueueCreate(10, bufferLen * sizeof(int16_t));
+    wsToSpeakerQueue = xQueueCreate(10, BUFFER_SIZE);
 
+    // Create tasks
+    xTaskCreatePinnedToCore(micTask, "micTask", 10000, NULL, 2, &micTaskHandle, 0);
+    xTaskCreatePinnedToCore(speakerTask, "speakerTask", 10000, NULL, 2, &speakerTaskHandle, 1);
+    xTaskCreatePinnedToCore(webSocketTask, "webSocketTask", 10000, NULL, 1, &webSocketTaskHandle, 0);
+    xTaskCreate(buttonTask, "buttonTask", 2048, NULL, 1, &buttonTaskHandle);
+    xTaskCreatePinnedToCore(ledControlTask, "ledControlTask", 2048, NULL, 1, &ledTaskHandle, 1);
+
+    // Configure pins and interrupts as before
     pinMode(BUTTON_PIN, INPUT_PULLUP);
     pinMode(LED_PIN, OUTPUT);
-
-    // Set SD_PIN as output and initialize to HIGH (unmuted)
     pinMode(I2S_SD_OUT, OUTPUT);
     digitalWrite(I2S_SD_OUT, HIGH);
-
     attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), buttonISR, FALLING);
 }
 
 void loop()
 {
-    if (shouldConnectWebSocket && !isWebSocketConnected)
-    {
-        connectWSServer();
-        shouldConnectWebSocket = false;
-    }
-
-    if (client.available())
-    {
-        client.poll();
-    }
-
     // Delay to avoid watchdog issues
     delay(10);
 }

@@ -15,9 +15,10 @@
 #include "Audio.h"
 
 // Define I2S connections
-#define I2S_LRC D5
-#define I2S_BCLK D2
-#define I2S_DOUT D0
+#define I2S_LRC D0
+#define I2S_BCLK D1
+#define I2S_DOUT D2
+#define I2S_SD_OUT D3
 
 // #define I2S_LRC 18
 // #define I2S_BCLK 21
@@ -43,6 +44,10 @@ void setup()
     WiFi.disconnect();
     WiFi.mode(WIFI_STA);
     WiFi.begin(ssid.c_str(), password.c_str());
+
+    // Set SD_PIN as output and initialize to HIGH (unmuted)
+    pinMode(I2S_SD_OUT, OUTPUT);
+    digitalWrite(I2S_SD_OUT, HIGH);
 
     while (WiFi.status() != WL_CONNECTED)
     {

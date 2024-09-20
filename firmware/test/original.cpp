@@ -25,35 +25,21 @@ unsigned long lastPulseTime = 0;
 int ledBrightness = 0;
 int fadeAmount = 5;
 
-// #define BUTTON_PIN 26
-// #define LED_PIN 2
-
-// // I2S pins for Audio Input (INMP441 MEMS microphone)
-// #define I2S_SD 13
-// #define I2S_WS 5
-// #define I2S_SCK 18
-// #define I2S_PORT_IN I2S_NUM_0
-
-// // I2S pins for Audio Output (MAX98357A amplifier)
-// #define I2S_WS_OUT 32
-// #define I2S_BCK_OUT 33
-// #define I2S_DATA_OUT 25
-// #define I2S_PORT_OUT I2S_NUM_1
-
-#define BUTTON_PIN D6       // Built-in BOOT button (GPIO 0)
+#define BUTTON_PIN 0        // Built-in BOOT button (GPIO 0)
 #define LED_PIN LED_BUILTIN // Built-in LED (GPIO 10)
 
 // I2S pins for Audio Input (INMP441 MEMS microphone)
 #define I2S_SD D4
-#define I2S_WS D1
-#define I2S_SCK D3
+#define I2S_WS D5
+#define I2S_SCK D6
 #define I2S_PORT_IN I2S_NUM_0
 
 // I2S pins for Audio Output (MAX98357A amplifier)
-#define I2S_WS_OUT D5
-#define I2S_BCK_OUT D2
-#define I2S_DATA_OUT D0
+#define I2S_WS_OUT D0
+#define I2S_BCK_OUT D1
+#define I2S_DATA_OUT D2
 #define I2S_PORT_OUT I2S_NUM_1
+#define I2S_SD_OUT D3
 
 #define SAMPLE_RATE 16000
 #define bufferCnt 10
@@ -69,6 +55,7 @@ const char *password = "LaunchLabRocks";
 
 // WebSocket server details
 const char *websocket_server_host = "192.168.2.236";
+// const char *websocket_server_host = "172.18.80.38";
 const uint16_t websocket_server_port = 8000;
 const char *websocket_server_path = "/starmoon";
 const char *auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNWFmNjJiMGUtM2RhNC00YzQ0LWFkZjctNWIxYjdjOWM0Y2I2IiwiZW1haWwiOiJhZG1pbkBzdGFybW9vbi5hcHAiLCJpYXQiOjE3MjYyMzY1Njl9.5Ble6393MS2yPPzxlONh2GGP1aI5v1R6TjLPWQ1eHY0";
@@ -483,6 +470,10 @@ void setup()
 
     pinMode(BUTTON_PIN, INPUT_PULLUP);
     pinMode(LED_PIN, OUTPUT);
+
+    // Set SD_PIN as output and initialize to HIGH (unmuted)
+    pinMode(I2S_SD_OUT, OUTPUT);
+    digitalWrite(I2S_SD_OUT, HIGH);
 
     attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), buttonISR, FALLING);
 }
