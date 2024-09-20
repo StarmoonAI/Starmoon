@@ -43,7 +43,10 @@ def print_current_time(utterance: str, messages: list):
 def emotion_detection(
     text: str, user: dict, role: str, session_id: str, is_sensitive: bool = False
 ):
-    API_URL = "https://api-inference.huggingface.co/models/michellejieli/emotion_text_classifier"
+    # API_URL = "https://api-inference.huggingface.co/models/michellejieli/emotion_text_classifier"
+    API_URL = (
+        "https://api-inference.huggingface.co/models/SamLowe/roberta-base-go_emotions"
+    )
     token = settings.HF_ACCESS_TOKEN
     headers = {"Authorization": f"Bearer {token}"}
 
@@ -64,6 +67,8 @@ def emotion_detection(
     converted_data = {
         "scores": {res[0][i]["label"]: softmax_scores[i] for i in range(len(res[0]))}
     }
+
+    print(converted_data)
 
     # ! update the supabase emotion scores
     add_msg(
