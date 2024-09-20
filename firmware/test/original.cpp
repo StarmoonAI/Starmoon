@@ -3,6 +3,7 @@
 #include <ArduinoWebsockets.h>
 #include <ArduinoJson.h>
 #include <freertos/queue.h>
+#include <WiFiManager.h> // Include the WiFiManager library
 
 // Debounce time in milliseconds
 #define DEBOUNCE_TIME 50
@@ -29,9 +30,9 @@ int fadeAmount = 5;
 #define LED_PIN LED_BUILTIN // Built-in LED (GPIO 10)
 
 // I2S pins for Audio Input (INMP441 MEMS microphone)
-#define I2S_SD D4
-#define I2S_WS D5
-#define I2S_SCK D6
+#define I2S_SD D9
+#define I2S_WS D7
+#define I2S_SCK D8
 #define I2S_PORT_IN I2S_NUM_0
 
 // I2S pins for Audio Output (MAX98357A amplifier)
@@ -49,9 +50,48 @@ int16_t sBuffer[bufferLen];
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define BUFFER_SIZE 1024
 
-// WiFi credentials
-const char *ssid = "launchlab";
-const char *password = "LaunchLabRocks";
+// // Wifi Credentials
+String ssid = "launchlab";
+String password = "LaunchLabRocks";
+
+WiFiManager wm;
+
+void simpleSetup()
+{
+    // **Set the portal title to "Starmoon AI"**
+    wm.setTitle("Starmoon AI");
+
+    // Set the menu to only include "Configure WiFi"
+    std::vector<const char *> menu = {"wifi"};
+    wm.setMenu(menu);
+
+    // **Inject custom CSS to hide unwanted elements**
+    String customHead = "<title>Starmoon setup</title>"
+                        "<style>"
+                        "  .msg { display: none; }" /* Hide the "No AP set" message */
+                        "  h2 { display: none; }"   /* Hide default heading "WiFiManager" */
+                        "</style>";
+    wm.setCustomHeadElement(customHead.c_str());
+
+    // **Inject custom HTML into the page body**
+    String customHTML = "<h1 style='text-align:center;'>Starmoon AI</h1>";
+    wm.setCustomMenuHTML(customHTML.c_str());
+
+    // Start the configuration portal
+    bool res = wm.startConfigPortal("Starmoon device");
+
+    if (res)
+    {
+        Serial.println("Connected to Wi-Fi!");
+        Serial.println("IP address: ");
+        Serial.println(WiFi.localIP());
+    }
+    else
+    {
+        Serial.println("Failed to connect to Wi-Fi");
+        ESP.restart(); // Optionally restart or handle the failure
+    }
+}
 
 // WebSocket server details
 const char *websocket_server_host = "192.168.2.236";

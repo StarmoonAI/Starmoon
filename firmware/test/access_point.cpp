@@ -20,46 +20,19 @@
 #define I2S_DOUT D2
 #define I2S_SD_OUT D3
 
+// #define I2S_LRC 18
+// #define I2S_BCLK 21
+// #define I2S_DOUT 17
+
 // Create audio object
 Audio audio;
-WiFiManager wm;
 
-void simpleSetup()
-{
-    // **Set the portal title to "Starmoon AI"**
-    wm.setTitle("Starmoon AI");
+// // // Wifi Credentials
+// String ssid = "launchlab";
+// String password = "LaunchLabRocks";
 
-    // Set the menu to only include "Configure WiFi"
-    std::vector<const char *> menu = {"wifi"};
-    wm.setMenu(menu);
-
-    // **Inject custom CSS to hide unwanted elements**
-    String customHead = "<title>Starmoon setup</title>"
-                        "<style>"
-                        "  .msg { display: none; }" /* Hide the "No AP set" message */
-                        "  h2 { display: none; }"   /* Hide default heading "WiFiManager" */
-                        "</style>";
-    wm.setCustomHeadElement(customHead.c_str());
-
-    // **Inject custom HTML into the page body**
-    String customHTML = "<h1 style='text-align:center;'>Starmoon AI</h1>";
-    wm.setCustomMenuHTML(customHTML.c_str());
-
-    // Start the configuration portal
-    bool res = wm.startConfigPortal("Starmoon device");
-
-    if (res)
-    {
-        Serial.println("Connected to Wi-Fi!");
-        Serial.println("IP address: ");
-        Serial.println(WiFi.localIP());
-    }
-    else
-    {
-        Serial.println("Failed to connect to Wi-Fi");
-        ESP.restart(); // Optionally restart or handle the failure
-    }
-}
+// String ssid = "EE-P8CX8N";
+// String password = "xd6UrFLd4kf9x4";
 
 void setup()
 {
@@ -71,7 +44,22 @@ void setup()
     pinMode(I2S_SD_OUT, OUTPUT);
     digitalWrite(I2S_SD_OUT, HIGH);
 
-    simpleSetup();
+    // Initialize WiFiManager
+    WiFiManager wifiManager;
+
+    // Uncomment for testing to reset saved settings
+    // wifiManager.resetSettings();
+
+    // Automatically connect using saved credentials,
+    // or start the captive portal to enter new credentials
+    if (!wifiManager.autoConnect("ESP32RadioAP"))
+    {
+        Serial.println("Failed to connect and hit timeout");
+        ESP.restart(); // Optionally, restart or handle the failure
+    }
+
+    // If you get here, you have connected to the Wi-Fi
+    Serial.println("Connected to Wi-Fi!");
 
     // Connect MAX98357 I2S Amplifier Module
     audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
