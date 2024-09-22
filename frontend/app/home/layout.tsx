@@ -2,7 +2,14 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { SidebarNav } from "../components/SidebarNavItems";
 import Footer from "../components/Footer";
-import { AudioLines, ChartSpline, Drum, Settings } from "lucide-react";
+import {
+    AudioLines,
+    ChartSpline,
+    Drum,
+    Flame,
+    Gamepad2,
+    Settings,
+} from "lucide-react";
 
 const ICON_SIZE = 20;
 
@@ -10,12 +17,12 @@ const sidebarNavItems = [
     {
         title: "Playground",
         href: "/home",
-        icon: <AudioLines size={ICON_SIZE} />,
+        icon: <Gamepad2 size={ICON_SIZE} />,
     },
     {
         title: "Trends",
         href: "/home/track",
-        icon: <ChartSpline size={ICON_SIZE} />,
+        icon: <Flame size={ICON_SIZE} />,
     },
     {
         title: "Settings",
