@@ -55,9 +55,7 @@ const PickPersonality: React.FC<PickPersonalityProps> = ({
                             <div className="flex flex-row items-center">
                                 <div className="w-20 h-20 flex-shrink-0">
                                     <Image
-                                        src={`/personality/${toyState?.image_src}_${removeEmojis(
-                                            personality.title
-                                        )
+                                        src={`/personality/${toyState?.image_src}_${personality.title
                                             .toLowerCase()
                                             .replace(/\s+/g, "_")}.png`}
                                         width={100}
