@@ -29,8 +29,8 @@ export default function EndingSection() {
                     className="ont-inter-tight text-3xl md:text-6xl font-semibold mt-14 tracking-tight text-stone-900 "
                     style={{ lineHeight: "1.25" }}
                 >
-                    Bring life into anything including toys, plushies and a
-                    whole lot more.
+                    Bring life into anything—toys, plushies and a whole lot
+                    more.
                 </h1>
 
                 <h1 className="text-4xl sm:text-4xl mt-8 font-lora text-light">
