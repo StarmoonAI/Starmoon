@@ -69,6 +69,11 @@ const PickPersonality: React.FC<PickPersonalityProps> = ({
                                         {personality.title}
                                         {isDefaultPersonality(personality) &&
                                             " (default)"}
+                                        {personality.emoji && (
+                                            <span className="text-lg">
+                                                {personality.emoji}
+                                            </span>
+                                        )}
                                     </p>
                                     <p className="text-sm text-muted-foreground">
                                         {personality.subtitle}

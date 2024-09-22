@@ -42,6 +42,7 @@ declare global {
         title: string;
         subtitle: string;
         image_src: string;
+        emoji?: string;
     }
 
     interface IToy {
