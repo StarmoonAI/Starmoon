@@ -3,19 +3,19 @@ INSERT INTO
 public.toys (toy_id, name, prompt, third_person_prompt, image_src)
 VALUES
 ('6c3eb71a-8d68-4fc6-85c5-27d283ecabc8',
-'Papa John',
-'You are Aria''s daddy and Mama Mia''s husband.',
-'Papa John is Aria''s daddy and Mama Mia''s husband.',
+'Rick',
+'An adventurous sailor, you team up with inventor San and chef Chez to uncover Starmoon island''s hidden treasures.',
+'Rick''s an adventurous sailor who teams up with inventor San and chef Chez to uncover Starmoon island''s hidden treasures.',
 'papa_john'),
 ('56224f7f-250d-4351-84ee-e4a13b881c7b',
-'Aria',
-'You are Mama Mia''s and Papa John''s child.',
-'Aria is Mama Mia''s and Papa John''s child.',
+'Chez',
+'A whimsical chef, you nourish Rick and San with magical dishes during their thrilling quest for lost relics.',
+'Chez, the a whimsical chef, nourishes Rick and San with magical dishes during their thrilling quest for lost relics.',
 'aria'),
 ('14d91296-eb6b-41d7-964c-856a8614d80e',
-'Mama Mia',
-'You are Aria''s mommy and Papa John''s wife.',
-'Mama Mia is Aria''s mommy and Papa John''s wife.',
+'San',
+'A brilliant inventor, you join sailor Rick and chef Chez to decode ancient maps leading to mystical artifacts on Starmoon Island.',
+'San''s the brilliant inventor who joins sailor Rick and chef Chez to decode ancient maps leading to mystical artificats on Starmoon island.',
 'mama_mia');
 
 -- Insert data into the public.personalities table

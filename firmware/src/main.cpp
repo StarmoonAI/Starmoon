@@ -1,27 +1,62 @@
-#include <Arduino.h>
-/*
-  Simple Internet Radio Demo
-  esp32-i2s-simple-radio.ino
-  Simple ESP32 I2S radio
-  Uses MAX98357 I2S Amplifier Module
-  Uses ESP32-audioI2S Library - https://github.com/schreibfaul1/ESP32-audioI2S
-
-  DroneBot Workshop 2022
-  https://dronebotworkshop.com
-*/
-
-// Include required libraries
+#include <driver/i2s.h>
+#include <WiFi.h>
+#include <ArduinoWebsockets.h>
+#include <ArduinoJson.h>
+#include <freertos/queue.h>
 #include <WiFiManager.h> // Include the WiFiManager library
-#include "Audio.h"
 
-// Define I2S connections
-#define I2S_LRC D0
-#define I2S_BCLK D1
-#define I2S_DOUT D2
+// Debounce time in milliseconds
+#define DEBOUNCE_TIME 50
+
+// Task handles
+TaskHandle_t micTaskHandle = NULL;
+TaskHandle_t buttonTaskHandle = NULL;
+TaskHandle_t ledTaskHandle = NULL;
+
+// BUTTON variables
+unsigned long lastDebounceTime = 0;
+bool isWebSocketConnected = false;
+bool shouldConnectWebSocket = false;
+volatile bool buttonPressed = false;
+
+// LED variables
+#define MIN_BRIGHTNESS 1
+#define MAX_BRIGHTNESS 200
+unsigned long lastPulseTime = 0;
+int ledBrightness = 0;
+int fadeAmount = 5;
+
+#define BUTTON_PIN 0        // Built-in BOOT button (GPIO 0)
+#define LED_PIN LED_BUILTIN // Built-in LED (GPIO 10)
+
+// I2S pins for Audio Input (INMP441 MEMS microphone)
+#define I2S_SD D9
+#define I2S_WS D7
+#define I2S_SCK D8
+#define I2S_PORT_IN I2S_NUM_0
+
+// I2S pins for Audio Output (MAX98357A amplifier)
+#define I2S_WS_OUT D0
+#define I2S_BCK_OUT D1
+#define I2S_DATA_OUT D2
+#define I2S_PORT_OUT I2S_NUM_1
 #define I2S_SD_OUT D3
 
-// Create audio object
-Audio audio;
+#define SAMPLE_RATE 16000
+#define bufferCnt 10
+#define bufferLen 1024
+int16_t sBuffer[bufferLen];
+
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+#define BUFFER_SIZE 1024
+
+// // Wifi Credentials
+// String ssid = "launchlab";
+// String password = "LaunchLabRocks";
+
+String ssid = "EE-P8CX8N";
+String password = "xd6UrFLd4kf9x4";
+
 WiFiManager wm;
 
 void simpleSetup()
@@ -61,94 +96,479 @@ void simpleSetup()
     }
 }
 
+const char *root_ca = R"(
+-----BEGIN CERTIFICATE-----
+MIIE7zCCA9egAwIBAgISBKv3yf9HyXyPZE5goVOmuU86MA0GCSqGSIb3DQEBCwUA
+MDMxCzAJBgNVBAYTAlVTMRYwFAYDVQQKEw1MZXQncyBFbmNyeXB0MQwwCgYDVQQD
+EwNSMTAwHhcNMjQwODI2MDQxOTE3WhcNMjQxMTI0MDQxOTE2WjAbMRkwFwYDVQQD
+ExB3d3cuc3Rhcm1vb24uYXBwMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
+AQEAuK49whSv2dsMMr73oD1LysmluuBFm/mTLAucLlAqnX9pL8nKa+XOMHmTVk7v
+osyZiRag12Fq7CbwP5IpULCHGrTzbVZeDX5BhsVuMti6NPKdrA6X4G3/2ZnUQr2D
+ZBwU7fJPbwo4BNsFU0wLygObs/9LC7yoDm95Nb/L0LZc3JybG0d5zMERf4R85s+A
+N0TDtKz5GrPK1QEmGnqlrX9HL5oQs0xoZI4JOCMnQO87JbK3Yq/EHMP7Ge6yarzi
+0d2aKsv8HNtbLH5BKLyINgttjlqaGrJWz6kYMAg1kEb6+RfuHoSPbK2t7iJgVKeW
+qT+G2M3DV0UrT/NFwDcTwVAn7QIDAQABo4ICEzCCAg8wDgYDVR0PAQH/BAQDAgWg
+MB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAMBgNVHRMBAf8EAjAAMB0G
+A1UdDgQWBBRpUpQy9JoPWqFlqXLiy2rVgfcAGjAfBgNVHSMEGDAWgBS7vMNHpeS8
+qcbDpHIMEI2iNeHI6DBXBggrBgEFBQcBAQRLMEkwIgYIKwYBBQUHMAGGFmh0dHA6
+Ly9yMTAuby5sZW5jci5vcmcwIwYIKwYBBQUHMAKGF2h0dHA6Ly9yMTAuaS5sZW5j
+ci5vcmcvMBsGA1UdEQQUMBKCEHd3dy5zdGFybW9vbi5hcHAwEwYDVR0gBAwwCjAI
+BgZngQwBAgEwggEDBgorBgEEAdZ5AgQCBIH0BIHxAO8AdQBIsONr2qZHNA/lagL6
+nTDrHFIBy1bdLIHZu7+rOdiEcwAAAZGNHnE/AAAEAwBGMEQCIGH9VFk23ka+nSDC
+NNcK2PJPidqExiYSvz5vd03W1ZZvAiB2dpj6DUy4vhDkbrh7OUBGnRqirhVK0ad6
+JB+F3JHnhgB2AHb/iD8KtvuVUcJhzPWHujS0pM27KdxoQgqf5mdMWjp0AAABkY0e
+cWQAAAQDAEcwRQIhAP1rSWR92oh4X4xCTksccgAjbARBocQ4Y2nsudfC7AKbAiAs
+luuzhsOb2+o7tpk2vr/+7crtSr1KiI9kCNDjR5oCKjANBgkqhkiG9w0BAQsFAAOC
+AQEAl7r59KuY9NzcXQyM7hbjhg+Q8w/I/VqfjnTvJTC6CQqVZsVDG1TKZ06LG6Be
+5fz1D/0TBWYJodjWQqjfbbUEWxL96k3Bm8bjh2gKp6jG098+AmhzlKigjO0gCynt
+ezQytoU7POQOPbmkNG2pFylFVkl7bwZlNnc7WQSwPwr4DkwUw9GIGzSCF79I9zsA
+jQwZbZliH/hmB0KUZRmOgzpyZ8faC+khhGUNevXVBdC+AA3gWPNefOvmTPGU98Tr
+oG0bpg6LEiBrq0w27mTSt1uxqwEAAMYsb3RDcifE0gWF8rAjHAxpSOmQhGKDpG/f
+JAaz0USzLpR8I/quVCIG+bCLqg==
+-----END CERTIFICATE-----
+)";
+
+// WebSocket server details
+const char *websocket_server_host = "api.starmoon.app";
+// const char *websocket_server_host = "172.18.80.38";
+const uint16_t websocket_server_port = 8000;
+const char *websocket_server_path = "/starmoon";
+const char *auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNWFmNjJiMGUtM2RhNC00YzQ0LWFkZjctNWIxYjdjOWM0Y2I2IiwiZW1haWwiOiJhZG1pbkBzdGFybW9vbi5hcHAiLCJpYXQiOjE3MjYyMzY1Njl9.5Ble6393MS2yPPzxlONh2GGP1aI5v1R6TjLPWQ1eHY0";
+String authMessage;
+
+// Flag to control when to play audio
+bool shouldPlayAudio = false;
+
+// ISR to handle button press
+void IRAM_ATTR buttonISR()
+{
+    buttonPressed = true;
+}
+
+// Function to create JSON message with the authentication token
+String createAuthTokenMessage(const char *token)
+{
+    JsonDocument doc;
+    doc["token"] = token;
+    doc["device"] = "esp";
+    doc["user_id"] = NULL;
+    String jsonString;
+    serializeJson(doc, jsonString);
+    return jsonString;
+}
+
+using namespace websockets;
+WebsocketsClient client;
+
+// Function prototypes
+void onWSConnectionOpened();
+void onWSConnectionClosed();
+void onEventsCallback(WebsocketsEvent event, String data);
+void sendAcknowledgment();
+void i2s_install();
+void i2s_setpin();
+void i2s_speaker_install();
+void i2s_speaker_setpin();
+void connectWiFi();
+void startSpeaker();
+void stopSpeaker();
+void handleTextMessage(const char *msgText);
+void connectWSServer();
+void disconnectWSServer();
+void handleBinaryAudio(const char *payload, size_t length);
+void onMessageCallback(WebsocketsMessage message);
+void micTask(void *parameter);
+void buttonTask(void *parameter);
+void ledControlTask(void *parameter);
+
+void onWSConnectionOpened()
+{
+    authMessage = createAuthTokenMessage(auth_token);
+    Serial.println(authMessage);
+    client.send(authMessage);
+    Serial.println("Connnection Opened");
+    analogWrite(LED_PIN, 250);
+    isWebSocketConnected = true;
+}
+
+void onWSConnectionClosed()
+{
+    analogWrite(LED_PIN, 0);
+    Serial.println("Connnection Closed");
+    isWebSocketConnected = false;
+}
+
+void onEventsCallback(WebsocketsEvent event, String data)
+{
+    if (event == WebsocketsEvent::ConnectionOpened)
+    {
+        onWSConnectionOpened();
+    }
+    else if (event == WebsocketsEvent::ConnectionClosed)
+    {
+        onWSConnectionClosed();
+    }
+    else if (event == WebsocketsEvent::GotPing)
+    {
+        Serial.println("Got a Ping!");
+    }
+    else if (event == WebsocketsEvent::GotPong)
+    {
+        Serial.println("Got a Pong!");
+    }
+}
+
+void sendAcknowledgment()
+{
+    JsonDocument doc;
+    doc["speaker"] = "user";
+    doc["is_replying"] = false;
+    String response;
+    serializeJson(doc, response);
+    client.send(response);
+}
+
+void i2s_install()
+{
+    // Set up I2S Processor configuration
+    const i2s_config_t i2s_config = {
+        .mode = i2s_mode_t(I2S_MODE_MASTER | I2S_MODE_RX),
+        .sample_rate = SAMPLE_RATE,
+        .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
+        .channel_format = I2S_CHANNEL_FMT_ONLY_LEFT,
+        .communication_format = i2s_comm_format_t(I2S_COMM_FORMAT_STAND_I2S),
+        .intr_alloc_flags = 0,
+        .dma_buf_count = bufferCnt,
+        .dma_buf_len = bufferLen,
+        .use_apll = false};
+
+    esp_err_t err = i2s_driver_install(I2S_PORT_IN, &i2s_config, 0, NULL);
+    Serial.printf("I2S mic driver install: %s\n", esp_err_to_name(err));
+}
+
+void i2s_setpin()
+{
+    // Set I2S pin configuration
+    const i2s_pin_config_t pin_config = {
+        .bck_io_num = I2S_SCK,
+        .ws_io_num = I2S_WS,
+        .data_out_num = -1,
+        .data_in_num = I2S_SD};
+
+    i2s_set_pin(I2S_PORT_IN, &pin_config);
+}
+
+void i2s_speaker_install()
+{
+    // Set up I2S Processor configuration for speaker
+    const i2s_config_t i2s_config = {
+        .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_TX),
+        .sample_rate = SAMPLE_RATE,
+        .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
+        .channel_format = I2S_CHANNEL_FMT_ONLY_LEFT, // Mono audio
+        .communication_format = I2S_COMM_FORMAT_I2S_MSB,
+        .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
+        .dma_buf_count = 8,
+        .dma_buf_len = 64,
+        .use_apll = false,
+        .tx_desc_auto_clear = true,
+        .fixed_mclk = 0};
+
+    esp_err_t err = i2s_driver_install(I2S_PORT_OUT, &i2s_config, 0, NULL); // Install the I2S driver on I2S_NUM_1
+    Serial.printf("I2S speaker driver install: %s\n", esp_err_to_name(err));
+}
+
+void i2s_speaker_setpin()
+{
+    // Set I2S pin configuration for speaker
+    const i2s_pin_config_t pin_config = {
+        .bck_io_num = I2S_BCK_OUT,    // Bit Clock (BCK)
+        .ws_io_num = I2S_WS_OUT,      // Word Select (LRCK)
+        .data_out_num = I2S_DATA_OUT, // Data Out (DIN)
+        .data_in_num = -1};           // Not used, so set to -1
+
+    i2s_set_pin(I2S_PORT_OUT, &pin_config); // Set the I2S pins on I2S_NUM_1
+}
+
+void connectWiFi()
+{
+    WiFi.begin(ssid, password);
+
+    while (WiFi.status() != WL_CONNECTED)
+    {
+        delay(500);
+        Serial.print("|");
+    }
+    Serial.println("");
+    Serial.println("WiFi connected");
+
+    WiFi.setSleep(false);
+}
+
+void micTask(void *parameter)
+{
+    i2s_start(I2S_PORT_IN);
+
+    size_t bytesIn = 0;
+    Serial.println("Mic task started");
+
+    while (1)
+    {
+        // Check if the WebSocket connection is still active
+        if (isWebSocketConnected)
+        {
+            esp_err_t result = i2s_read(I2S_PORT_IN, &sBuffer, bufferLen, &bytesIn, portMAX_DELAY);
+            if (result == ESP_OK)
+            {
+                // time sending audio data
+                unsigned long currentMillis = millis();
+                Serial.printf("Sending audio at %lu\n", currentMillis);
+
+                client.sendBinary((const char *)sBuffer, bytesIn);
+            }
+            else
+            {
+                Serial.printf("Error reading from I2S: %d\n", result);
+            }
+        }
+
+        // Add a small delay to prevent watchdog issues
+        vTaskDelay(10 / portTICK_PERIOD_MS);
+    }
+
+    // If the task is ending, ensure I2S is stopped and buffer is cleared
+    i2s_stop(I2S_PORT_IN);
+    i2s_zero_dma_buffer(I2S_PORT_IN);
+    Serial.println("Mic task ended");
+    vTaskDelete(NULL); // Delete the task if it's no longer needed
+}
+
+void startSpeaker()
+{
+    shouldPlayAudio = true;
+
+    // Start the I2S interface when the audio stream starts
+    esp_err_t err = i2s_start(I2S_PORT_OUT);
+    if (err != ESP_OK)
+    {
+        Serial.printf("Failed to start I2S: %d\n", err);
+    }
+    else
+    {
+        Serial.println("I2S started");
+    }
+}
+
+void stopSpeaker()
+{
+    shouldPlayAudio = false;
+
+    // Stop the I2S interface when the audio stream ends
+    esp_err_t err = i2s_stop(I2S_PORT_OUT);
+
+    if (err != ESP_OK)
+    {
+        Serial.printf("Failed to stop I2S: %d\n", err);
+    }
+    else
+    {
+        Serial.println("I2S stopped");
+    }
+    i2s_zero_dma_buffer(I2S_PORT_OUT);
+}
+
+void handleTextMessage(const char *msgText)
+{
+    Serial.printf("Received message: %s\n", msgText);
+
+    JsonDocument doc;
+    DeserializationError error = deserializeJson(doc, msgText);
+
+    if (error)
+    {
+        Serial.println("Failed to parse JSON");
+        return;
+    }
+
+    const char *type = doc["type"];
+    if (strcmp(type, "start_of_audio") == 0)
+    {
+        Serial.println("Received start_of_audio");
+        startSpeaker();
+    }
+    else if (strcmp(type, "end_of_audio") == 0)
+    {
+        Serial.println("Received end_of_audio");
+
+        // Clear any remaining buffers or resources here if necessary
+        stopSpeaker();
+
+        // Send acknowledgment to the server
+        sendAcknowledgment();
+    }
+}
+
+void connectWSServer()
+{
+    if (client.connect(websocket_server_host, websocket_server_port, websocket_server_path))
+    {
+        Serial.println("Connected to WebSocket server");
+    }
+    else
+    {
+        Serial.println("Failed to connect to WebSocket server");
+    }
+}
+
+void disconnectWSServer()
+{
+    client.close();
+    vTaskDelay(100 / portTICK_PERIOD_MS); // Delay to ensure the connection is closed
+    onWSConnectionClosed();
+}
+
+void handleBinaryAudio(const char *payload, size_t length)
+{
+    size_t bytesWritten = 0;
+
+    // time received audio
+    unsigned long currentMillis = millis();
+    Serial.printf("Received audio at %lu\n", currentMillis);
+
+    esp_err_t result = i2s_write(I2S_PORT_OUT, payload, length, &bytesWritten, portMAX_DELAY);
+    if (result != ESP_OK)
+    {
+        Serial.printf("Error in i2s_write: %d\n", result);
+    }
+    else if (bytesWritten != length)
+    {
+        Serial.printf("Warning: only %d bytes written out of %d\n", bytesWritten, length);
+    }
+}
+
+void onMessageCallback(WebsocketsMessage message)
+{
+    if (message.isText())
+    {
+        handleTextMessage(message.c_str());
+    }
+    else if (message.isBinary() && shouldPlayAudio)
+    {
+        // Handle binary audio data
+        handleBinaryAudio(message.c_str(), message.length());
+    }
+}
+
+void buttonTask(void *parameter)
+{
+    while (1)
+    {
+        if (buttonPressed && (millis() - lastDebounceTime > DEBOUNCE_TIME))
+        {
+            buttonPressed = false;
+            lastDebounceTime = millis();
+
+            Serial.println("Button pressed");
+            Serial.printf("isWebSocketConnected: %d\n", isWebSocketConnected);
+
+            if (isWebSocketConnected)
+            {
+                disconnectWSServer();
+            }
+            else
+            {
+                Serial.println("Attempting to connect to WebSocket server...");
+                shouldConnectWebSocket = true;
+            }
+        }
+        vTaskDelay(pdMS_TO_TICKS(10)); // Small delay to prevent task starvation
+    }
+}
+
+void ledControlTask(void *parameter)
+{
+    unsigned long lastPulseTime = 0;
+    int ledBrightness = MIN_BRIGHTNESS;
+    int fadeAmount = 5;
+
+    while (1)
+    {
+        if (!isWebSocketConnected)
+        {
+            analogWrite(LED_PIN, 0); // LED off when not connected
+        }
+        else if (shouldPlayAudio)
+        {
+            // Pulse LED while playing audio
+            unsigned long currentMillis = millis();
+            if (currentMillis - lastPulseTime >= 30)
+            {
+                lastPulseTime = currentMillis;
+
+                ledBrightness += fadeAmount;
+                if (ledBrightness <= MIN_BRIGHTNESS || ledBrightness >= MAX_BRIGHTNESS)
+                {
+                    fadeAmount = -fadeAmount;
+                }
+
+                analogWrite(LED_PIN, ledBrightness);
+            }
+        }
+        else
+        {
+            // Fixed brightness when connected but not playing audio
+            analogWrite(LED_PIN, MAX_BRIGHTNESS);
+        }
+
+        // Small delay to prevent task from hogging CPU
+        vTaskDelay(pdMS_TO_TICKS(10));
+    }
+}
+
 void setup()
 {
-
-    // Start Serial Monitor
     Serial.begin(115200);
+
+    connectWiFi();
+    // client.setInsecure(); // Accept all certificates (insecure)
+    client.setCACert(root_ca);
+
+    client.onEvent(onEventsCallback);
+    client.onMessage(onMessageCallback);
+
+    i2s_install();
+    i2s_setpin();
+
+    i2s_speaker_install();
+    i2s_speaker_setpin();
+
+    xTaskCreatePinnedToCore(micTask, "micTask", 10000, NULL, 1, &micTaskHandle, 0);
+    xTaskCreatePinnedToCore(ledControlTask, "ledControlTask", 2048, NULL, 1, &ledTaskHandle, 1);
+    xTaskCreate(buttonTask, "buttonTask", 2048, NULL, 1, &buttonTaskHandle);
+
+    pinMode(BUTTON_PIN, INPUT_PULLUP);
+    pinMode(LED_PIN, OUTPUT);
 
     // Set SD_PIN as output and initialize to HIGH (unmuted)
     pinMode(I2S_SD_OUT, OUTPUT);
     digitalWrite(I2S_SD_OUT, HIGH);
 
-    simpleSetup();
-
-    // Connect MAX98357 I2S Amplifier Module
-    audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
-
-    // Set thevolume (0-100)
-    audio.setVolume(90);
-
-    // Connect to an Internet radio station (select one as desired)
-    // audio.connecttohost("http://vis.media-ice.musicradio.com/CapitalMP3");
-    // audio.connecttohost("mediaserv30.live-nect MAX98357 I2S Amplifier Module
-    // audio.connecttohost("www.surfmusic.de/m3u/100-5-das-hitradio,4529.m3u");
-    // audio.connecttohost("stream.1a-webradio.de/deutsch/mp3-128/vtuner-1a");
-    // audio.connecttohost("www.antenne.de/webradio/antenne.m3u");
-    audio.connecttohost("0n-80s.radionetz.de:8000/0n-70s.mp3");
+    attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), buttonISR, FALLING);
 }
 
 void loop()
+{
+    if (shouldConnectWebSocket && !isWebSocketConnected)
+    {
+        connectWSServer();
+        shouldConnectWebSocket = false;
+    }
 
-{
-    // Run audio player
-    audio.loop();
-}
+    if (client.available())
+    {
+        client.poll();
+    }
 
-// Audio status functions
-
-void audio_info(const char *info)
-{
-    Serial.print("info        ");
-    Serial.println(info);
-}
-void audio_id3data(const char *info)
-{ // id3 metadata
-    Serial.print("id3data     ");
-    Serial.println(info);
-}
-void audio_eof_mp3(const char *info)
-{ // end of file
-    Serial.print("eof_mp3     ");
-    Serial.println(info);
-}
-void audio_showstation(const char *info)
-{
-    Serial.print("station     ");
-    Serial.println(info);
-}
-void audio_showstreaminfo(const char *info)
-{
-    Serial.print("streaminfo  ");
-    Serial.println(info);
-}
-void audio_showstreamtitle(const char *info)
-{
-    Serial.print("streamtitle ");
-    Serial.println(info);
-}
-void audio_bitrate(const char *info)
-{
-    Serial.print("bitrate     ");
-    Serial.println(info);
-}
-void audio_commercial(const char *info)
-{ // duration in sec
-    Serial.print("commercial  ");
-    Serial.println(info);
-}
-void audio_icyurl(const char *info)
-{ // homepage
-    Serial.print("icyurl      ");
-    Serial.println(info);
-}
-void audio_lasthost(const char *info)
-{ // stream URL played
-    Serial.print("lasthost    ");
-    Serial.println(info);
-}
-void audio_eof_speech(const char *info)
-{
-    Serial.print("eof_speech  ");
-    Serial.println(info);
+    // Delay to avoid watchdog issues
+    delay(10);
 }
