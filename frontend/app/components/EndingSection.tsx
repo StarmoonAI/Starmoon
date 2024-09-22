@@ -1,10 +1,7 @@
 "use client";
 
 import Illustration from "@/public/hero_section.svg";
-import InsightsDemo from "./InsightsDemo";
 import { Button } from "@/components/ui/button";
-import AnimatedText from "./AnimatedText";
-import PreorderModal from "./Upsell/PreorderModal";
 import BookDemoModal from "./BookDemoModal";
 import { CalendarCheck, ShoppingCart, Store } from "lucide-react";
 import { FaDiscord } from "react-icons/fa";
@@ -40,12 +37,12 @@ export default function EndingSection() {
 
             <div className="my-20 flex flex-col items-center justify-center gap-8">
                 <div className="flex items-center justify-center gap-8 flex-wrap">
-                    <PreorderModal>
+                    <Link href="/products" passHref>
                         <Button className="flex flex-row items-center gap-2 font-medium text-base bg-stone-800 leading-8 rounded-full">
                             <ShoppingCart size={20} />
                             <span>Preorder Now</span>
                         </Button>
-                    </PreorderModal>
+                    </Link>
                     <BookDemoModal>
                         <Button className="flex flex-row items-center gap-2 font-medium text-base text-stone-800 leading-8 rounded-full bg-transparent border-2 border-stone-900 hover:bg-stone-500 hover:bg-opacity-5">
                             <CalendarCheck size={20} />

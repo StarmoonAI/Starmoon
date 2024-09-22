@@ -137,7 +137,7 @@ export default async function RootLayout({
                                         </Button>
                                     </Link>
                                     <NavbarButtons user={user} />
-                                    <PreorderModal>
+                                    <Link href={"/products"} passHref>
                                         <Button
                                             size="sm"
                                             variant="primary"
@@ -148,7 +148,7 @@ export default async function RootLayout({
                                                 Preorder
                                             </p>
                                         </Button>
-                                    </PreorderModal>
+                                    </Link>
                                 </div>
                             </nav>
                         </div>
