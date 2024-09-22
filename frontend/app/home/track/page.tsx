@@ -1,9 +1,5 @@
 import Charts from "@/app/components/Insights/Charts";
-import { Badge } from "@/components/ui/badge";
 import { getUserById } from "@/db/users";
-import { defaultToyId } from "@/lib/data";
-import { getAllToys, getToyById } from "@/db/toys";
-import { getCreditsRemaining } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/server";
 import CreditsRemaining from "@/app/components/CreditsRemaining";
 

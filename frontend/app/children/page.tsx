@@ -2,7 +2,7 @@ import { createToys, getAllToys, getToyById } from "@/db/toys";
 import { getUserById } from "@/db/users";
 import { createClient } from "@/utils/supabase/server";
 
-import { defaultToyId, toys } from "@/lib/data";
+import { defaultToyId } from "@/lib/data";
 
 import Products from "../components/Products";
 import Preorder from "../components/Preorder";
@@ -50,17 +50,6 @@ export default async function Home() {
 
     const dbUser = user ? await getUserById(supabase, user.id) : undefined;
     let allToys = await getAllToys(supabase);
-
-    if (allToys.length === 0) {
-        try {
-            await createToys(supabase, toys);
-            allToys = toys;
-            console.log("Toys created", allToys.length);
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
     const toy = await getToyById(supabase, dbUser?.toy_id ?? defaultToyId);
 
     return (
