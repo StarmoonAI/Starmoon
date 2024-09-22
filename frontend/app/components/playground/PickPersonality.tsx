@@ -44,7 +44,7 @@ const PickPersonality: React.FC<PickPersonalityProps> = ({
                     className="rounded-full gap-2"
                 >
                     <PersonStanding size={18} />
-                    {personalityState?.title}{" "}
+                    {personalityState?.title} {personalityState?.emoji}
                 </SelectTrigger>
                 <SelectContent>
                     {allPersonalities.map((personality) => (
@@ -71,6 +71,7 @@ const PickPersonality: React.FC<PickPersonalityProps> = ({
                                             " (default)"}
                                         {personality.emoji && (
                                             <span className="text-lg">
+                                                {" "}
                                                 {personality.emoji}
                                             </span>
                                         )}
