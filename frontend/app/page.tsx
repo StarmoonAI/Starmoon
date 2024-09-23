@@ -38,12 +38,14 @@ export default async function Index() {
 
             <div className="max-w-3xl text-center mx-8 md:mx-auto">
                 <h1
-                    className="ont-inter-tight text-4xl md:text-6xl font-semibold sm:mt-14 tracking-tight text-stone-900 "
+                    className="ont-inter-tight text-4xl md:text-6xl font-bold sm:mt-14 tracking-tight text-stone-900 "
                     style={{ lineHeight: "1.25" }}
                 >
-                    The open-source{" "}
-                    <span className="text-amber-500">low-cost</span>{" "}
-                    voice-enabled AI device for
+                    The open-source, compact,{" "}
+                    <span className="px-2 text-white bg-blue-600 rounded dark:bg-blue-500">
+                        conversational
+                    </span>{" "}
+                    AI device for
                 </h1>
 
                 <AnimatedText />
