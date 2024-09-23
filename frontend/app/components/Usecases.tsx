@@ -62,7 +62,7 @@ export default function Usecases() {
                             Use Starmoon as an add-on to real-life objects to
                             create interactive games and stories. Bring your
                             toys and plushies to life by giving them a voice and
-                            a curated personality.
+                            personality created by you.
                         </p>
                     </div>
                 </div>

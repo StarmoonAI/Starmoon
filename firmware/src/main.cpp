@@ -26,7 +26,7 @@ unsigned long lastPulseTime = 0;
 int ledBrightness = 0;
 int fadeAmount = 5;
 
-#define BUTTON_PIN 0        // Built-in BOOT button (GPIO 0)
+#define BUTTON_PIN D5       // Built-in BOOT button (GPIO 0)
 #define LED_PIN LED_BUILTIN // Built-in LED (GPIO 10)
 
 // I2S pins for Audio Input (INMP441 MEMS microphone)
@@ -51,11 +51,8 @@ int16_t sBuffer[bufferLen];
 #define BUFFER_SIZE 1024
 
 // // Wifi Credentials
-// String ssid = "launchlab";
-// String password = "LaunchLabRocks";
-
-String ssid = "EE-P8CX8N";
-String password = "xd6UrFLd4kf9x4";
+String ssid = "launchlab";
+String password = "LaunchLabRocks";
 
 WiFiManager wm;
 
@@ -96,41 +93,9 @@ void simpleSetup()
     }
 }
 
-const char *root_ca = R"(
------BEGIN CERTIFICATE-----
-MIIE7zCCA9egAwIBAgISBKv3yf9HyXyPZE5goVOmuU86MA0GCSqGSIb3DQEBCwUA
-MDMxCzAJBgNVBAYTAlVTMRYwFAYDVQQKEw1MZXQncyBFbmNyeXB0MQwwCgYDVQQD
-EwNSMTAwHhcNMjQwODI2MDQxOTE3WhcNMjQxMTI0MDQxOTE2WjAbMRkwFwYDVQQD
-ExB3d3cuc3Rhcm1vb24uYXBwMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
-AQEAuK49whSv2dsMMr73oD1LysmluuBFm/mTLAucLlAqnX9pL8nKa+XOMHmTVk7v
-osyZiRag12Fq7CbwP5IpULCHGrTzbVZeDX5BhsVuMti6NPKdrA6X4G3/2ZnUQr2D
-ZBwU7fJPbwo4BNsFU0wLygObs/9LC7yoDm95Nb/L0LZc3JybG0d5zMERf4R85s+A
-N0TDtKz5GrPK1QEmGnqlrX9HL5oQs0xoZI4JOCMnQO87JbK3Yq/EHMP7Ge6yarzi
-0d2aKsv8HNtbLH5BKLyINgttjlqaGrJWz6kYMAg1kEb6+RfuHoSPbK2t7iJgVKeW
-qT+G2M3DV0UrT/NFwDcTwVAn7QIDAQABo4ICEzCCAg8wDgYDVR0PAQH/BAQDAgWg
-MB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAMBgNVHRMBAf8EAjAAMB0G
-A1UdDgQWBBRpUpQy9JoPWqFlqXLiy2rVgfcAGjAfBgNVHSMEGDAWgBS7vMNHpeS8
-qcbDpHIMEI2iNeHI6DBXBggrBgEFBQcBAQRLMEkwIgYIKwYBBQUHMAGGFmh0dHA6
-Ly9yMTAuby5sZW5jci5vcmcwIwYIKwYBBQUHMAKGF2h0dHA6Ly9yMTAuaS5sZW5j
-ci5vcmcvMBsGA1UdEQQUMBKCEHd3dy5zdGFybW9vbi5hcHAwEwYDVR0gBAwwCjAI
-BgZngQwBAgEwggEDBgorBgEEAdZ5AgQCBIH0BIHxAO8AdQBIsONr2qZHNA/lagL6
-nTDrHFIBy1bdLIHZu7+rOdiEcwAAAZGNHnE/AAAEAwBGMEQCIGH9VFk23ka+nSDC
-NNcK2PJPidqExiYSvz5vd03W1ZZvAiB2dpj6DUy4vhDkbrh7OUBGnRqirhVK0ad6
-JB+F3JHnhgB2AHb/iD8KtvuVUcJhzPWHujS0pM27KdxoQgqf5mdMWjp0AAABkY0e
-cWQAAAQDAEcwRQIhAP1rSWR92oh4X4xCTksccgAjbARBocQ4Y2nsudfC7AKbAiAs
-luuzhsOb2+o7tpk2vr/+7crtSr1KiI9kCNDjR5oCKjANBgkqhkiG9w0BAQsFAAOC
-AQEAl7r59KuY9NzcXQyM7hbjhg+Q8w/I/VqfjnTvJTC6CQqVZsVDG1TKZ06LG6Be
-5fz1D/0TBWYJodjWQqjfbbUEWxL96k3Bm8bjh2gKp6jG098+AmhzlKigjO0gCynt
-ezQytoU7POQOPbmkNG2pFylFVkl7bwZlNnc7WQSwPwr4DkwUw9GIGzSCF79I9zsA
-jQwZbZliH/hmB0KUZRmOgzpyZ8faC+khhGUNevXVBdC+AA3gWPNefOvmTPGU98Tr
-oG0bpg6LEiBrq0w27mTSt1uxqwEAAMYsb3RDcifE0gWF8rAjHAxpSOmQhGKDpG/f
-JAaz0USzLpR8I/quVCIG+bCLqg==
------END CERTIFICATE-----
-)";
-
 // WebSocket server details
-const char *websocket_server_host = "api.starmoon.app";
-// const char *websocket_server_host = "172.18.80.38";
+// const char *websocket_server_host = "192.168.2.236";
+const char *websocket_server_host = "172.18.80.69";
 const uint16_t websocket_server_port = 8000;
 const char *websocket_server_path = "/starmoon";
 const char *auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNWFmNjJiMGUtM2RhNC00YzQ0LWFkZjctNWIxYjdjOWM0Y2I2IiwiZW1haWwiOiJhZG1pbkBzdGFybW9vbi5hcHAiLCJpYXQiOjE3MjYyMzY1Njl9.5Ble6393MS2yPPzxlONh2GGP1aI5v1R6TjLPWQ1eHY0";
@@ -530,9 +495,6 @@ void setup()
     Serial.begin(115200);
 
     connectWiFi();
-    // client.setInsecure(); // Accept all certificates (insecure)
-    client.setCACert(root_ca);
-
     client.onEvent(onEventsCallback);
     client.onMessage(onMessageCallback);
 

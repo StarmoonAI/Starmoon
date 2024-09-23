@@ -1,28 +1,59 @@
 #include <Arduino.h>
 
-#define LED_PIN D7 // GPIO pin connected to the LED
+// Define pin assignments
+const int ledPin = 0;     // GPIO 2 connected to LED
+const int buttonPin = D5; // GPIO 15 connected to button
 
-// Different PWM values can result in different colors or modes
-const int RED_VALUE = 64;
-const int GREEN_VALUE = 128;
-const int BLUE_VALUE = 192;
+// Variables for button state tracking
+bool ledState = LOW;
+bool buttonState = HIGH;
+bool lastButtonState = HIGH;
+unsigned long lastDebounceTime = 0;
+unsigned long debounceDelay = 50; // Adjust debounce delay as needed
 
 void setup()
 {
-    // Configure LED_PIN for PWM
-    ledcSetup(0, 5000, 8);     // Channel 0, 5000 Hz, 8-bit resolution
-    ledcAttachPin(LED_PIN, 0); // Attach the LED pin to channel 0
+    // Initialize serial communication (optional)
+    Serial.begin(115200);
+
+    // Set the LED pin as output
+    pinMode(ledPin, OUTPUT);
+    digitalWrite(ledPin, ledState);
+
+    // Set the button pin as input with internal pull-up resistor
+    pinMode(buttonPin, INPUT_PULLUP);
 }
 
 void loop()
 {
-    // Cycle through colors
-    ledcWrite(0, RED_VALUE);
-    delay(200); // Wait for 2 seconds
+    // Read the state of the button
+    int reading = digitalRead(buttonPin);
 
-    ledcWrite(0, GREEN_VALUE);
-    delay(200);
+    // Check for state change (debounce)
+    if (reading != lastButtonState)
+    {
+        lastDebounceTime = millis(); // Reset debounce timer
+    }
 
-    ledcWrite(0, BLUE_VALUE);
-    delay(200);
+    if ((millis() - lastDebounceTime) > debounceDelay)
+    {
+        // If the button state has changed
+        if (reading != buttonState)
+        {
+            buttonState = reading;
+
+            // Only toggle the LED if the new button state is LOW (button pressed)
+            if (buttonState == LOW)
+            {
+                ledState = !ledState; // Toggle LED state
+                digitalWrite(ledPin, ledState);
+
+                // Optional: print the LED state to the Serial Monitor
+                Serial.print("LED is now ");
+                Serial.println(ledState == HIGH ? "ON" : "OFF");
+            }
+        }
+    }
+
+    lastButtonState = reading; // Save the reading for next loop
 }
