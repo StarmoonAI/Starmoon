@@ -1,9 +1,5 @@
 "use client";
 
-import Image1 from "@/public/images/image1.png";
-import Image2 from "@/public/images/image2.png";
-import Illustration from "@/public/usecase_section.svg";
-
 import Usecase from "./Usecase";
 import TopCard from "./Insights/TopCard";
 import { MyResponsiveLine } from "./Insights/LineChart";
