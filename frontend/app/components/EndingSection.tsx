@@ -44,7 +44,10 @@ export default function EndingSection() {
                         </Button>
                     </Link>
                     <BookDemoModal>
-                        <Button className="flex flex-row items-center gap-2 font-medium text-base text-stone-800 leading-8 rounded-full bg-transparent border-2 border-stone-900 hover:bg-stone-500 hover:bg-opacity-5">
+                        <Button
+                            variant="secondary"
+                            className="flex flex-row items-center gap-2 font-medium text-base text-stone-800 leading-8 rounded-full bg-transparent border-2 border-stone-900 hover:bg-stone-500 hover:bg-opacity-5"
+                        >
                             <CalendarCheck size={20} />
                             <span>Book a Demo</span>
                         </Button>

@@ -16,66 +16,66 @@ import { Gamepad2, ShoppingCart } from "lucide-react";
 import { getAllPersonalities } from "@/db/personalities";
 
 export default async function Index() {
-  const supabase = createClient();
+    const supabase = createClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
 
-  const allToys = await getAllToys(supabase);
-  const allPersonalities = await getAllPersonalities(supabase);
+    const allToys = await getAllToys(supabase);
+    const allPersonalities = await getAllPersonalities(supabase);
 
-  return (
-    <main className="flex flex-1 flex-col mx-auto w-full gap-6 my-8">
-      {/* Illustration */}
-      <div className="relative w-full max-w-[1440px] mx-auto">
-        <div
-          className="absolute -top-24 pointer-events-none -z-10 opacity-90 w-full h-[650px] bg-cover bg-center bg-no-repeat blur-2xl"
-          style={{ backgroundImage: `url(${Illustration.src})` }}
-          aria-hidden="true"
-        ></div>
-      </div>
+    return (
+        <main className="flex flex-1 flex-col mx-auto w-full gap-6 my-8">
+            {/* Illustration */}
+            <div className="relative w-full max-w-[1440px] mx-auto">
+                <div
+                    className="absolute -top-24 pointer-events-none -z-10 opacity-90 w-full h-[650px] bg-cover bg-center bg-no-repeat blur-2xl"
+                    style={{ backgroundImage: `url(${Illustration.src})` }}
+                    aria-hidden="true"
+                ></div>
+            </div>
 
-      <div className="max-w-4xl text-center mx-8 md:mx-auto">
-        <h1
-          className="font-inter-tight- text-4xl md:text-6xl font-semibold sm:mt-14 tracking-tight text-stone-900 "
-          style={{ lineHeight: "1.25" }}
-        >
-          The open-source, compact and conversational AI device for
-          {/* {" "}
-                    <span className="px-2 text-white bg-blue-600 rounded dark:bg-blue-500">
-                        conversational
-                    </span>{" "} */}
-        </h1>
+            <div className="max-w-4xl text-center mx-8 md:mx-auto">
+                <h1
+                    className="font-inter-tight- text-4xl md:text-6xl font-semibold sm:mt-14 tracking-tight text-stone-900 "
+                    style={{ lineHeight: "1.25" }}
+                >
+                    The open-source, compact, and conversational AI device for
+                </h1>
 
-        <AnimatedText />
+                <AnimatedText />
 
-        <p className="font-inter font-light mt-14 text-lg sm:text-xl leading-8 text-stone-800">
-          Starmoon is an low-cost, compact, voiced-enabled AI device that offers
-          supportive conversations through personalized AI characters.
-        </p>
-      </div>
+                <p className="font-inter font-light mt-14 text-lg sm:text-xl leading-8 text-stone-800">
+                    Starmoon is an low-cost, compact, voiced-enabled AI device
+                    that offers supportive conversations through personalized AI
+                    characters.
+                </p>
+            </div>
 
-      <div className="flex items-center justify-center gap-x-8 mt-10">
-        <Link href="/products" passHref>
-          <Button className="flex flex-row items-center gap-2 font-medium text-base bg-stone-800 leading-8 rounded-full">
-            <ShoppingCart size={20} />
-            <span>Preorder</span>
-          </Button>
-        </Link>
-        <Link href={user ? "/home" : "/login"}>
-          <Button className="flex flex-row items-center gap-2 font-medium text-base text-stone-800 leading-8 rounded-full bg-transparent border-2 border-stone-900 hover:bg-stone-500 hover:bg-opacity-5">
-            <Gamepad2 size={20} />
-            <span>Play Online</span>
-          </Button>
-        </Link>
-      </div>
+            <div className="flex items-center justify-center gap-x-8 mt-10">
+                <Link href="/products" passHref>
+                    <Button className="flex flex-row items-center gap-2 font-medium text-base bg-stone-800 leading-8 rounded-full">
+                        <ShoppingCart size={20} />
+                        <span>Preorder</span>
+                    </Button>
+                </Link>
+                <Link href={user ? "/home" : "/login"}>
+                    <Button className="flex flex-row items-center gap-2 font-medium text-base text-stone-800 leading-8 rounded-full bg-transparent border-2 border-stone-900 hover:bg-stone-500 hover:bg-opacity-5">
+                        <Gamepad2 size={20} />
+                        <span>Play Online</span>
+                    </Button>
+                </Link>
+            </div>
 
-      <CharacterPicker allToys={allToys} allPersonalities={allPersonalities} />
-      <Usecases></Usecases>
-      <InsightsDemoSection></InsightsDemoSection>
-      <FeaturesSection></FeaturesSection>
-      <EndingSection></EndingSection>
-    </main>
-  );
+            <CharacterPicker
+                allToys={allToys}
+                allPersonalities={allPersonalities}
+            />
+            <Usecases></Usecases>
+            <InsightsDemoSection></InsightsDemoSection>
+            <FeaturesSection></FeaturesSection>
+            <EndingSection></EndingSection>
+        </main>
+    );
 }
