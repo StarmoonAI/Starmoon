@@ -7,10 +7,15 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { createClient } from "@/utils/supabase/server";
-import { CheckCircle } from "lucide-react";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { CheckCircle, Info } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 interface Product {
     title: string;
@@ -19,6 +24,8 @@ interface Product {
     features: string[];
     price: number;
     tag: string;
+    paymentLink: string;
+    originalPrice: number;
 }
 
 const products: Product[] = [
@@ -28,7 +35,8 @@ const products: Product[] = [
             "The Starmoon AI Toy provides all AI characters packed into one compact device that can be added to any object.",
         imageSrc: "/case1.png",
         features: [
-            "3-month FREE access to Starmoon subscription",
+            "2-month FREE access to Starmoon AI subscription",
+            "Unlimited access to Starmoon characters till we deliver your device",
             "On-the-go empathic companion for anyone",
             "Access any AI character from the Starmoon universe",
             "Compact and easy to use",
@@ -36,23 +44,28 @@ const products: Product[] = [
             "Battery life of 12 hours",
             "Understand your conversational trends",
         ],
-        price: 79,
+        originalPrice: 109,
+        price: 59,
         tag: "Most Popular",
+        paymentLink: "https://buy.stripe.com/eVa3cfb5E9TJ3cs6ou",
     },
     {
-        title: "Starmoon AI DIY Dev kit",
+        title: "Starmoon AI DIY Dev Kit",
         description:
             "The Starmoon AI Dev Kit is a powerful tool for developers to create their own AI characters and integrate them into the Starmoon universe.",
         imageSrc: "/case1.png",
         features: [
             "All hardware components included in your Starmoon kit",
+            "Unlimited access to Starmoon characters till we deliver your device",
             "Tools to create your own AI character",
             "Integrate your AI character into the Starmoon universe",
             "Access to the Starmoon AI SDK",
             "Access to the Starmoon AI Discord community",
         ],
+        originalPrice: 79,
         price: 49,
         tag: "Best Value",
+        paymentLink: "https://buy.stripe.com/3cs6ora1A2rheVa3cj",
     },
 ];
 
@@ -62,8 +75,27 @@ export default async function Home() {
             <div className="flex-auto flex  flex-col gap-6 px-1">
                 <div className="flex flex-col gap-2">
                     <h1 className="text-5xl font-bold">Products</h1>
-                    <p className="text-lg text-gray-600">
-                        Choose the product that fits your needs.
+                    <p className="text-lg text-gray-600 inline-block">
+                        Choose the product that fits your needs.{" "}
+                        <TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button
+                                        size="icon"
+                                        variant="ghost"
+                                        className="w-6 h-6"
+                                    >
+                                        <Info size={14} />
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>
+                                        All reciepts will be from Starmoon AI
+                                        Doing Business As (DBA) HeyHaddock, Inc.
+                                    </p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
                     </p>
                 </div>
 
@@ -83,9 +115,28 @@ export default async function Home() {
                                     />
                                 </div>
                             </CardHeader>
+                            <CardFooter className="flex justify-between items-center p-6 bg-muted/50">
+                                <div className="flex flex-row items-center gap-4">
+                                    <div className="text-2xl font-bold">
+                                        ${product.price}
+                                    </div>
+                                    <div className="text-2xl text-muted-foreground opacity-80 line-through">
+                                        ${product.originalPrice}
+                                    </div>
+                                </div>
+
+                                <Link href={product.paymentLink} passHref>
+                                    <Button
+                                        size="lg"
+                                        className="rounded-full text-md"
+                                    >
+                                        Pre-order Now
+                                    </Button>
+                                </Link>
+                            </CardFooter>
                             <CardContent className="p-6 relative">
                                 <div className="flex justify-between items-start mb-4">
-                                    <div className="mt-6">
+                                    <div className="mt-8">
                                         <CardTitle className="text-3xl font-bold mb-2">
                                             {product.title}
                                         </CardTitle>
@@ -119,17 +170,6 @@ export default async function Home() {
                                     </div>
                                 </div>
                             </CardContent>
-                            <CardFooter className="flex justify-between items-center p-6 bg-muted/50">
-                                <div className="text-2xl font-bold">
-                                    ${product.price}
-                                </div>
-                                <Button
-                                    size="lg"
-                                    className="rounded-full text-md"
-                                >
-                                    Pre-order Now
-                                </Button>
-                            </CardFooter>
                         </Card>
                     ))}
                 </div>

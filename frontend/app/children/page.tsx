@@ -102,7 +102,7 @@ export default async function Home() {
                 </div>
             </div>
 
-            <Preorder />
+            {/* <Preorder /> */}
 
             <div className="relative -z-10 px-6 lg:px-8">
                 <div
