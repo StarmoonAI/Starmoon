@@ -94,10 +94,10 @@ void simpleSetup()
 }
 
 // WebSocket server details
-// const char *websocket_server_host = "192.168.2.236";
+const char *websocket_server_host = "192.168.2.236";
 // const char *websocket_server_host = "172.18.80.69";
-const char *websocket_server_host = "wss://api.starmoon.app";
-const uint16_t websocket_server_port = NULL;
+// const char *websocket_server_host = "wss://api.starmoon.app";
+const uint16_t websocket_server_port = 8000;
 const char *websocket_server_path = "/starmoon";
 const char *auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiOGMzYWYwODctOGQ4MC00NTM2LThjNzYtMDYyNjc3NDQ4MDMzIiwiZW1haWwiOiJha2FkM2JAZ21haWwuY29tIiwiaWF0IjoxNzI3MTA5MzMyfQ.IMLwv7xQutN3Pgz40yLwdLKm5ocURk6iCUv8_a9zLPY";
 String authMessage;
@@ -410,8 +410,8 @@ void handleTextMessage(const char *msgText)
 
 void connectWSServer()
 {
-    // if (client.connect(websocket_server_host, websocket_server_port, websocket_server_path))
-    if (client.connect("wss://api.starmoon.app/starmoon"))
+    if (client.connect(websocket_server_host, websocket_server_port, websocket_server_path))
+    // if (client.connect("wss://api.starmoon.app/starmoon"))
     {
         Serial.println("Connected to WebSocket server");
     }
@@ -533,7 +533,7 @@ void setup()
     connectWiFi();
     // simpleSetup();
     // client.setInsecure();
-    client.setCACert(rootCACertificate);
+    // client.setCACert(rootCACertificate);
     client.onEvent(onEventsCallback);
     client.onMessage(onMessageCallback);
 

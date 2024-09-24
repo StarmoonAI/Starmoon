@@ -73,7 +73,7 @@ export default async function Home() {
         <div className="flex flex-col gap-2">
             <div className="flex-auto flex flex-col gap-6">
                 <div className="flex flex-col gap-2">
-                    <h1 className="text-5xl font-bold">Products</h1>
+                    <h1 className="text-3xl font-medium">Products</h1>
                     <p className="text-md text-gray-600 inline-block">
                         Choose the product that fits your needs.{" "}
                         <Popover>
@@ -86,8 +86,8 @@ export default async function Home() {
                                     <Info size={14} />
                                 </Button>
                             </PopoverTrigger>
-                            <PopoverContent>
-                                <p>
+                            <PopoverContent className="p-3">
+                                <p className="text-xs p-0">
                                     All receipts will reflect Starmoon AI,
                                     operating as HeyHaddock, Inc. (DBA). Thank
                                     you for your understanding.
