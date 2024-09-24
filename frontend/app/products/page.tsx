@@ -13,6 +13,11 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+    Popover,
+    PopoverTrigger,
+    PopoverContent,
+} from "@/components/ui/popover";
 import { CheckCircle, Info } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -44,7 +49,7 @@ const products: Product[] = [
             "Battery life of 12 hours",
             "Understand your conversational trends",
         ],
-        originalPrice: 109,
+        originalPrice: 89,
         price: 59,
         tag: "Most Popular",
         paymentLink: "https://buy.stripe.com/eVa3cfb5E9TJ3cs6ou",
@@ -72,30 +77,29 @@ const products: Product[] = [
 export default async function Home() {
     return (
         <div className="flex flex-col gap-2">
-            <div className="flex-auto flex  flex-col gap-6 px-1">
+            <div className="flex-auto flex flex-col gap-6">
                 <div className="flex flex-col gap-2">
                     <h1 className="text-5xl font-bold">Products</h1>
-                    <p className="text-lg text-gray-600 inline-block">
+                    <p className="text-md text-gray-600 inline-block">
                         Choose the product that fits your needs.{" "}
-                        <TooltipProvider>
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Button
-                                        size="icon"
-                                        variant="ghost"
-                                        className="w-6 h-6"
-                                    >
-                                        <Info size={14} />
-                                    </Button>
-                                </TooltipTrigger>
-                                <TooltipContent>
-                                    <p>
-                                        All reciepts will be from Starmoon AI
-                                        Doing Business As (DBA) HeyHaddock, Inc.
-                                    </p>
-                                </TooltipContent>
-                            </Tooltip>
-                        </TooltipProvider>
+                        <Popover>
+                            <PopoverTrigger>
+                                <Button
+                                    size="icon"
+                                    variant="ghost"
+                                    className="w-6 h-6"
+                                >
+                                    <Info size={14} />
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent>
+                                <p>
+                                    All receipts will reflect Starmoon AI,
+                                    operating as HeyHaddock, Inc. (DBA). Thank
+                                    you for your understanding.
+                                </p>
+                            </PopoverContent>
+                        </Popover>
                     </p>
                 </div>
 
@@ -116,21 +120,22 @@ export default async function Home() {
                                 </div>
                             </CardHeader>
                             <CardFooter className="flex justify-between items-center p-6 bg-muted/50">
-                                <div className="flex flex-row items-center gap-4">
+                                <div className="flex flex-row items-baseline gap-2">
                                     <div className="text-2xl font-bold">
                                         ${product.price}
                                     </div>
-                                    <div className="text-2xl text-muted-foreground opacity-80 line-through">
+                                    <div className="text-lg text-muted-foreground opacity-80 line-through">
                                         ${product.originalPrice}
                                     </div>
                                 </div>
 
                                 <Link href={product.paymentLink} passHref>
                                     <Button
-                                        size="lg"
-                                        className="rounded-full text-md"
+                                        size="sm"
+                                        variant="primary"
+                                        className="rounded-full"
                                     >
-                                        Pre-order Now
+                                        Preorder Now
                                     </Button>
                                 </Link>
                             </CardFooter>
@@ -160,9 +165,16 @@ export default async function Home() {
                                             {product.features.map((feature) => (
                                                 <li
                                                     key={feature}
-                                                    className="flex items-center"
+                                                    className="flex flex-row gap-1 items-center"
                                                 >
-                                                    <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
+                                                    <CheckCircle
+                                                        style={{
+                                                            height: "20px",
+                                                            width: "20px",
+                                                        }}
+                                                        strokeWidth={3}
+                                                        className="min-h-5 min-w-5 text-green-500 mr-2"
+                                                    />
                                                     <span>{feature}</span>
                                                 </li>
                                             ))}
