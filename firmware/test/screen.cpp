@@ -2,14 +2,15 @@
 #include <SPI.h>
 #include <Wire.h>
 #include <LGFX_AUTODETECT.hpp> // Autodetect board
+#include <LovyanGFX.hpp>
 
-class LGFX_GC9A01 : public lgfx::LGFX_Device
+class LGFX : public lgfx::LGFX_Device
 {
     lgfx::Panel_GC9A01 _panel_instance;
     lgfx::Bus_SPI _bus_instance;
 
 public:
-    LGFX_GC9A01(void)
+    LGFX(void)
     {
         {
             auto cfg = _bus_instance.config();
@@ -49,7 +50,7 @@ public:
     }
 };
 
-LGFX_GC9A01 tft;
+LGFX tft;
 
 void setup()
 {

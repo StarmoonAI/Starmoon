@@ -94,12 +94,47 @@ void simpleSetup()
 }
 
 // WebSocket server details
-const char *websocket_server_host = "192.168.2.236";
-// const char *websocket_server_host = "172.18.80.38";
-const uint16_t websocket_server_port = 8000;
+// const char *websocket_server_host = "192.168.2.236";
+// const char *websocket_server_host = "172.18.80.69";
+const char *websocket_server_host = "wss://api.starmoon.app";
+const uint16_t websocket_server_port = NULL;
 const char *websocket_server_path = "/starmoon";
-const char *auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNWFmNjJiMGUtM2RhNC00YzQ0LWFkZjctNWIxYjdjOWM0Y2I2IiwiZW1haWwiOiJhZG1pbkBzdGFybW9vbi5hcHAiLCJpYXQiOjE3MjYyMzY1Njl9.5Ble6393MS2yPPzxlONh2GGP1aI5v1R6TjLPWQ1eHY0";
+const char *auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiOGMzYWYwODctOGQ4MC00NTM2LThjNzYtMDYyNjc3NDQ4MDMzIiwiZW1haWwiOiJha2FkM2JAZ21haWwuY29tIiwiaWF0IjoxNzI3MTA5MzMyfQ.IMLwv7xQutN3Pgz40yLwdLKm5ocURk6iCUv8_a9zLPY";
 String authMessage;
+
+// certificate for https://api.starmoon.app
+// ISRG Root X1, valid until Sat Mar 13 2027, size: 1801 bytes
+const char *rootCACertificate =
+    "-----BEGIN CERTIFICATE-----\n"
+    "MIIFBTCCAu2gAwIBAgIQS6hSk/eaL6JzBkuoBI110DANBgkqhkiG9w0BAQsFADBP\n"
+    "MQswCQYDVQQGEwJVUzEpMCcGA1UEChMgSW50ZXJuZXQgU2VjdXJpdHkgUmVzZWFy\n"
+    "Y2ggR3JvdXAxFTATBgNVBAMTDElTUkcgUm9vdCBYMTAeFw0yNDAzMTMwMDAwMDBa\n"
+    "Fw0yNzAzMTIyMzU5NTlaMDMxCzAJBgNVBAYTAlVTMRYwFAYDVQQKEw1MZXQncyBF\n"
+    "bmNyeXB0MQwwCgYDVQQDEwNSMTAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEK\n"
+    "AoIBAQDPV+XmxFQS7bRH/sknWHZGUCiMHT6I3wWd1bUYKb3dtVq/+vbOo76vACFL\n"
+    "YlpaPAEvxVgD9on/jhFD68G14BQHlo9vH9fnuoE5CXVlt8KvGFs3Jijno/QHK20a\n"
+    "/6tYvJWuQP/py1fEtVt/eA0YYbwX51TGu0mRzW4Y0YCF7qZlNrx06rxQTOr8IfM4\n"
+    "FpOUurDTazgGzRYSespSdcitdrLCnF2YRVxvYXvGLe48E1KGAdlX5jgc3421H5KR\n"
+    "mudKHMxFqHJV8LDmowfs/acbZp4/SItxhHFYyTr6717yW0QrPHTnj7JHwQdqzZq3\n"
+    "DZb3EoEmUVQK7GH29/Xi8orIlQ2NAgMBAAGjgfgwgfUwDgYDVR0PAQH/BAQDAgGG\n"
+    "MB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDATASBgNVHRMBAf8ECDAGAQH/\n"
+    "AgEAMB0GA1UdDgQWBBS7vMNHpeS8qcbDpHIMEI2iNeHI6DAfBgNVHSMEGDAWgBR5\n"
+    "tFnme7bl5AFzgAiIyBpY9umbbjAyBggrBgEFBQcBAQQmMCQwIgYIKwYBBQUHMAKG\n"
+    "Fmh0dHA6Ly94MS5pLmxlbmNyLm9yZy8wEwYDVR0gBAwwCjAIBgZngQwBAgEwJwYD\n"
+    "VR0fBCAwHjAcoBqgGIYWaHR0cDovL3gxLmMubGVuY3Iub3JnLzANBgkqhkiG9w0B\n"
+    "AQsFAAOCAgEAkrHnQTfreZ2B5s3iJeE6IOmQRJWjgVzPw139vaBw1bGWKCIL0vIo\n"
+    "zwzn1OZDjCQiHcFCktEJr59L9MhwTyAWsVrdAfYf+B9haxQnsHKNY67u4s5Lzzfd\n"
+    "u6PUzeetUK29v+PsPmI2cJkxp+iN3epi4hKu9ZzUPSwMqtCceb7qPVxEbpYxY1p9\n"
+    "1n5PJKBLBX9eb9LU6l8zSxPWV7bK3lG4XaMJgnT9x3ies7msFtpKK5bDtotij/l0\n"
+    "GaKeA97pb5uwD9KgWvaFXMIEt8jVTjLEvwRdvCn294GPDF08U8lAkIv7tghluaQh\n"
+    "1QnlE4SEN4LOECj8dsIGJXpGUk3aU3KkJz9icKy+aUgA+2cP21uh6NcDIS3XyfaZ\n"
+    "QjmDQ993ChII8SXWupQZVBiIpcWO4RqZk3lr7Bz5MUCwzDIA359e57SSq5CCkY0N\n"
+    "4B6Vulk7LktfwrdGNVI5BsC9qqxSwSKgRJeZ9wygIaehbHFHFhcBaMDKpiZlBHyz\n"
+    "rsnnlFXCb5s8HKn5LsUgGvB24L7sGNZP2CX7dhHov+YhD+jozLW2p9W4959Bz2Ei\n"
+    "RmqDtmiXLnzqTpXbI+suyCsohKRg6Un0RC47+cpiVwHiXZAW+cn8eiNIjqbVgXLx\n"
+    "KPpdzvvtTnOPlC7SQZSYmdunr3Bf9b77AiC/ZidstK36dRILKz7OA54=\n"
+    "-----END CERTIFICATE-----\n"
+    "";
 
 // Flag to control when to play audio
 bool shouldPlayAudio = false;
@@ -375,7 +410,8 @@ void handleTextMessage(const char *msgText)
 
 void connectWSServer()
 {
-    if (client.connect(websocket_server_host, websocket_server_port, websocket_server_path))
+    // if (client.connect(websocket_server_host, websocket_server_port, websocket_server_path))
+    if (client.connect("wss://api.starmoon.app/starmoon"))
     {
         Serial.println("Connected to WebSocket server");
     }
@@ -495,6 +531,9 @@ void setup()
     Serial.begin(115200);
 
     connectWiFi();
+    // simpleSetup();
+    // client.setInsecure();
+    client.setCACert(rootCACertificate);
     client.onEvent(onEventsCallback);
     client.onMessage(onMessageCallback);
 
