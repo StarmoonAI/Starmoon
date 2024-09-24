@@ -12,18 +12,16 @@ const STROKE_WIDTH = 3;
 
 const NavbarButtons: React.FC<NavbarButtonsProps> = ({ user }) => {
     return user ? (
-        <div className="flex flex-row gap-2 items-center">
-            <Link href="/home">
-                <Button
-                    variant="secondary"
-                    size="sm"
-                    className="flex flex-row items-center gap-2 rounded-full bg-nav-bar"
-                >
-                    <Home size={ICON_SIZE} />
-                    <span className="hidden md:inline">Home</span>
-                </Button>
-            </Link>
-        </div>
+        <Link href="/home">
+            <Button
+                variant="secondary"
+                size="sm"
+                className="flex flex-row items-center gap-2 rounded-full bg-nav-bar"
+            >
+                <Home size={ICON_SIZE} />
+                <span className="hidden md:inline">Home</span>
+            </Button>
+        </Link>
     ) : (
         <Link href="/login">
             <Button

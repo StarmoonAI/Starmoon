@@ -118,7 +118,7 @@ export default async function RootLayout({
                                     {/* <p className="text-xs text-gray-500">beta</p> */}
                                 </a>
 
-                                <div className="flex flex-row gap-4 items-center font-bold text-sm ">
+                                <div className="flex flex-row gap-2 items-center font-bold text-sm ">
                                     <Link
                                         href="https://github.com/StarmoonAI/Starmoon"
                                         target="_blank"
