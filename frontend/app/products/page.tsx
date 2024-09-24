@@ -59,9 +59,9 @@ const products: Product[] = [
 export default async function Home() {
     return (
         <div className="flex flex-col gap-2">
-            <div className="overflow-hidden flex-auto flex  flex-col gap-6 px-1">
+            <div className="flex-auto flex  flex-col gap-6 px-1">
                 <div className="flex flex-col gap-2">
-                    <h1 className="text-6xl font-semibold">Products</h1>
+                    <h1 className="text-5xl font-bold">Products</h1>
                     <p className="text-lg text-gray-600">
                         Choose the product that fits your needs.
                     </p>
@@ -86,7 +86,7 @@ export default async function Home() {
                             <CardContent className="p-6 relative">
                                 <div className="flex justify-between items-start mb-4">
                                     <div className="mt-6">
-                                        <CardTitle className="text-4xl font-bold mb-2">
+                                        <CardTitle className="text-3xl font-bold mb-2">
                                             {product.title}
                                         </CardTitle>
                                         <p className="text-muted-foreground">
