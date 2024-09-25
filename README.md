@@ -103,7 +103,7 @@ Video
 
 ### Hardware setup 🧰
 
--   **Step 0 (Optional)**: Build the device yourself (alternatively, the [Starmoon DIY Dev Kit](www.starmoon.app/products) come pre-assembled so you can focus on working with your own forked backend)
+-   **Step 0 (Optional)**: Build the device yourself (alternatively, the [Starmoon DIY Dev Kit](www.starmoon.app/products) comes pre-assembled so you can focus on working with your own frontend + backend)
 
     -   Follow the instructions [here](firmware/README.md) for more details on assembly
 
