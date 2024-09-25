@@ -4,6 +4,7 @@
 #include <ArduinoJson.h>
 #include <freertos/queue.h>
 #include <WiFiManager.h> // Include the WiFiManager library
+#include <esp_task_wdt.h>
 
 // Debounce time in milliseconds
 #define DEBOUNCE_TIME 50
@@ -15,7 +16,7 @@ TaskHandle_t ledTaskHandle = NULL;
 
 // BUTTON variables
 unsigned long lastDebounceTime = 0;
-bool isWebSocketConnected = false;
+volatile bool isWebSocketConnected = false;
 bool shouldConnectWebSocket = false;
 volatile bool buttonPressed = false;
 
@@ -49,6 +50,9 @@ int16_t sBuffer[bufferLen];
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define BUFFER_SIZE 1024
+
+#define LED_ON LOW
+#define LED_OFF HIGH
 
 // // Wifi Credentials
 String ssid = "launchlab";
@@ -99,7 +103,7 @@ const char *websocket_server_host = "192.168.2.236";
 // const char *websocket_server_host = "wss://api.starmoon.app";
 const uint16_t websocket_server_port = 8000;
 const char *websocket_server_path = "/starmoon";
-const char *auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiOGMzYWYwODctOGQ4MC00NTM2LThjNzYtMDYyNjc3NDQ4MDMzIiwiZW1haWwiOiJha2FkM2JAZ21haWwuY29tIiwiaWF0IjoxNzI3MTA5MzMyfQ.IMLwv7xQutN3Pgz40yLwdLKm5ocURk6iCUv8_a9zLPY";
+const char *auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNWFmNjJiMGUtM2RhNC00YzQ0LWFkZjctNWIxYjdjOWM0Y2I2IiwiZW1haWwiOiJhZG1pbkBzdGFybW9vbi5hcHAiLCJpYXQiOjE3MjcyODUzMjJ9.3olRYDctJmDDu-zZWMeas_VG3wa8Pog_cXey4pxRBDI";
 String authMessage;
 
 // certificate for https://api.starmoon.app
@@ -187,15 +191,15 @@ void onWSConnectionOpened()
     Serial.println(authMessage);
     client.send(authMessage);
     Serial.println("Connnection Opened");
-    analogWrite(LED_PIN, 250);
+    digitalWrite(LED_PIN, LED_ON);
     isWebSocketConnected = true;
 }
 
 void onWSConnectionClosed()
 {
-    analogWrite(LED_PIN, 0);
-    Serial.println("Connnection Closed");
     isWebSocketConnected = false;
+    digitalWrite(LED_PIN, LED_OFF);
+    Serial.println("Connnection Closed");
 }
 
 void onEventsCallback(WebsocketsEvent event, String data)
@@ -425,6 +429,7 @@ void disconnectWSServer()
 {
     client.close();
     vTaskDelay(100 / portTICK_PERIOD_MS); // Delay to ensure the connection is closed
+    isWebSocketConnected = false;         // Explicitly set to false
     onWSConnectionClosed();
 }
 
@@ -474,6 +479,7 @@ void buttonTask(void *parameter)
 
             if (isWebSocketConnected)
             {
+                digitalWrite(LED_PIN, LED_OFF);
                 disconnectWSServer();
             }
             else
@@ -494,9 +500,11 @@ void ledControlTask(void *parameter)
 
     while (1)
     {
+        // Delay at the start of the loop to allow for status updates
+        vTaskDelay(pdMS_TO_TICKS(50));
         if (!isWebSocketConnected)
         {
-            analogWrite(LED_PIN, 0); // LED off when not connected
+            digitalWrite(LED_PIN, LED_OFF);
         }
         else if (shouldPlayAudio)
         {
@@ -518,17 +526,20 @@ void ledControlTask(void *parameter)
         else
         {
             // Fixed brightness when connected but not playing audio
-            analogWrite(LED_PIN, MAX_BRIGHTNESS);
+            digitalWrite(LED_PIN, LED_ON);
         }
 
-        // Small delay to prevent task from hogging CPU
-        vTaskDelay(pdMS_TO_TICKS(10));
+        // Allow other tasks to run and reset the watchdog timer
+        esp_task_wdt_reset();
     }
 }
 
 void setup()
 {
     Serial.begin(115200);
+
+    pinMode(LED_PIN, OUTPUT);
+    digitalWrite(LED_PIN, LED_OFF);
 
     connectWiFi();
     // simpleSetup();
@@ -548,7 +559,6 @@ void setup()
     xTaskCreate(buttonTask, "buttonTask", 2048, NULL, 1, &buttonTaskHandle);
 
     pinMode(BUTTON_PIN, INPUT_PULLUP);
-    pinMode(LED_PIN, OUTPUT);
 
     // Set SD_PIN as output and initialize to HIGH (unmuted)
     pinMode(I2S_SD_OUT, OUTPUT);
