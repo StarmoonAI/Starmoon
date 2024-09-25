@@ -1,6 +1,6 @@
 # ESP32 WebSocket Audio Client
 
-This firmware turns your ESP32 device into a WebSocket audio client, enabling real-time audio communication with the WS backend server hosted at `../backend`. It's designed to be used in interactive toys or devices that can create AI characters for conversation.
+This firmware turns your ESP32-S3 (or general ESP32 WROOM Dev module) device into a WebSocket audio client, enabling real-time full-duplex audio communication with the WS backend server hosted at `../backend`. It's designed to be used in interactive toys or devices to converse with your personal AI characters.
 
 ## Installation with PlatformIO
 
@@ -19,6 +19,21 @@ This firmware turns your ESP32 device into a WebSocket audio client, enabling re
 
 4. Add the required libraries to your `platformio.ini` file:
 
+-   For ESP32S3
+
+    ```ini
+    [env:seeed_xiao_esp32s3]
+    platform = espressif32
+    board = seeed_xiao_esp32s3
+    framework = arduino
+    monitor_speed = 115200
+    lib_deps =
+        https://github.com/tzapu/WiFiManager.git
+        gilmaimon/ArduinoWebsockets@^0.5.4
+        bblanchon/ArduinoJson@^7.1.0
+    ```
+
+-   For a general ESP32 Dev board
     ```ini
     [env:esp32dev]
     platform = espressif32
@@ -26,39 +41,46 @@ This firmware turns your ESP32 device into a WebSocket audio client, enabling re
     framework = arduino
     monitor_speed = 115200
     lib_deps =
+        https://github.com/tzapu/WiFiManager.git
         gilmaimon/ArduinoWebsockets @ ^0.5.3
         bblanchon/ArduinoJson @ ^7.1.0
     ```
 
-5. Update the WiFi credentials and WebSocket server details in the code:
+1. Update the WebSocket server details in the code:
 
     - Find the following lines in the code and update them with your information:
         ```cpp
-        const char *ssid = "<your-wifi-name>";
-        const char *password = "<your-wifi-password>";
-        const char *websocket_server_host = "<192.168.1.1.your-server-host>";
-        const uint16_t websocket_server_port = 443;
-        const char *websocket_server_path = "/<your-server-path-here>";
-        const char *auth_token = "<your-auth-token-here>"; // generate auth-token in your starmoon account
+        const char *websocket_server_host = "<your-server-host>"; // this is your WiFi I.P. Address
+        const uint16_t websocket_server_port = 8000;
+        const char *websocket_server_path = "/starmoon";
+        const char *auth_token = "<your-auth-token-here>"; // generate auth-token in your starmoon web-app in Settings
         ```
 
-6. Build the project:
+2. Build the project:
 
     - Click the "PlatformIO: Build" button in the PlatformIO toolbar or run the build task.
 
-7. Upload the firmware:
+3. Upload the firmware:
 
     - Connect your ESP32 to your computer.
     - Click the "PlatformIO: Upload" button or run the upload task.
 
-8. Monitor the device:
+4. Monitor the device:
+
     - Open the Serial Monitor to view debug output and device status.
     - You can do this by clicking the "PlatformIO: Serial Monitor" button or running the monitor task.
 
+5. Connect to WiFi using the WiFi Captive portal
+    - It is straightforward to connect to your local Wifi network with an SSID and Password.
+    - Once the device is on, it acts as an Access Point to connect to a known WiFi network.
+    - Find the device name "Starmoon device" in your list of local wifi networks.
+    - Press "Configure Wifi" and type in your SSID and PW for your Wifi and connect.
+    - The ESP32S3 should then automatically connect to your Wifi and save your Wifi details.
+
 ## Usage
 
-1. Power on the ESP32 device.
-2. The device will automatically connect to the configured WiFi network.
+1. Power on the ESP32S3 device.
+2. The device will automatically connect to the WiFi network as set on the Captive portal.
 3. Press the button to initiate a full-duplex WebSocket connection to the server.
 4. The LED indicates the current status:
 

@@ -119,7 +119,7 @@ Video
 
         ```cpp
         // Wifi setup
-        Power the device -> Find the Access Point Wifi capture portal under "Starmoon device"
+        Power the device -> Find the Access Point Wifi captive portal under "Starmoon device"
 
         // WebSocket setup
         const char *websocket_server_host = "<your-server-host-ip>"; // Wifi settings -> Your Wifi I.P.
