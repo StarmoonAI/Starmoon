@@ -77,7 +77,7 @@ const defaultUrl = process.env.VERCEL_URL
 export const metadata = {
     metadataBase: new URL(defaultUrl),
     title: "Starmoon",
-    description: "Starmoon, your low-cost physical empathic AI companion",
+    description: "Starmoon, your affordable conversational AI companion",
 };
 
 export default async function RootLayout({

@@ -1,6 +1,6 @@
-# <span ><img style='vertical-align:middle; display:inline;' src="./logo.png"  width="5%" height="5%"><span style='vertical-align: middle; line-height: normal;'>&nbsp;Starmoon - The low-cost AI empathic companion</span></span>
+# <span ><img style='vertical-align:middle; display:inline;' src="./logo.png"  width="5%" height="5%"><span style='vertical-align: middle; line-height: normal;'>&nbsp;Starmoon - An affordable, empathic, and conversational AI companion</span></span>
 
-Starmoon is a affordable little AI companion device, you can take it anywhere and talk to it. It can understand your emotions and respond with empathy, offering supportive conversations and personalized learning assistance.
+Starmoon is an affordable, compact AI-enabled device, you can take anywhere and converse with. It can understand your emotions and respond with empathy, offering supportive conversations and personalized learning assistance.
 
 [Check our Roadmap](roadmap.md)
 
@@ -23,11 +23,11 @@ Video
 
 ## Key features 🎯
 
--   **Low-cost**: Assemble the device yourself with off-the-shelf components cost in $10.
--   **Voice-enabled emotional intelligence**: Understands and analyse your emotions according to your conversation in real time.
--   **Open-source**: Fully open-scourced, you can deploy locally and self-host to ensure the privacy of your data.
--   **Tiny size device**: As small as the Apple Watch, you can carry the device anywhere.
--   **Reduce screen time**: Many AI companion are screen-based, and our intention is to give your eyes a rest.
+-   **Cost-effective**: Assemble the device yourself with off-the-shelf components costing <$20.
+-   **Voice-enabled emotional intelligence**: Understand and analyze trends in your emotions through your conversations in real time.
+-   **Open-source**: Fully open-source, you can deploy Starmoon locally and self-host to ensure the privacy of your data.
+-   **Compact device**: Only slightly larger than an Apple Watch, you can carry the device anywhere.
+-   **Reduced screen time**: A myriad of AI companions are screen-based, and our intention is to give your eyes a rest.
 
 ## Getting Started 🚀
 
@@ -103,11 +103,11 @@ Video
 
 ### Hardware setup 🧰
 
--   **Step 0 (Optional)**: Build the device yourself (if you haven't bought the assembled device)
+-   **Step 0 (Optional)**: Build the device yourself (or, alternatively, consider purchasing the [Starmoon DIY Dev Kit](www.starmoon.app/products) so you can focus on creating your own backend)
 
     -   Follow the instructions [here](firmware/README.md) for more details on assembly
 
--   **Step 1**: Open PlatformIO Icon (Vscode icon left sidebar)
+-   **Step 1**: Open PlatformIO Icon (VScode icon left sidebar)
 
     -   Click "Pick a folder"
     -   Select the location of the `firmware` folder in the current project.
@@ -115,28 +115,27 @@ Video
 -   **Step 2**: Update the WiFi (only support 2.4Ghz) credentials and WebSocket server details in `src/main.cpp`
 
     -   Find the following lines in the code and update them with your information:
-    -   Find the WIFI host by command `ipconfig` (under `Default Gateway`) in Windows or `ifconfig` (under `inet xxx.x.x.x netmask 0xff000000`) in Linux/MacOS
+    -   Find the WiFi host by command `ipconfig` (under `Default Gateway`) in Windows or `ifconfig` (under `inet xxx.x.x.x netmask 0xff000000`) in Linux/MacOS
 
         ```cpp
         // Wifi setup
-        const char *ssid = "<your-wifi-name>";
-        const char *password = "<your-wifi-password>";
+        Power the device -> Find the Access Point Wifi capture portal under "Starmoon device"
 
         // WebSocket setup
         const char *websocket_server_host = "<your-server-host-ip>"; // Wifi settings -> Your Wifi I.P.
         const uint16_t websocket_server_port = 8000;
         const char *websocket_server_path = "/starmoon";
-        const char *auth_token = "<your-auth-token-here>"; // generate your auth-token in your starmoon account settings page
+        const char *auth_token = "<your-STARMOON_API_KEY-here>"; // generate your STARMOON_API_KEY in your starmoon account settings page
         ```
 
 -   **Step 3**: Build the firmware
 
     -   Click `Build` button in the PlatformIO toolbar or run the build task.
 
--   **Step 5**: Upload the firmware to the device
-    -   Connect your ESP32 to your computer using usb.
-    -   Click `Upload` button to run the upload task, or `Upload and Monitor` button to run the upload task and monitor the device.
--   **Step 6**: Hardware usage
+-   **Step 4**: Upload the firmware to the device
+    -   Connect your ESP32-S3 to your computer using usb.
+    -   Click the `Upload` button to run the upload task, or `Upload and Monitor` button to run the upload task and monitor the device.
+-   **Step 5**: Hardware usage
     -   Once the software and firmware are set up, you can push the button to power on the ESP32 device and start talking to the device.
     -   The LED indicates the current status:
         -   Off: Not connected
