@@ -110,22 +110,44 @@ This firmware turns your ESP32-S3 (or general ESP32 WROOM Dev module) device int
 
 ## Pin Configuration
 
-### I2S Input (Microphone)
+-   ### For ESP32S3
 
--   SD: GPIO 13
--   WS: GPIO 5
--   SCK: GPIO 18
+          I2S Input (Microphone)
 
-### I2S Output (Speaker)
+          -   SD: D9
+          -   WS: D7
+          -   SCK: GD8
 
--   WS: GPIO 32
--   BCK: GPIO 33
--   DATA: GPIO 25
+          I2S Output (Speaker with amp MAX98357A)
 
-### Other
+          -   WS: D0
+          -   BCK: D1
+          -   DATA: D2
+          -   SD: D3 (shutdown)
 
--   LED: GPIO 2
--   Button: GPIO 26
+          Other
+
+          -   LED: D4
+          -   Button: D5
+
+-   ### For a general ESP32 dev board
+
+          I2S Input (Microphone)
+
+          -   SD: GPIO 13
+          -   WS: GPIO 5
+          -   SCK: GPIO 18
+
+          I2S Output (Speaker)
+
+          -   WS: GPIO 32
+          -   BCK: GPIO 33
+          -   DATA: GPIO 25
+
+          Other
+
+          -   LED: GPIO 2
+          -   Button: GPIO 26
 
 ## Functions
 
