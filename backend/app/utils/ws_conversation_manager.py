@@ -340,7 +340,9 @@ class ConversationManager:
                         try:
                             message = await websocket.receive()
                             if message["type"] == "websocket.receive":
-                                if "text" in message:
+                                text_data = message.get("text")
+                                bytes_data = message.get("bytes")
+                                if text_data is not None:
                                     try:
                                         data = json.loads(message["text"])
                                         print("message++++", data)
@@ -354,7 +356,7 @@ class ConversationManager:
                                             self.is_interrupted = True
                                     except json.JSONDecodeError:
                                         print("Received invalid JSON")
-                                elif "bytes" in message:
+                                elif bytes_data is not None:
                                     data = message["bytes"]
                                     await data_stream.put(data)
                                     # stream.write(data)
@@ -402,10 +404,12 @@ class ConversationManager:
                 else:
                     message = await asyncio.wait_for(websocket.receive(), timeout=0.1)
                     if message["type"] == "websocket.receive":
-                        if "bytes" in message:
+                        text_data = message.get("text")
+                        bytes_data = message.get("bytes")
+                        if bytes_data is not None:
                             data = message["bytes"]
                             # Process incoming audio data if needed
-                        elif "text" in message:
+                        elif text_data is not None:
                             print("message----", message)
                             try:
                                 data = json.loads(message["text"])

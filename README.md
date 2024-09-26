@@ -99,7 +99,7 @@ Video
 
     -   You can access Supabase dashboard at [http://localhost:54323](http://localhost:54323)
 
-    -   You can access Celery Flower background task dashboard at [http://localhost:5555](http://localhost:5555) (`admin@starmoon.app` & `admin`)
+    -   You can access Celery Flower background task dashboard at [http://localhost:5555](http://localhost:5555) (`admin` & `admin`)
 
 ### Hardware setup 🧰
 
