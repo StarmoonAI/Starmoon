@@ -95,12 +95,12 @@ export default function CharacterPicker({
                 data-aos="fade-up"
                 data-aos-anchor="[data-aos-id-6]"
               >
-                <div className="character-carousel swiper-container max-w-sm mx-auto sm:max-w-none h-[450px] rounded-[30px] shadow-custom_unfocus">
+                <div className="character-carousel swiper-container max-w-sm mx-auto sm:max-w-none h-[450px] rounded-[30px]">
                   <div className="swiper-wrapper">
                     {/* corp */}
                     {/* Card #1 */}
                     <div className="swiper-slide w-full h-full flex-shrink-0 relative">
-                      <div className="rounded-[30px] overflow-hidden w-full h-full bg-white ">
+                      <div className="rounded-[30px] overflow-hidden w-full h-full">
                         <Image
                           src={Product1}
                           alt="Description of the image"

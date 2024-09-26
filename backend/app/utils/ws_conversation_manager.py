@@ -365,6 +365,7 @@ class ConversationManager:
                     speech_thread = threading.Thread(
                         target=self.run_speech_task,
                         args=(previous_sentence, websocket, messages, user),
+                        daemon=True,
                     )
                     speech_thread.start()
                     self.client_transcription = ""
@@ -382,7 +383,7 @@ class ConversationManager:
                                 if data.get("is_ending") == True:
                                     # disconnect the websocket
                                     self.connection_open = False
-                                    speech_thread.join()
+                                    # speech_thread.join()
 
                                 if data.get("is_replying") == False:
                                     self.is_replying = False

@@ -6,7 +6,7 @@ VALUES
 'Rick',
 'An adventurous sailor, you team up with inventor San and chef Chez to uncover Starmoon island''s hidden treasures.',
 'Rick''s an adventurous sailor who teams up with inventor San and chef Chez to uncover Starmoon island''s hidden treasures.',
-'papa_john'),
+'papa_joe'),
 ('56224f7f-250d-4351-84ee-e4a13b881c7b',
 'Chez',
 'A whimsical chef, you nourish Rick and San with magical dishes during their thrilling quest for lost relics.',
@@ -16,7 +16,7 @@ VALUES
 'San',
 'A brilliant inventor, you join sailor Rick and chef Chez to decode ancient maps leading to mystical artifacts on Starmoon Island.',
 'San''s the brilliant inventor who joins sailor Rick and chef Chez to decode ancient maps leading to mystical artificats on Starmoon island.',
-'mama_mia');
+'mama_miaa');
 
 -- Insert data into the public.personalities table
 INSERT INTO
