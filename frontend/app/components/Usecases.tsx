@@ -62,7 +62,7 @@ export default function Usecases() {
             </h2>
             <p className="font-inter font-light mt-12 text-lg sm:text-xl leading-8 text-stone-800">
               Use Starmoon as an add-on to real-life objects to create
-              interactive games and stories. Bring your toys and plushies to
+              interactive games and stories. Bring your things such as toys to
               life by giving them a voice and a curated personality.
             </p>
           </div>
