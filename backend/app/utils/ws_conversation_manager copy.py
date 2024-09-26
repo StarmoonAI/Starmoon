@@ -20,6 +20,26 @@ transcript_collector = TranscriptCollector()
 client = Clients()
 
 
+CLAUSE_BOUNDARIES = r"\.|\?|!|。|;|, (and|but|or|nor|for|yet|so)"
+
+
+def chunk_text_by_clause(text):
+    # Find clause boundaries using regular expression
+    clause_boundaries = re.finditer(CLAUSE_BOUNDARIES, text)
+    boundaries_indices = [boundary.end() for boundary in clause_boundaries]
+
+    chunks = []
+    start = 0
+    for boundary_index in boundaries_indices:
+        chunks.append(text[start:boundary_index].strip())
+        start = boundary_index
+    # Append the remaining part of the text
+    if start < len(text):
+        chunks.append(text[start:].strip())
+
+    return chunks
+
+
 class ConversationManager:
     def __init__(self):
         self.client_transcription = ""
@@ -129,7 +149,8 @@ class ConversationManager:
                 # print("CONTENT:", chunk_text)
                 accumulated_text.append(chunk_text)
                 response_text += chunk_text
-                sentences = re.split(r"(?<=[.。!?])\s+", "".join(accumulated_text))
+                sentences = chunk_text_by_clause("".join(accumulated_text))
+                # sentences = re.split(r"(?<=[.。!?])\s+", "".join(accumulated_text))
                 sentences = [sentence for sentence in sentences if sentence]
 
                 if len(sentences) > 1:
