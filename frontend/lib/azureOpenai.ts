@@ -75,7 +75,7 @@ export const generateSuggestion = async (
     lineData.length === 0 &&
     pieData.length === 0
   ) {
-    return "Talk to a character in the Playground or on your device to get new insights.";
+    return "Talk to a character in the Playground or on your device to get new analytics.";
   }
 
   return result.choices[0].message.content;

@@ -23,7 +23,7 @@ const features = [
     progress: "Released",
     name: "Emotion Intelligence",
     description:
-      "Understand emotional insights according to real time analysis.",
+      "Understand emotional insights and trends according to real time analytics.",
     source: "images/feature1.png",
   },
 

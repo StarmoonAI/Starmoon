@@ -20,7 +20,7 @@ const sidebarNavItems = [
     icon: <Gamepad2 size={ICON_SIZE} />,
   },
   {
-    title: "Insights",
+    title: "Trends & Insights",
     href: "/home/track",
     icon: <Flame size={ICON_SIZE} />,
   },
