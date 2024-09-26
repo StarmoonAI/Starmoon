@@ -41,7 +41,7 @@ const products: Product[] = [
       "Compact and easy to use",
       "Customizable to fit any object",
       "Over 4 days standby",
-      "Understand your conversational insight",
+      "Understand your conversational insights",
     ],
     originalPrice: 89,
     price: 59,

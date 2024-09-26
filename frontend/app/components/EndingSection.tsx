@@ -21,7 +21,7 @@ export default function EndingSection() {
         ></div>
       </div>
 
-      <div className="max-w-3xl text-center mx-8 md:mx-auto">
+      <div className="max-w-4xl text-center mx-8 md:mx-auto">
         <h1
           className="ont-inter-tight text-4xl md:text-6xl font-semibold mt-14 tracking-tight text-stone-900 "
           style={{ lineHeight: "1.25" }}
