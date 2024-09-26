@@ -24,7 +24,7 @@ Video
 ## Key features 🎯
 
 -   **Cost-effective**: Assemble the device yourself with off-the-shelf components costing <$20.
--   **Voice-enabled emotional intelligence**: Understand and analyze trends in your emotions through your conversations in real time.
+-   **Voice-enabled emotional intelligence**: Understand and analyze insights in your emotions through your conversations in real time.
 -   **Open-source**: Fully open-source, you can deploy Starmoon locally and self-host to ensure the privacy of your data.
 -   **Compact device**: Only slightly larger than an Apple Watch, you can carry the device anywhere.
 -   **Reduced screen time**: A myriad of AI companions are screen-based, and our intention is to give your eyes a rest.

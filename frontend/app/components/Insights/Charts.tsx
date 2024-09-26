@@ -22,7 +22,7 @@ const Charts: React.FC<ChartsProps> = async ({ user, filter }) => {
   const placeholder = (
     <div className="my-4 bg-gray-50 text-center w-full h-full rounded-lg flex items-center justify-center">
       <p className="text-lg font-medium text-gray-500">
-        Talk to a character to see your trends
+        Talk to a character to see your insights
       </p>
     </div>
   );
