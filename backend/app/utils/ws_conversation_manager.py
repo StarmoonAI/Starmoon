@@ -102,7 +102,7 @@ class ConversationManager:
 
         # send utterance to celery task
         task_id_input = create_emotion_detection_task(
-            f"{previous_sentence}\n\nutterance", user, "user", session_id
+            f"{previous_sentence}\n\n{utterance}", user, "user", session_id
         )
 
         if device == "web":
