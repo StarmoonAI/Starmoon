@@ -40,7 +40,7 @@ const products: Product[] = [
       "Access any AI character from the Starmoon universe",
       "Compact and easy to use",
       "Customizable to fit any object",
-      "Over 4 days standby and 6 hours of continuous voice input",
+      "Over 4 days standby and 6 hours of continuous voice interaction",
       "Understand your conversational insights",
     ],
     originalPrice: 89,
