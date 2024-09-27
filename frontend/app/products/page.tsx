@@ -98,16 +98,16 @@ export default async function Home() {
               key={index}
               className="w-full rounded-3xl max-w-2xl overflow-hidden transition-all duration-300 hover:shadow-lg"
             >
-              <CardHeader className="p-2">
+              <CardHeader className="p-4 md:p-6">
                 <div className="w-full">
                   <Image
                     src={product.imageSrc}
                     alt={product.title}
-                    width={600} // Specify desired width
+                    width={800} // Specify desired width
                     height={400} // Specify desired height
                     layout="responsive" // Use responsive layout
                     objectFit="contain" // Ensure the image fits without cropping
-                    className="px-4"
+                    className=""
                   />
                 </div>
               </CardHeader>
