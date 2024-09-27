@@ -105,7 +105,7 @@ Video
 
 -   **Step 0 (Optional)**: Build the device yourself (alternatively, the [Starmoon DIY Dev Kit](https://www.starmoon.app/products) comes pre-assembled so you can focus on working with your own frontend + backend)
 
-    -   Follow the instructions [here](firmware/README.md) for more details on assembly
+    -   Follow the instructions [here](firmware/README.md) in Pin Configuration section for more details on assembly
 
 -   **Step 1**: Open PlatformIO Icon (VScode icon left sidebar)
 

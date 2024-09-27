@@ -1,8 +1,65 @@
 # ESP32 WebSocket Audio Client
 
-This firmware turns your ESP32-S3 (or general ESP32 WROOM Dev module) device into a WebSocket audio client, enabling real-time full-duplex audio communication with the WS backend server hosted at `../backend`. It's designed to be used in interactive toys or devices to converse with your personal AI characters.
+This firmware turns your Seed Studio XIAO ESP32-S3 (or general ESP32 WROOM Dev module) device into a WebSocket audio client, enabling real-time full-duplex audio communication with the server hosted at `../backend`. It's designed to be used in interactive toys or devices to converse with your personal AI characters.
 
-## Installation with PlatformIO
+## Pin Configuration
+
+<!-- ### For Seeed Studio XIAO ESP32S3 -->
+
+| **Component**              | **Seeed Studio XIAO ESP32S3** | **General ESP32 Dev Board** |
+| -------------------------- | ----------------------------- | --------------------------- |
+| **I2S Input (Microphone)** |                               |                             |
+| SD                         | D9                            | GPIO 13                     |
+| WS                         | D7                            | GPIO 5                      |
+| SCK                        | GD8                           | GPIO 18                     |
+| **I2S Output (Speaker)**   |                               |                             |
+| WS                         | D0                            | GPIO 32                     |
+| BCK                        | D1                            | GPIO 33                     |
+| DATA                       | D2                            | GPIO 25                     |
+| SD (shutdown)              | D3                            | N/A                         |
+| **Other**                  |                               |                             |
+| LED                        | D4                            | GPIO 2                      |
+| Button                     | D5                            | GPIO 26                     |
+
+<!-- 
+          I2S Input (Microphone)
+
+          -   SD: D9
+          -   WS: D7
+          -   SCK: GD8
+
+          I2S Output (Speaker with amp MAX98357A)
+
+          -   WS: D0
+          -   BCK: D1
+          -   DATA: D2
+          -   SD: D3 (shutdown)
+
+          Other
+
+          -   LED: D4
+          -   Button: D5
+
+### For a general ESP32 dev board
+
+          I2S Input (Microphone)
+
+          -   SD: GPIO 13
+          -   WS: GPIO 5
+          -   SCK: GPIO 18
+
+          I2S Output (Speaker)
+
+          -   WS: GPIO 32
+          -   BCK: GPIO 33
+          -   DATA: GPIO 25
+
+          Other
+
+          -   LED: GPIO 2
+          -   Button: GPIO 26 -->
+
+## Firmware burning with PlatformIO
 
 1. Install PlatformIO IDE (Visual Studio Code extension) if you haven't already.
 
@@ -19,34 +76,35 @@ This firmware turns your ESP32-S3 (or general ESP32 WROOM Dev module) device int
 
 4. Add the required libraries to your `platformio.ini` file:
 
--   For Seeed Studio XIAO ESP32S3
+   -   For Seeed Studio XIAO ESP32S3
 
-    ```ini
-    [env:seeed_xiao_esp32s3]
-    platform = espressif32
-    board = seeed_xiao_esp32s3
-    framework = arduino
-    monitor_speed = 115200
-    lib_deps =
-        https://github.com/tzapu/WiFiManager.git
-        gilmaimon/ArduinoWebsockets@^0.5.4
-        bblanchon/ArduinoJson@^7.1.0
-    ```
+       ```ini
+       [env:seeed_xiao_esp32s3]
+       platform = espressif32
+       board = seeed_xiao_esp32s3
+       framework = arduino
+       monitor_speed = 115200
+       lib_deps =
+           https://github.com/tzapu/WiFiManager.git
+           gilmaimon/ArduinoWebsockets@^0.5.4
+           bblanchon/ArduinoJson@^7.1.0
+       ```
 
--   For a general ESP32 Dev board
-    ```ini
-    [env:esp32dev]
-    platform = espressif32
-    board = esp32dev
-    framework = arduino
-    monitor_speed = 115200
-    lib_deps =
-        https://github.com/tzapu/WiFiManager.git
-        gilmaimon/ArduinoWebsockets @ ^0.5.3
-        bblanchon/ArduinoJson @ ^7.1.0
-    ```
-
-1. Update the WebSocket server details in the code:
+   -   For a general ESP32 Dev board
+       ```ini
+       [env:esp32dev]
+       platform = espressif32
+       board = esp32dev
+       framework = arduino
+       monitor_speed = 115200
+       lib_deps =
+           https://github.com/tzapu/WiFiManager.git
+           gilmaimon/ArduinoWebsockets @ ^0.5.3
+           bblanchon/ArduinoJson @ ^7.1.0
+       ```
+       
+       
+5. Update the WebSocket server details in the code:
 
     - Find the following lines in the code and update them with your information:
         ```cpp
@@ -56,22 +114,22 @@ This firmware turns your ESP32-S3 (or general ESP32 WROOM Dev module) device int
         const char *auth_token = "<your-auth-token-here>"; // generate auth-token in your starmoon web-app in Settings
         ```
 
-2. Build the project:
+6. Build the project:
 
     - Click the "PlatformIO: Build" button in the PlatformIO toolbar or run the build task.
 
-3. Upload the firmware:
+7. Upload the firmware:
 
     - Connect your ESP32 to your computer.
     - Click the "PlatformIO: Upload" button or run the upload task.
 
-4. Monitor the device:
+8. Monitor the device:
 
     - Open the Serial Monitor to view debug output and device status.
     - You can do this by clicking the "PlatformIO: Serial Monitor" button or running the monitor task.
 
-5. Connect to WiFi using the WiFi Captive portal
-    - It is straightforward to connect to your local Wifi network with an SSID and Password.
+9. Connect to WiFi using the WiFi Captive portal
+    - It is straightforward to connect to your local Wifi network with an SSID (WIFI name) and Password.
     - Once the device is on, it acts as an Access Point to connect to a known WiFi network.
     - Find the device name "Starmoon device" in your list of local wifi networks.
     - Press "Configure Wifi" and type in your SSID and PW for your Wifi and connect.
@@ -91,63 +149,23 @@ This firmware turns your ESP32-S3 (or general ESP32 WROOM Dev module) device int
 5. Speak into the microphone to send audio to the server.
 6. The device will play audio received from the server through the speaker.
 
-## Features
+<!-- ## Features -->
 
--   Real-time audio streaming using WebSocket
+<!-- -   Real-time audio streaming using WebSocket
 -   Full-duplex I2S audio input (microphone) and I2S audio output (speaker)
 -   WiFi connectivity
--   LED status indicator
--   Button interrupt for connection management
+-   LED status indicator -->
+<!-- -   Button interrupt for connection management -->
 
-## Hardware Requirements
+<!-- ## Hardware Requirements
 
 -   ESP32 development board
 -   INMP441 MEMS microphone (I2S input)
 -   MAX98357A amplifier (I2S output)
 -   LED (for status indication)
 -   Push button (for connection control)
--   USB Type-C or Micro USB power cable
+-   USB Type-C or Micro USB power cable -->
 
-## Pin Configuration
-
--   ### For ESP32S3
-
-          I2S Input (Microphone)
-
-          -   SD: D9
-          -   WS: D7
-          -   SCK: GD8
-
-          I2S Output (Speaker with amp MAX98357A)
-
-          -   WS: D0
-          -   BCK: D1
-          -   DATA: D2
-          -   SD: D3 (shutdown)
-
-          Other
-
-          -   LED: D4
-          -   Button: D5
-
--   ### For a general ESP32 dev board
-
-          I2S Input (Microphone)
-
-          -   SD: GPIO 13
-          -   WS: GPIO 5
-          -   SCK: GPIO 18
-
-          I2S Output (Speaker)
-
-          -   WS: GPIO 32
-          -   BCK: GPIO 33
-          -   DATA: GPIO 25
-
-          Other
-
-          -   LED: GPIO 2
-          -   Button: GPIO 26
 
 ## Functions
 
@@ -161,9 +179,9 @@ This firmware turns your ESP32-S3 (or general ESP32 WROOM Dev module) device int
 
 You can modify the following parameters in the code:
 
--   Audio sample rate (`SAMPLE_RATE`)
+<!-- -   Audio sample rate (`SAMPLE_RATE`) -->
 -   Buffer sizes (`bufferCnt`, `bufferLen`)
--   LED brightness levels (`MIN_BRIGHTNESS`, `MAX_BRIGHTNESS`)
+<!-- -   LED brightness levels (`MIN_BRIGHTNESS`, `MAX_BRIGHTNESS`) -->
 -   Debounce time for the button (`DEBOUNCE_TIME`)
 
 ## Troubleshooting
