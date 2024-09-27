@@ -77,7 +77,7 @@ export default async function Home() {
           <p className="text-md text-gray-600 inline-block">
             Choose the product that fits your needs.{" "}
             <Popover>
-              <PopoverTrigger>
+              <PopoverTrigger asChild>
                 <Button size="icon" variant="ghost" className="w-6 h-6">
                   <Info size={14} />
                 </Button>
@@ -98,13 +98,15 @@ export default async function Home() {
               key={index}
               className="w-full rounded-3xl max-w-2xl overflow-hidden transition-all duration-300 hover:shadow-lg"
             >
-              <CardHeader className="p-0">
-                <div className="relative h-56 w-full">
+              <CardHeader className="p-2">
+                <div className="w-full">
                   <Image
                     src={product.imageSrc}
                     alt={product.title}
-                    layout="fill"
-                    objectFit="cover"
+                    width={600} // Specify desired width
+                    height={400} // Specify desired height
+                    layout="responsive" // Use responsive layout
+                    objectFit="contain" // Ensure the image fits without cropping
                     className="px-4"
                   />
                 </div>
