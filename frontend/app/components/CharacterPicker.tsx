@@ -2,8 +2,8 @@
 
 import { useEffect } from "react";
 import Image from "next/image";
-import Product2 from "@/public/case1.png";
 import Product1 from "@/public/images/decomposation_view.gif";
+import Product2 from "@/public/images/front_view.png";
 
 // Import Swiper
 import Swiper from "swiper";

@@ -32,7 +32,7 @@ const products: Product[] = [
     title: "Starmoon AI Toy",
     description:
       "The Starmoon AI Toy provides all AI characters packed into one compact device that can be added to any object.",
-    imageSrc: "/case1.png",
+    imageSrc: "/images/front_view.png",
     features: [
       "2-month FREE access to Starmoon AI subscription",
       "Unlimited access to Starmoon characters till we deliver your device",
@@ -40,7 +40,7 @@ const products: Product[] = [
       "Access any AI character from the Starmoon universe",
       "Compact and easy to use",
       "Customizable to fit any object",
-      "Over 4 days standby and 6 hours of continuous voice input ",
+      "Over 4 days standby and 6 hours of continuous voice input",
       "Understand your conversational insights",
     ],
     originalPrice: 89,
@@ -105,6 +105,7 @@ export default async function Home() {
                     alt={product.title}
                     layout="fill"
                     objectFit="cover"
+                    className="px-4"
                   />
                 </div>
               </CardHeader>
