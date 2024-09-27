@@ -20,7 +20,7 @@ transcript_collector = TranscriptCollector()
 client = Clients()
 
 
-CLAUSE_BOUNDARIES = r"\.|\?|!|。|;|,"
+CLAUSE_BOUNDARIES = r"\.|\?|!|。|;"
 
 
 def chunk_text_by_clause(text):
