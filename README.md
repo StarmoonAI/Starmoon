@@ -103,7 +103,7 @@ Video
 
 ### Hardware setup 🧰
 
--   **Step 0 (Optional)**: Build the device yourself (alternatively, the [Starmoon DIY Dev Kit](www.starmoon.app/products) comes pre-assembled so you can focus on working with your own frontend + backend)
+-   **Step 0 (Optional)**: Build the device yourself (alternatively, the [Starmoon DIY Dev Kit](https://www.starmoon.app/products) comes pre-assembled so you can focus on working with your own frontend + backend)
 
     -   Follow the instructions [here](firmware/README.md) for more details on assembly
 
@@ -115,11 +115,11 @@ Video
 -   **Step 2**: Update the WiFi (only support 2.4Ghz) credentials and WebSocket server details in `src/main.cpp`
 
     -   Find the following lines in the code and update them with your information:
-    -   Find the WiFi host by command `ipconfig` (under `Default Gateway`) in Windows or `ifconfig` (under `inet xxx.x.x.x netmask 0xff000000`) in Linux/MacOS
+    -   Find the WiFi ip (websocket_server_host) by command `ipconfig` (under `Default Gateway`) in Windows or `ifconfig` (under `inet xxx.x.x.x netmask 0xff000000`) in Linux/MacOS
 
         ```cpp
         // Wifi setup
-        Power the device -> Find the Access Point Wifi captive portal under "Starmoon device"
+        // Power the device -> Find the Access Point Wifi captive portal under "Starmoon device"
 
         // WebSocket setup
         const char *websocket_server_host = "<your-server-host-ip>"; // Wifi settings -> Your Wifi I.P.

@@ -19,7 +19,7 @@ This firmware turns your ESP32-S3 (or general ESP32 WROOM Dev module) device int
 
 4. Add the required libraries to your `platformio.ini` file:
 
--   For ESP32S3
+-   For Seeed Studio XIAO ESP32S3
 
     ```ini
     [env:seeed_xiao_esp32s3]
@@ -75,11 +75,11 @@ This firmware turns your ESP32-S3 (or general ESP32 WROOM Dev module) device int
     - Once the device is on, it acts as an Access Point to connect to a known WiFi network.
     - Find the device name "Starmoon device" in your list of local wifi networks.
     - Press "Configure Wifi" and type in your SSID and PW for your Wifi and connect.
-    - The ESP32S3 should then automatically connect to your Wifi and save your Wifi details.
+    - The Seeed Stuido XIAO ESP32S3 should then automatically connect to your Wifi and save your Wifi details.
 
 ## Usage
 
-1. Power on the ESP32S3 device.
+1. Power on the ESP32 device.
 2. The device will automatically connect to the WiFi network as set on the Captive portal.
 3. Press the button to initiate a full-duplex WebSocket connection to the server.
 4. The LED indicates the current status:
@@ -175,7 +175,3 @@ You can modify the following parameters in the code:
 ## Contributing
 
 Feel free to submit issues or pull requests to improve this firmware.
-
-## License
-
-MIT
