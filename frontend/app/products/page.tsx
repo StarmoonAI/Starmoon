@@ -31,7 +31,7 @@ const products: Product[] = [
   {
     title: "Starmoon AI Box",
     description:
-      "The Starmoon AI box provides all AI characters packed into one compact device that can be added to any object. Comes fully assembled, doesn't require technical skills to set up.",
+      "The Starmoon AI box provides all AI characters packed into one fully assembled compact device that can be added to any object",
     imageSrc: "/images/front_view.png",
     features: [
       "2-month FREE access to Starmoon AI subscription",
