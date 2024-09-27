@@ -29,9 +29,9 @@ interface Product {
 
 const products: Product[] = [
   {
-    title: "Starmoon AI Toy",
+    title: "Starmoon AI Box",
     description:
-      "The Starmoon AI Toy provides all AI characters packed into one compact device that can be added to any object.",
+      "The Starmoon AI box provides all AI characters packed into one compact device that can be added to any object. Comes fully assembled, doesn't require technical skills to set up.",
     imageSrc: "/images/front_view.png",
     features: [
       "2-month FREE access to Starmoon AI subscription",
