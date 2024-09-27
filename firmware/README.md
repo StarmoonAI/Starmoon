@@ -76,7 +76,7 @@ This firmware turns your Seed Studio XIAO ESP32-S3 (or general ESP32 WROOM Dev m
 
 4. Add the required libraries to your `platformio.ini` file:
 
-   -   For Seeed Studio XIAO ESP32S3
+   - For Seeed Studio XIAO ESP32S3
 
        ```ini
        [env:seeed_xiao_esp32s3]
@@ -90,7 +90,7 @@ This firmware turns your Seed Studio XIAO ESP32-S3 (or general ESP32 WROOM Dev m
            bblanchon/ArduinoJson@^7.1.0
        ```
 
-   -   For a general ESP32 Dev board
+   - For a general ESP32 Dev board
        ```ini
        [env:esp32dev]
        platform = espressif32
@@ -102,7 +102,6 @@ This firmware turns your Seed Studio XIAO ESP32-S3 (or general ESP32 WROOM Dev m
            gilmaimon/ArduinoWebsockets @ ^0.5.3
            bblanchon/ArduinoJson @ ^7.1.0
        ```
-       
        
 5. Update the WebSocket server details in the code:
 
@@ -129,7 +128,7 @@ This firmware turns your Seed Studio XIAO ESP32-S3 (or general ESP32 WROOM Dev m
     - You can do this by clicking the "PlatformIO: Serial Monitor" button or running the monitor task.
 
 9. Connect to WiFi using the WiFi Captive portal
-    - It is straightforward to connect to your local Wifi network with an SSID (WIFI name) and Password.
+    - It is straightforward to connect to your local Wifi network with an SSID (WiFi name) and Password.
     - Once the device is on, it acts as an Access Point to connect to a known WiFi network.
     - Find the device name "Starmoon device" in your list of local wifi networks.
     - Press "Configure Wifi" and type in your SSID and PW for your Wifi and connect.
