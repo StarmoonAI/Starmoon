@@ -17,7 +17,7 @@ This firmware turns your Seed Studio XIAO ESP32-S3 (or general ESP32 WROOM Dev m
 | BCK                        | D1                            | GPIO 33                     |
 | DATA                       | D2                            | GPIO 25                     |
 | SD (shutdown)              | D3                            | N/A                         |
-| **Other**                  |                               |                             |
+| **Others**                 |                               |                             |
 | LED                        | D4                            | GPIO 2                      |
 | Button                     | D5                            | GPIO 26                     |
 

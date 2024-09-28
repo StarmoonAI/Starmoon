@@ -22,6 +22,7 @@ interface Product {
   imageSrc: string;
   features: string[];
   price: number;
+  deliveryDate: string;
   tag: string;
   paymentLink: string;
   originalPrice: number;
@@ -45,6 +46,7 @@ const products: Product[] = [
     ],
     originalPrice: 89,
     price: 59,
+    deliveryDate: "Delivery by November 2024",
     tag: "Most Popular",
     paymentLink: "https://buy.stripe.com/eVa3cfb5E9TJ3cs6ou",
   },
@@ -63,6 +65,7 @@ const products: Product[] = [
     ],
     originalPrice: 79,
     price: 49,
+    deliveryDate: "Delivery by November 2024",
     tag: "Best Value",
     paymentLink: "https://buy.stripe.com/3cs6ora1A2rheVa3cj",
   },
@@ -116,6 +119,9 @@ export default async function Home() {
                   <div className="text-2xl font-bold">${product.price}</div>
                   <div className="text-lg text-muted-foreground opacity-80 line-through">
                     ${product.originalPrice}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    {product.deliveryDate}
                   </div>
                 </div>
 
