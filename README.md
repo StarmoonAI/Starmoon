@@ -7,7 +7,7 @@ Starmoon is an affordable, compact AI-enabled device, you can take anywhere and 
 <!-- Put on a toy, Hanging on the hand, put on the desktop near macbook -->
 
 <div align="center">
-    <img src="./logo.png" alt="Starmoon-logo" width="20%"  style="border-radius: 50%; padding-bottom: 20px"/>
+    <img src="./usecases.png" alt="Starmoon-logo" width="100%" padding-bottom: 20px"/>
 
 <!-- [![Discord Follow](https://dcbadge.vercel.app/api/server/HUpRgp2HG8?style=flat)](https://discord.gg) -->
 
