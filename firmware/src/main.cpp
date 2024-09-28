@@ -4,7 +4,6 @@
 #include <ArduinoJson.h>
 #include <freertos/queue.h>
 #include <WiFiManager.h> // Include the WiFiManager library
-#include <esp_task_wdt.h>
 
 // Debounce time in milliseconds
 #define DEBOUNCE_TIME 50
@@ -16,7 +15,7 @@ TaskHandle_t ledTaskHandle = NULL;
 
 // BUTTON variables
 unsigned long lastDebounceTime = 0;
-volatile bool isWebSocketConnected = false;
+bool isWebSocketConnected = false;
 bool shouldConnectWebSocket = false;
 volatile bool buttonPressed = false;
 
@@ -27,13 +26,13 @@ unsigned long lastPulseTime = 0;
 int ledBrightness = 0;
 int fadeAmount = 5;
 
-#define BUTTON_PIN 0        // Built-in BOOT button (GPIO 0)
+#define BUTTON_PIN D5       // Built-in BOOT button (GPIO 0)
 #define LED_PIN LED_BUILTIN // Built-in LED (GPIO 10)
 
 // I2S pins for Audio Input (INMP441 MEMS microphone)
 #define I2S_SD D9
-#define I2S_WS D7
-#define I2S_SCK D8
+#define I2S_WS D8
+#define I2S_SCK D7
 #define I2S_PORT_IN I2S_NUM_0
 
 // I2S pins for Audio Output (MAX98357A amplifier)
@@ -50,9 +49,6 @@ int16_t sBuffer[bufferLen];
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define BUFFER_SIZE 1024
-
-#define LED_ON LOW
-#define LED_OFF HIGH
 
 // // Wifi Credentials
 String ssid = "launchlab";
@@ -100,45 +96,10 @@ void simpleSetup()
 // WebSocket server details
 const char *websocket_server_host = "192.168.2.236";
 // const char *websocket_server_host = "172.18.80.69";
-// const char *websocket_server_host = "wss://api.starmoon.app";
 const uint16_t websocket_server_port = 8000;
 const char *websocket_server_path = "/starmoon";
-const char *auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNWFmNjJiMGUtM2RhNC00YzQ0LWFkZjctNWIxYjdjOWM0Y2I2IiwiZW1haWwiOiJhZG1pbkBzdGFybW9vbi5hcHAiLCJpYXQiOjE3MjcyODUzMjJ9.3olRYDctJmDDu-zZWMeas_VG3wa8Pog_cXey4pxRBDI";
+const char *auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNWFmNjJiMGUtM2RhNC00YzQ0LWFkZjctNWIxYjdjOWM0Y2I2IiwiZW1haWwiOiJhZG1pbkBzdGFybW9vbi5hcHAiLCJpYXQiOjE3Mjc0NTI5OTV9.vdI-Qfq6Q7WI6Bq5S8Vsanl1xporDUvBwwAidFLafRw";
 String authMessage;
-
-// certificate for https://api.starmoon.app
-// ISRG Root X1, valid until Sat Mar 13 2027, size: 1801 bytes
-const char *rootCACertificate =
-    "-----BEGIN CERTIFICATE-----\n"
-    "MIIFBTCCAu2gAwIBAgIQS6hSk/eaL6JzBkuoBI110DANBgkqhkiG9w0BAQsFADBP\n"
-    "MQswCQYDVQQGEwJVUzEpMCcGA1UEChMgSW50ZXJuZXQgU2VjdXJpdHkgUmVzZWFy\n"
-    "Y2ggR3JvdXAxFTATBgNVBAMTDElTUkcgUm9vdCBYMTAeFw0yNDAzMTMwMDAwMDBa\n"
-    "Fw0yNzAzMTIyMzU5NTlaMDMxCzAJBgNVBAYTAlVTMRYwFAYDVQQKEw1MZXQncyBF\n"
-    "bmNyeXB0MQwwCgYDVQQDEwNSMTAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEK\n"
-    "AoIBAQDPV+XmxFQS7bRH/sknWHZGUCiMHT6I3wWd1bUYKb3dtVq/+vbOo76vACFL\n"
-    "YlpaPAEvxVgD9on/jhFD68G14BQHlo9vH9fnuoE5CXVlt8KvGFs3Jijno/QHK20a\n"
-    "/6tYvJWuQP/py1fEtVt/eA0YYbwX51TGu0mRzW4Y0YCF7qZlNrx06rxQTOr8IfM4\n"
-    "FpOUurDTazgGzRYSespSdcitdrLCnF2YRVxvYXvGLe48E1KGAdlX5jgc3421H5KR\n"
-    "mudKHMxFqHJV8LDmowfs/acbZp4/SItxhHFYyTr6717yW0QrPHTnj7JHwQdqzZq3\n"
-    "DZb3EoEmUVQK7GH29/Xi8orIlQ2NAgMBAAGjgfgwgfUwDgYDVR0PAQH/BAQDAgGG\n"
-    "MB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDATASBgNVHRMBAf8ECDAGAQH/\n"
-    "AgEAMB0GA1UdDgQWBBS7vMNHpeS8qcbDpHIMEI2iNeHI6DAfBgNVHSMEGDAWgBR5\n"
-    "tFnme7bl5AFzgAiIyBpY9umbbjAyBggrBgEFBQcBAQQmMCQwIgYIKwYBBQUHMAKG\n"
-    "Fmh0dHA6Ly94MS5pLmxlbmNyLm9yZy8wEwYDVR0gBAwwCjAIBgZngQwBAgEwJwYD\n"
-    "VR0fBCAwHjAcoBqgGIYWaHR0cDovL3gxLmMubGVuY3Iub3JnLzANBgkqhkiG9w0B\n"
-    "AQsFAAOCAgEAkrHnQTfreZ2B5s3iJeE6IOmQRJWjgVzPw139vaBw1bGWKCIL0vIo\n"
-    "zwzn1OZDjCQiHcFCktEJr59L9MhwTyAWsVrdAfYf+B9haxQnsHKNY67u4s5Lzzfd\n"
-    "u6PUzeetUK29v+PsPmI2cJkxp+iN3epi4hKu9ZzUPSwMqtCceb7qPVxEbpYxY1p9\n"
-    "1n5PJKBLBX9eb9LU6l8zSxPWV7bK3lG4XaMJgnT9x3ies7msFtpKK5bDtotij/l0\n"
-    "GaKeA97pb5uwD9KgWvaFXMIEt8jVTjLEvwRdvCn294GPDF08U8lAkIv7tghluaQh\n"
-    "1QnlE4SEN4LOECj8dsIGJXpGUk3aU3KkJz9icKy+aUgA+2cP21uh6NcDIS3XyfaZ\n"
-    "QjmDQ993ChII8SXWupQZVBiIpcWO4RqZk3lr7Bz5MUCwzDIA359e57SSq5CCkY0N\n"
-    "4B6Vulk7LktfwrdGNVI5BsC9qqxSwSKgRJeZ9wygIaehbHFHFhcBaMDKpiZlBHyz\n"
-    "rsnnlFXCb5s8HKn5LsUgGvB24L7sGNZP2CX7dhHov+YhD+jozLW2p9W4959Bz2Ei\n"
-    "RmqDtmiXLnzqTpXbI+suyCsohKRg6Un0RC47+cpiVwHiXZAW+cn8eiNIjqbVgXLx\n"
-    "KPpdzvvtTnOPlC7SQZSYmdunr3Bf9b77AiC/ZidstK36dRILKz7OA54=\n"
-    "-----END CERTIFICATE-----\n"
-    "";
 
 // Flag to control when to play audio
 bool shouldPlayAudio = false;
@@ -191,15 +152,15 @@ void onWSConnectionOpened()
     Serial.println(authMessage);
     client.send(authMessage);
     Serial.println("Connnection Opened");
-    digitalWrite(LED_PIN, LED_ON);
+    analogWrite(LED_PIN, 250);
     isWebSocketConnected = true;
 }
 
 void onWSConnectionClosed()
 {
-    isWebSocketConnected = false;
-    digitalWrite(LED_PIN, LED_OFF);
+    analogWrite(LED_PIN, 0);
     Serial.println("Connnection Closed");
+    isWebSocketConnected = false;
 }
 
 void onEventsCallback(WebsocketsEvent event, String data)
@@ -415,7 +376,6 @@ void handleTextMessage(const char *msgText)
 void connectWSServer()
 {
     if (client.connect(websocket_server_host, websocket_server_port, websocket_server_path))
-    // if (client.connect("wss://api.starmoon.app/starmoon"))
     {
         Serial.println("Connected to WebSocket server");
     }
@@ -429,7 +389,6 @@ void disconnectWSServer()
 {
     client.close();
     vTaskDelay(100 / portTICK_PERIOD_MS); // Delay to ensure the connection is closed
-    isWebSocketConnected = false;         // Explicitly set to false
     onWSConnectionClosed();
 }
 
@@ -479,7 +438,6 @@ void buttonTask(void *parameter)
 
             if (isWebSocketConnected)
             {
-                digitalWrite(LED_PIN, LED_OFF);
                 disconnectWSServer();
             }
             else
@@ -500,11 +458,9 @@ void ledControlTask(void *parameter)
 
     while (1)
     {
-        // Delay at the start of the loop to allow for status updates
-        vTaskDelay(pdMS_TO_TICKS(50));
         if (!isWebSocketConnected)
         {
-            digitalWrite(LED_PIN, LED_OFF);
+            analogWrite(LED_PIN, 0); // LED off when not connected
         }
         else if (shouldPlayAudio)
         {
@@ -526,11 +482,11 @@ void ledControlTask(void *parameter)
         else
         {
             // Fixed brightness when connected but not playing audio
-            digitalWrite(LED_PIN, LED_ON);
+            analogWrite(LED_PIN, MAX_BRIGHTNESS);
         }
 
-        // Allow other tasks to run and reset the watchdog timer
-        esp_task_wdt_reset();
+        // Small delay to prevent task from hogging CPU
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 }
 
@@ -538,13 +494,7 @@ void setup()
 {
     Serial.begin(115200);
 
-    pinMode(LED_PIN, OUTPUT);
-    digitalWrite(LED_PIN, LED_OFF);
-
     connectWiFi();
-    // simpleSetup();
-    // client.setInsecure();
-    // client.setCACert(rootCACertificate);
     client.onEvent(onEventsCallback);
     client.onMessage(onMessageCallback);
 
@@ -559,6 +509,7 @@ void setup()
     xTaskCreate(buttonTask, "buttonTask", 2048, NULL, 1, &buttonTaskHandle);
 
     pinMode(BUTTON_PIN, INPUT_PULLUP);
+    pinMode(LED_PIN, OUTPUT);
 
     // Set SD_PIN as output and initialize to HIGH (unmuted)
     pinMode(I2S_SD_OUT, OUTPUT);

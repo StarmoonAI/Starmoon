@@ -34,7 +34,7 @@ export const ClientProfileForm: React.FC<ClientProfileFormProps> = ({
                 type: "demo",
             });
             toast({
-                title: "We can't wait to demo you!",
+                title: "We are excited to demo you the Starmoon device!",
                 description:
                     "Thanks for getting in touch. We will reach out within 24 hours.",
                 duration: 5000,
@@ -55,7 +55,7 @@ export const ClientProfileForm: React.FC<ClientProfileFormProps> = ({
                 <Label htmlFor="name">Name</Label>
                 <Input
                     id="name"
-                    placeholder="Mr. So Kyoh"
+                    placeholder="Mr. Moon McStar"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     style={{ fontSize: 16 }}
@@ -67,7 +67,7 @@ export const ClientProfileForm: React.FC<ClientProfileFormProps> = ({
                 <Input
                     type="email"
                     id="email"
-                    placeholder={"sookeeoh@gmail.com"}
+                    placeholder={"star@moon.com"}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     style={{ fontSize: 16 }}

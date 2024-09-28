@@ -61,7 +61,7 @@ export default async function Index() {
                     </Button>
                 </Link>
                 <Link href={user ? "/home" : "/login"}>
-                    <Button className="flex flex-row items-center gap-2 font-medium text-base text-stone-800 leading-8 rounded-full bg-transparent border-2 border-stone-900 hover:bg-stone-500 hover:bg-opacity-5">
+                    <Button className="flex flex-row items-center bg-white gap-2 font-medium text-base text-stone-800 leading-8 rounded-full border-2 border-stone-900 hover:bg-gray-100">
                         <Gamepad2 size={20} />
                         <span>Play Online</span>
                     </Button>
