@@ -46,7 +46,7 @@ const products: Product[] = [
     ],
     originalPrice: 89,
     price: 59,
-    deliveryDate: "Delivery by November 2024",
+    deliveryDate: "Deliveries begin at November",
     tag: "Most Popular",
     paymentLink: "https://buy.stripe.com/eVa3cfb5E9TJ3cs6ou",
   },
@@ -65,7 +65,7 @@ const products: Product[] = [
     ],
     originalPrice: 79,
     price: 49,
-    deliveryDate: "Delivery by November 2024",
+    deliveryDate: "Deliveries begin at November",
     tag: "Best Value",
     paymentLink: "https://buy.stripe.com/3cs6ora1A2rheVa3cj",
   },
@@ -115,12 +115,14 @@ export default async function Home() {
                 </div>
               </CardHeader>
               <CardFooter className="flex justify-between items-center p-6 bg-muted/50">
-                <div className="flex flex-row items-baseline gap-2">
-                  <div className="text-2xl font-bold">${product.price}</div>
-                  <div className="text-lg text-muted-foreground opacity-80 line-through">
-                    ${product.originalPrice}
+                <div>
+                  <div className="flex flex-row items-baseline gap-2">
+                    <div className="text-2xl font-bold">${product.price}</div>
+                    <div className="text-lg text-muted-foreground opacity-80 line-through">
+                      ${product.originalPrice}
+                    </div>
                   </div>
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-xs text-muted-foreground">
                     {product.deliveryDate}
                   </div>
                 </div>
