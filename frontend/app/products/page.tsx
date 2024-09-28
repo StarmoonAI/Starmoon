@@ -105,10 +105,7 @@ export default async function Home() {
                 {products.map((product, index) => (
                     <Card
                         key={`productCard-${index}`}
-                        className={`w-full rounded-3xl max-w-2xl overflow-hidden transition-all duration-300`}
-                        style={{
-                            boxShadow: product.shadow,
-                        }}
+                        className={`w-full rounded-3xl max-w-2xl overflow-hidden transition-all duration-300 shadow-md`}
                     >
                         <CardFooter className="flex gap-6 justify-between items-center p-6 bg-muted/50">
                             <div className="flex flex-row items-baseline gap-2">
