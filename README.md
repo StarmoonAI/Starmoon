@@ -41,7 +41,7 @@ Video
     - [OpenAI API key](https://platform.openai.com/api-keys): For AI language models
     - [Deepgram API key](https://developers.deepgram.com/docs/create-additional-api-keys): For speech-to-text
     - [Azure speech API keys](https://vitalpbx.com/blog/how-to-create-microsoft-azure-tts-api-key/): For text-to-speech
-    - [Huggingface API key](https://huggingface.co/docs/api-inference/en/quicktour#get-your-api-token): For emotion intelligence
+    - [Huggingface API key](https://huggingface.co/settings/tokens): For emotion intelligence
 
 2. Hardware list (Tax and shipping rates may vary by region)
     - [Seeed Studio Xiao ESP32S3](https://www.aliexpress.us/item/1005007341749305.html)
