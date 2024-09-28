@@ -102,13 +102,6 @@ const config = {
             },
         },
     },
-    purge: {
-        safelist: [
-            "shadow-cool",
-            "shadow-tron",
-            // Add any other dynamically applied shadow classes here
-        ],
-    },
     plugins: [
         require("tailwindcss-animate"),
         require("@tailwindcss/aspect-ratio"),

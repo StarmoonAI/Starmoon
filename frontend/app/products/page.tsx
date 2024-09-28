@@ -28,6 +28,8 @@ interface Product {
     shadow: string;
 }
 
+const DeliveryString = "Delivery starting November 2024";
+
 const products: Product[] = [
     {
         title: "Starmoon AI Device",
@@ -108,26 +110,16 @@ export default async function Home() {
                             boxShadow: product.shadow,
                         }}
                     >
-                        <CardHeader className="p-2">
-                            <div className="w-full">
-                                <Image
-                                    src={product.imageSrc}
-                                    alt={product.title}
-                                    width={600} // Specify desired width
-                                    height={400} // Specify desired height
-                                    layout="responsive" // Use responsive layout
-                                    objectFit="contain" // Ensure the image fits without cropping
-                                    className="px-4"
-                                />
-                            </div>
-                        </CardHeader>
-                        <CardFooter className="flex justify-between items-center p-6 bg-muted/50">
+                        <CardFooter className="flex gap-6 items-center p-6 bg-muted/50 relative">
                             <div className="flex flex-row items-baseline gap-2">
                                 <div className="text-2xl font-bold">
                                     ${product.price}
                                 </div>
                                 <div className="text-lg text-muted-foreground opacity-80 line-through">
                                     ${product.originalPrice}
+                                </div>
+                                <div className="text-xs text-muted-foreground absolute bottom-2 right-2">
+                                    {DeliveryString}
                                 </div>
                             </div>
 
@@ -141,6 +133,20 @@ export default async function Home() {
                                 </Button>
                             </Link>
                         </CardFooter>
+                        <CardHeader className="p-2">
+                            <div className="w-full">
+                                <Image
+                                    src={product.imageSrc}
+                                    alt={product.title}
+                                    width={600} // Specify desired width
+                                    height={400} // Specify desired height
+                                    layout="responsive" // Use responsive layout
+                                    objectFit="contain" // Ensure the image fits without cropping
+                                    className="px-4"
+                                />
+                            </div>
+                        </CardHeader>
+
                         <CardContent className="p-8 relative">
                             <div className="flex justify-between items-start mb-4">
                                 <div className="mt-8">
