@@ -51,8 +51,8 @@ int16_t sBuffer[bufferLen];
 #define BUFFER_SIZE 1024
 
 // // Wifi Credentials
-String ssid = "launchlab";
-String password = "LaunchLabRocks";
+String ssid = "jPhone";
+String password = "0987654321";
 
 WiFiManager wm;
 
@@ -94,7 +94,7 @@ void simpleSetup()
 }
 
 // WebSocket server details
-const char *websocket_server_host = "192.168.2.236";
+const char *websocket_server_host = "172.20.10.2";
 // const char *websocket_server_host = "172.18.80.69";
 const uint16_t websocket_server_port = 8000;
 const char *websocket_server_path = "/starmoon";
@@ -495,6 +495,7 @@ void setup()
     Serial.begin(115200);
 
     connectWiFi();
+    // simpleSetup();
     client.onEvent(onEventsCallback);
     client.onMessage(onMessageCallback);
 
