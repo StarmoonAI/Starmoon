@@ -110,16 +110,13 @@ export default async function Home() {
                             boxShadow: product.shadow,
                         }}
                     >
-                        <CardFooter className="flex gap-6 items-center p-6 bg-muted/50 relative">
+                        <CardFooter className="flex gap-6 justify-between items-center p-6 bg-muted/50">
                             <div className="flex flex-row items-baseline gap-2">
                                 <div className="text-2xl font-bold">
                                     ${product.price}
                                 </div>
                                 <div className="text-lg text-muted-foreground opacity-80 line-through">
                                     ${product.originalPrice}
-                                </div>
-                                <div className="text-xs text-muted-foreground absolute bottom-2 right-2">
-                                    {DeliveryString}
                                 </div>
                             </div>
 
@@ -164,7 +161,7 @@ export default async function Home() {
                                     {product.tag}
                                 </Badge>
                             </div>
-                            <div className="space-y-4">
+                            <div className="space-y-4 mb-2">
                                 <div>
                                     <h3 className="font-semibold text-lg mb-2">
                                         Features
@@ -188,6 +185,9 @@ export default async function Home() {
                                         ))}
                                     </ul>
                                 </div>
+                            </div>
+                            <div className="text-xs text-muted-foreground absolute bottom-3 right-3">
+                                {DeliveryString}
                             </div>
                         </CardContent>
                     </Card>
