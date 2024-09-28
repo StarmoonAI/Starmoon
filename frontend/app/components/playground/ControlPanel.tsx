@@ -124,6 +124,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
                                 //     callDurationTimestamp ?? "00:00:00",
                                 // );
                             }}
+                            size="sm"
                             variant={"destructive"}
                         >
                             <span>
