@@ -8,10 +8,9 @@
 #include "time.h"
 
 // Define your NTP server
-const char* ntpServer = "pool.ntp.org";
-const long gmtOffset_sec = 0; // Adjust according to your time zone
+const char *ntpServer = "pool.ntp.org";
+const long gmtOffset_sec = 0;        // Adjust according to your time zone
 const int daylightOffset_sec = 3600; // Adjust for daylight saving if needed
-
 
 // Debounce time in milliseconds
 #define DEBOUNCE_TIME 50
@@ -152,10 +151,10 @@ const char *rootCACertificate =
     "";
 
 // WebSocket server details
-// const char *websocket_server_host = "api.starmoon.app";
-// // const char *websocket_server_host = "172.18.80.69";
-// const uint16_t websocket_server_port = 8000;
-// const char *websocket_server_path = "/starmoon";
+const char *websocket_server_host = "51.8.202.78";
+// const char *websocket_server_host = "172.18.80.69";
+const uint16_t websocket_server_port = 80;
+const char *websocket_server_path = "/starmoon";
 const char *auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMjliZTc2NTgtNDZiYi00NDhmLWFjNGUtYjU3ZDNjYjBkYTZhIiwiZW1haWwiOiJha2FkZWI5N0BnbWFpbC5jb20iLCJpYXQiOjE3Mjc2MjcyMDV9.x1OImIqILW-zsLitYCNO4Ikr187JZCnm4zkzqzIU11U";
 String authMessage;
 
@@ -433,7 +432,8 @@ void handleTextMessage(const char *msgText)
 
 void connectWSServer()
 {
-    if (client.connect("wss://api.starmoon.app/starmoon"))
+    if (client.connect(websocket_server_host, websocket_server_port, websocket_server_path))
+    // if (client.connect("wss://api.starmoon.app/starmoon"))
     {
         Serial.println("Connected to WebSocket server");
     }
@@ -509,9 +509,11 @@ void buttonTask(void *parameter)
     }
 }
 
-void printLocalTime() {
+void printLocalTime()
+{
     struct tm timeinfo;
-    if (!getLocalTime(&timeinfo)) {
+    if (!getLocalTime(&timeinfo))
+    {
         Serial.println("Failed to obtain time");
         return;
     }
@@ -527,12 +529,13 @@ void setup()
 
     connectWiFi();
 
-// Configure time using NTP
+    // Configure time using NTP
     configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 
     // Wait for time to be set
     Serial.println("Waiting for NTP time sync...");
-    while (!time(nullptr)) {
+    while (!time(nullptr))
+    {
         delay(1000);
         Serial.print(".");
     }
@@ -542,7 +545,8 @@ void setup()
     printLocalTime();
 
     // simpleAPSetup();
-    client.setCACert(rootCACertificate);
+    // client.setCACert(rootCACertificate);
+
     client.onEvent(onEventsCallback);
     client.onMessage(onMessageCallback);
 
