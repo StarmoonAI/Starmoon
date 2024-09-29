@@ -1,3 +1,4 @@
+
 #include <Arduino.h>
 /*
   Simple Internet Radio Demo
@@ -28,17 +29,18 @@
 Audio audio;
 
 // // Wifi Credentials
-String ssid = "launchlab";
-String password = "LaunchLabRocks";
+String ssid = "city-guest";
+String password = "16mzyvu6";
 
 // String ssid = "EE-P8CX8N";
 // String password = "xd6UrFLd4kf9x4";
 
 void setup()
 {
-
     // Start Serial Monitor
     Serial.begin(115200);
+
+    Serial.println("Connecting to WiFi");
 
     // Setup WiFi in Station mode
     WiFi.disconnect();
@@ -66,7 +68,7 @@ void setup()
     audio.setPinout(I2S_BCLK, I2S_LRC, I2S_DOUT);
 
     // Set thevolume (0-100)
-    audio.setVolume(90);
+    audio.setVolume(10);
 
     // Connect to an Internet radio station (select one as desired)
     // audio.connecttohost("http://vis.media-ice.musicradio.com/CapitalMP3");
@@ -74,7 +76,7 @@ void setup()
     // audio.connecttohost("www.surfmusic.de/m3u/100-5-das-hitradio,4529.m3u");
     // audio.connecttohost("stream.1a-webradio.de/deutsch/mp3-128/vtuner-1a");
     // audio.connecttohost("www.antenne.de/webradio/antenne.m3u");
-    audio.connecttohost("0n-80s.radionetz.de:8000/0n-70s.mp3");
+    audio.connecttohost("http://vis.media-ice.musicradio.com/CapitalMP3");
 }
 
 void loop()
