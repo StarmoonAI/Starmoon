@@ -68,6 +68,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
                                     muteMicrophone();
                                 }
                             }}
+                            className="rounded-full"
                         >
                             {isMuted ? (
                                 <MicOff className={"size-4"} />
@@ -81,7 +82,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
                                 <TooltipTrigger>
                                     <Button
                                         className={
-                                            "bg-gray-100 hover:bg-gray-200 "
+                                            "bg-gray-100 hover:bg-gray-200 rounded-full"
                                         }
                                         onClick={() => {
                                             handleClickInterrupt();
@@ -117,7 +118,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
                             />
                         </div>
                         <Button
-                            className={"flex items-center gap-1"}
+                            className={"flex items-center gap-1 rounded-full"}
                             onClick={() => {
                                 handleClickCloseConnection();
                                 // addSessionTime(
@@ -127,14 +128,11 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
                             size="sm"
                             variant={"destructive"}
                         >
-                            <span>
-                                <Phone
-                                    className={"size-4 opacity-50"}
-                                    strokeWidth={2}
-                                    stroke={"currentColor"}
-                                />
-                            </span>
-                            <span>End Call</span>
+                            <Phone
+                                className={"size-4"}
+                                strokeWidth={2}
+                                stroke={"currentColor"}
+                            />
                         </Button>
                     </motion.div>
                 ) : null}
