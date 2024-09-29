@@ -1,3 +1,5 @@
+import OurAddressSign from "../components/OurAddressSign";
+
 export default async function Index() {
     return (
         <div className="flex max-w-xl mx-auto w-full mt-8 flex-col lg:w-1/2 px-4  gap-2 text-left m-2">
@@ -92,30 +94,7 @@ export default async function Index() {
                     If you have any questions about these Terms, please contact
                     me at
                 </p>
-                <p>
-                    Akashdeep Deb, [
-                    <a
-                        href="mailto:akash@starmoon.app"
-                        className="text-blue-400 underline"
-                    >
-                        akash@starmoon.app
-                    </a>
-                    ] <br />
-                    Junru Xiong, [
-                    <a
-                        href="mailto:junru@starmoon.app"
-                        className="text-blue-400 underline"
-                    >
-                        junru@starmoon.app
-                    </a>
-                    ] <br />
-                    Co-founders, Starmoon AI
-                    <br />
-                    Floor 3, <br />
-                    44 Montgomery St, <br />
-                    San Francisco, CA, <br />
-                    94104
-                </p>
+                <OurAddressSign />
             </div>
         </div>
     );

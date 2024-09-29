@@ -1,5 +1,7 @@
 // export const dynamic = "force-dynamic";
 
+import OurAddressSign from "../components/OurAddressSign";
+
 export default async function Index() {
     return (
         <div className="flex w-full  max-w-xl mx-auto mt-8 flex-col lg:w-1/2 px-4  gap-2 text-left m-2">
@@ -156,30 +158,7 @@ export default async function Index() {
                     If there are any questions regarding this privacy policy,
                     you may contact me using the information below:
                 </p>
-                <p>
-                    Akashdeep Deb, [
-                    <a
-                        href="mailto:akash@starmoon.app"
-                        className="text-blue-400 underline"
-                    >
-                        akash@starmoon.app
-                    </a>
-                    ] <br />
-                    Junru Xiong, [
-                    <a
-                        href="mailto:junru@starmoon.app"
-                        className="text-blue-400 underline"
-                    >
-                        junru@starmoon.app
-                    </a>
-                    ] <br />
-                    Co-founders, Starmoon AI
-                    <br />
-                    Floor 3, <br />
-                    44 Montgomery St, <br />
-                    San Francisco, CA, <br />
-                    94104
-                </p>
+                <OurAddressSign />
             </div>
         </div>
     );
