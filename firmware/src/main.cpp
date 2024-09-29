@@ -28,6 +28,10 @@ int fadeAmount = 5;
 
 #define BUTTON_PIN D5       // Built-in BOOT button (GPIO 0)
 #define LED_PIN LED_BUILTIN // Built-in LED (GPIO 10)
+#define BLINK_INTERVAL 1000 // Blink interval in milliseconds
+
+unsigned long previousMillis = 0; // Will store the last time the LED was updated
+bool ledState = LOW;              // Variable to store LED state
 
 // I2S pins for Audio Input (INMP441 MEMS microphone)
 #define I2S_SD D9
@@ -51,13 +55,28 @@ int16_t sBuffer[bufferLen];
 #define BUFFER_SIZE 1024
 
 // // Wifi Credentials
-String ssid = "jPhone";
-String password = "0987654321";
+String ssid = "city-guest";
+String password = "16mzyvu6";
+
+/**
+ * city university
+ * city-guest
+ * 16mzyvu6
+ */
 
 WiFiManager wm;
 
-void simpleSetup()
+// TODO
+// add a Success state in the captive portal
+// add a way to reset the device
+// make the device blink while it is not connected to wifi
+
+void simpleAPSetup()
 {
+    pinMode(LED_PIN, OUTPUT);
+    digitalWrite(LED_PIN, HIGH); // Turn off LED (assuming LOW turns it ON)
+
+    // wm.resetSettings();
     // **Set the portal title to "Starmoon AI"**
     wm.setTitle("Starmoon AI");
 
@@ -77,28 +96,27 @@ void simpleSetup()
     String customHTML = "<h1 style='text-align:center;'>Starmoon AI</h1>";
     wm.setCustomMenuHTML(customHTML.c_str());
 
-    // Start the configuration portal
-    bool res = wm.startConfigPortal("Starmoon device");
-
-    if (res)
+    if (!wm.autoConnect("Starmoon AI device"))
     {
-        Serial.println("Connected to Wi-Fi!");
-        Serial.println("IP address: ");
-        Serial.println(WiFi.localIP());
-    }
-    else
-    {
-        Serial.println("Failed to connect to Wi-Fi");
+        Serial.println("Failed to connect or hit timeout");
         ESP.restart(); // Optionally restart or handle the failure
     }
+
+    // If connected
+    Serial.println("Connected to Wi-Fi!");
+    Serial.println("IP address: ");
+    Serial.println(WiFi.localIP());
+
+    // Turn on the LED when connected
+    digitalWrite(LED_PIN, LOW); // LED ON when connected to Wi-Fi
 }
 
 // WebSocket server details
-const char *websocket_server_host = "172.20.10.2";
+const char *websocket_server_host = "172.16.7.211";
 // const char *websocket_server_host = "172.18.80.69";
 const uint16_t websocket_server_port = 8000;
 const char *websocket_server_path = "/starmoon";
-const char *auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNWFmNjJiMGUtM2RhNC00YzQ0LWFkZjctNWIxYjdjOWM0Y2I2IiwiZW1haWwiOiJhZG1pbkBzdGFybW9vbi5hcHAiLCJpYXQiOjE3Mjc0NTI5OTV9.vdI-Qfq6Q7WI6Bq5S8Vsanl1xporDUvBwwAidFLafRw";
+const char *auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNWFmNjJiMGUtM2RhNC00YzQ0LWFkZjctNWIxYjdjOWM0Y2I2IiwiZW1haWwiOiJhZG1pbkBzdGFybW9vbi5hcHAiLCJpYXQiOjE3Mjc2MjQxMTB9.p3EtpwHwwBR3AtIJXhYaPEL3lChrLZH14isbWrGY7y0";
 String authMessage;
 
 // Flag to control when to play audio
@@ -152,13 +170,13 @@ void onWSConnectionOpened()
     Serial.println(authMessage);
     client.send(authMessage);
     Serial.println("Connnection Opened");
-    analogWrite(LED_PIN, 250);
+    // analogWrite(LED_PIN, 250);
     isWebSocketConnected = true;
 }
 
 void onWSConnectionClosed()
 {
-    analogWrite(LED_PIN, 0);
+    // analogWrite(LED_PIN, 0);
     Serial.println("Connnection Closed");
     isWebSocketConnected = false;
 }
@@ -382,6 +400,7 @@ void connectWSServer()
     else
     {
         Serial.println("Failed to connect to WebSocket server");
+        Serial.println(client.getCloseReason());
     }
 }
 
@@ -450,52 +469,55 @@ void buttonTask(void *parameter)
     }
 }
 
-void ledControlTask(void *parameter)
-{
-    unsigned long lastPulseTime = 0;
-    int ledBrightness = MIN_BRIGHTNESS;
-    int fadeAmount = 5;
+// void ledControlTask(void *parameter)
+// {
+//     unsigned long lastPulseTime = 0;
+//     int ledBrightness = MIN_BRIGHTNESS;
+//     int fadeAmount = 5;
 
-    while (1)
-    {
-        if (!isWebSocketConnected)
-        {
-            analogWrite(LED_PIN, 0); // LED off when not connected
-        }
-        else if (shouldPlayAudio)
-        {
-            // Pulse LED while playing audio
-            unsigned long currentMillis = millis();
-            if (currentMillis - lastPulseTime >= 30)
-            {
-                lastPulseTime = currentMillis;
+//     while (1)
+//     {
+//         if (!isWebSocketConnected)
+//         {
+//             analogWrite(LED_PIN, 0); // LED off when not connected
+//         }
+//         else if (shouldPlayAudio)
+//         {
+//             // Pulse LED while playing audio
+//             unsigned long currentMillis = millis();
+//             if (currentMillis - lastPulseTime >= 30)
+//             {
+//                 lastPulseTime = currentMillis;
 
-                ledBrightness += fadeAmount;
-                if (ledBrightness <= MIN_BRIGHTNESS || ledBrightness >= MAX_BRIGHTNESS)
-                {
-                    fadeAmount = -fadeAmount;
-                }
+//                 ledBrightness += fadeAmount;
+//                 if (ledBrightness <= MIN_BRIGHTNESS || ledBrightness >= MAX_BRIGHTNESS)
+//                 {
+//                     fadeAmount = -fadeAmount;
+//                 }
 
-                analogWrite(LED_PIN, ledBrightness);
-            }
-        }
-        else
-        {
-            // Fixed brightness when connected but not playing audio
-            analogWrite(LED_PIN, MAX_BRIGHTNESS);
-        }
+//                 analogWrite(LED_PIN, ledBrightness);
+//             }
+//         }
+//         else
+//         {
+//             // Fixed brightness when connected but not playing audio
+//             analogWrite(LED_PIN, MAX_BRIGHTNESS);
+//         }
 
-        // Small delay to prevent task from hogging CPU
-        vTaskDelay(pdMS_TO_TICKS(10));
-    }
-}
+//         // Small delay to prevent task from hogging CPU
+//         vTaskDelay(pdMS_TO_TICKS(10));
+//     }
+// }
 
 void setup()
 {
     Serial.begin(115200);
 
+    pinMode(LED_PIN, OUTPUT);
+    digitalWrite(LED_PIN, HIGH); // Start with LED off
+
     connectWiFi();
-    // simpleSetup();
+    // simpleAPSetup();
     client.onEvent(onEventsCallback);
     client.onMessage(onMessageCallback);
 
@@ -506,11 +528,11 @@ void setup()
     i2s_speaker_setpin();
 
     xTaskCreatePinnedToCore(micTask, "micTask", 10000, NULL, 1, &micTaskHandle, 0);
-    xTaskCreatePinnedToCore(ledControlTask, "ledControlTask", 2048, NULL, 1, &ledTaskHandle, 1);
+    // xTaskCreatePinnedToCore(ledControlTask, "ledControlTask", 2048, NULL, 1, &ledTaskHandle, 1);
     xTaskCreate(buttonTask, "buttonTask", 2048, NULL, 1, &buttonTaskHandle);
 
     pinMode(BUTTON_PIN, INPUT_PULLUP);
-    pinMode(LED_PIN, OUTPUT);
+    // pinMode(LED_PIN, OUTPUT);
 
     // Set SD_PIN as output and initialize to HIGH (unmuted)
     pinMode(I2S_SD_OUT, OUTPUT);
@@ -532,6 +554,13 @@ void loop()
         client.poll();
     }
 
-    // Delay to avoid watchdog issues
-    delay(10);
+    if (WiFi.status() != WL_CONNECTED)
+    {
+        digitalWrite(LED_PIN, HIGH);
+    }
+    else
+    {
+        // If Wi-Fi is connected, make sure the LED is ON
+        digitalWrite(LED_PIN, LOW);
+    }
 }
