@@ -41,7 +41,7 @@ export default async function Index() {
                     className="font-inter-tight- text-4xl md:text-6xl font-semibold sm:mt-14 tracking-tight text-stone-900 "
                     style={{ lineHeight: "1.25" }}
                 >
-                    The open-source, compact, and conversational AI device for
+                    An open-source, compact, and conversational AI device for
                 </h1>
 
                 <AnimatedText />

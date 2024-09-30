@@ -74,7 +74,7 @@ export default async function Home() {
                                 className="font-inter text-4xl font-bold tracking-tight text-stone-800 sm:text-6xl"
                                 style={{ lineHeight: "1.25" }}
                             >
-                                The open-source{", "}
+                                An open-source{", "}
                                 <span className="text-amber-500">
                                     affordable
                                 </span>
