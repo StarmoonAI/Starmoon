@@ -10,6 +10,7 @@ from app.api.endpoints import (
     db_user,
     generate_token,
     starmoon,
+    starmoon_hardware,
 )
 from app.core.config import settings
 from dotenv import load_dotenv
@@ -40,6 +41,7 @@ app.include_router(analyze_text.router, prefix="/api", tags=["LLM response"])
 app.include_router(db_user.router, prefix="/api", tags=["User"])
 app.include_router(generate_token.router, prefix="/api", tags=["Token"])
 app.include_router(starmoon.router, tags=["StarMoon WebSocket"])
+app.include_router(starmoon_hardware.router, tags=["StarMoon Hardware WebSocket"])
 
 
 if __name__ == "__main__":
