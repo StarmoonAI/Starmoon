@@ -7,7 +7,7 @@ from app.db.personalities import get_personality
 from app.prompt.sys_prompt import BLOOD_TEST, SYS_PROMPT_PREFIX
 from app.services.clients import Clients
 from app.utils.ws_connection_manager import ConnectionManager
-from app.utils.ws_conversation_manager import ConversationManager
+from app.utils.ws_conversation_manager_hardware import ConversationManagerHardware
 from dotenv import load_dotenv
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 import pyaudio
@@ -31,10 +31,10 @@ manager = ConnectionManager()
 # )
 
 
-@router.websocket("/starmoon")
+@router.websocket("/starmoon_hardware")
 async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
-    conversation_manager = ConversationManager()
+    conversation_manager = ConversationManagerHardware()
     data_stream = asyncio.Queue()
     try:
         # ! 0 authenticate

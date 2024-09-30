@@ -14,7 +14,7 @@ class Clients:
         self.aclient_azure_4o = self._create_azure_aclient()
 
     def _create_azure_client(self):
-        # if os.getenv(OPENAI_API_KEY) exists, use it
+        # if os.getenv(OPENAI_API_KEY) has a value, use it
         if os.getenv("OPENAI_API_KEY"):
             return OpenAI()
         else:
