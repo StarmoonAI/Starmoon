@@ -16,10 +16,6 @@ from app.services.tts import (
 from app.utils.transcription_collector import TranscriptCollector
 from fastapi import WebSocket, WebSocketDisconnect
 
-import pyaudio
-
-p = pyaudio.PyAudio()
-
 transcript_collector = TranscriptCollector()
 client = Clients()
 
@@ -287,8 +283,8 @@ class ConversationManager:
                         "task_id": None,
                     }
                 )
-                await self.send_message(websocket, json_data)
-                await asyncio.sleep(10)
+            await self.send_message(websocket, json_data)
+            await asyncio.sleep(10)
             if (
                 not transcription_complete.is_set()
                 and self.client_transcription == ""
@@ -317,12 +313,11 @@ class ConversationManager:
         messages: list,
     ):
         previous_sentence = None
-        stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, output=True)
+        # stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, output=True)
 
         while True:
             try:
                 if not self.is_replying:
-                    print("Not replying")
                     transcription_complete = asyncio.Event()
                     transcription_task = asyncio.create_task(
                         self.get_transcript(data_stream, transcription_complete)
@@ -363,9 +358,8 @@ class ConversationManager:
                                         print("Received invalid JSON")
                                 elif bytes_data is not None:
                                     data = message["bytes"]
-                                    # stream.write(data)
                                     await data_stream.put(data)
-
+                                    # stream.write(data)
                         except WebSocketDisconnect:
                             self.connection_open = False
                             break
@@ -408,13 +402,11 @@ class ConversationManager:
                     self.client_transcription = ""
 
                 else:
-                    print("Received audio data")
                     message = await asyncio.wait_for(websocket.receive(), timeout=0.1)
                     if message["type"] == "websocket.receive":
                         text_data = message.get("text")
                         bytes_data = message.get("bytes")
                         if bytes_data is not None:
-
                             data = message["bytes"]
                             # Process incoming audio data if needed
                         elif text_data is not None:
