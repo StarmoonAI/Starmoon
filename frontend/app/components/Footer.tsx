@@ -32,12 +32,20 @@ export default function Footer() {
             <div className="flex flex-row items-center gap-8">
                 <div className="flex flex-row items-center gap-2">
                     <Link href={githubPublicLink} passHref>
-                        <Button variant="ghost" size="icon" className="w-7 h-7">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="w-7 h-7 text-gray-500"
+                        >
                             <FaGithub />
                         </Button>
                     </Link>
                     <Link href={discordInviteLink} passHref>
-                        <Button variant="ghost" size="icon" className="w-7 h-7">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            className="w-7 h-7 text-gray-500"
+                        >
                             <FaDiscord />
                         </Button>
                     </Link>
