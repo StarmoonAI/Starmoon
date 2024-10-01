@@ -3,6 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Mail } from "lucide-react";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Separator } from "@/components/ui/separator";
+import { FaDiscord, FaGithub } from "react-icons/fa";
+import Link from "next/link";
+import { discordInviteLink, githubPublicLink } from "@/lib/data";
 
 export default function Footer() {
     return (
@@ -27,6 +30,19 @@ export default function Footer() {
             </div>
             {/* <Separator orientation="vertical" /> */}
             <div className="flex flex-row items-center gap-8">
+                <div className="flex flex-row items-center gap-2">
+                    <Link href={githubPublicLink} passHref>
+                        <Button variant="ghost" size="icon" className="w-7 h-7">
+                            <FaGithub />
+                        </Button>
+                    </Link>
+                    <Link href={discordInviteLink} passHref>
+                        <Button variant="ghost" size="icon" className="w-7 h-7">
+                            <FaDiscord />
+                        </Button>
+                    </Link>
+                </div>
+
                 <a
                     href="/privacy"
                     className="font-sans font-normal underline text-gray-500 text-xs"
