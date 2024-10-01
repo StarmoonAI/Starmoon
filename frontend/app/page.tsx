@@ -47,9 +47,9 @@ export default async function Index() {
                 <AnimatedText />
 
                 <p className="font-inter font-light mt-14 text-lg sm:text-xl leading-8 text-stone-800">
-                    Starmoon is an affordable, compact, voiced-enabled AI device
-                    that offers supportive conversations through personalized AI
-                    characters.
+                    With a platform that supports real-time conversations safe
+                    for all ages, manages your AI characters, with long-term
+                    memory, RAG-based responses, and more.
                 </p>
             </div>
 

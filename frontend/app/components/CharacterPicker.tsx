@@ -88,7 +88,7 @@ export default function CharacterPicker({
                 <div className="max-w-7xl mx-auto px-4 sm:px-6">
                     <div className="py-8 md:py-12">
                         {/* Section content */}
-                        <div className="relative max-w-xl mx-auto md:max-w-none text-center md:text-left flex flex-col md:flex-row items-center justify-end">
+                        <div className="relative max-w-xl gap-8 mx-auto md:max-w-none text-center md:text-left flex flex-col md:flex-row items-center justify-end">
                             {/* Carousel */}
                             <div
                                 className="w-full md:w-3/5 md:mr-8 mb-8 md:mb-0 flex-shrink-0 h-[450px] shadow-custom"

@@ -3,8 +3,8 @@
 import Illustration from "@/public/hero_section.svg";
 import { Button } from "@/components/ui/button";
 import BookDemoModal from "./BookDemoModal";
-import { CalendarCheck, ShoppingCart, Store } from "lucide-react";
-import { FaDiscord } from "react-icons/fa";
+import { CalendarCheck, ShoppingCart, Star, Store } from "lucide-react";
+import { FaDiscord, FaGithub } from "react-icons/fa";
 import Link from "next/link";
 
 export default function EndingSection() {
@@ -43,7 +43,10 @@ export default function EndingSection() {
                             <span>Preorder Now</span>
                         </Button>
                     </Link>
-                    <BookDemoModal>
+                    <Link
+                        href="https://calendly.com/akadeb/starmoon-ai-enterprise-demo"
+                        passHref
+                    >
                         <Button
                             variant="secondary"
                             className="flex flex-row bg-white items-center gap-2 font-medium text-base text-stone-800 leading-8 rounded-full border-2 border-stone-900"
@@ -51,10 +54,22 @@ export default function EndingSection() {
                             <CalendarCheck size={20} />
                             <span>Book a Demo</span>
                         </Button>
-                    </BookDemoModal>
+                    </Link>
                 </div>
-                <div className="w-full flex justify-center">
-                    <Link href="https://discord.gg/BtaybK5dvU">
+                <div className="flex items-center justify-center gap-8 flex-wrap">
+                    <Link
+                        href="https://github.com/StarmoonAI/starmoon"
+                        passHref
+                    >
+                        <Button
+                            variant="link"
+                            className="flex flex-row items-center gap-2 font-medium text-base text-stone-800 leading-8 rounded-full bg-transparent"
+                        >
+                            <Star size={20} className="text-2xl" />
+                            <span>Star on GitHub</span>
+                        </Button>
+                    </Link>
+                    <Link href="https://discord.gg/BtaybK5dvU" passHref>
                         <Button
                             variant="link"
                             className="flex flex-row items-center gap-2 font-medium text-base text-stone-800 leading-8 rounded-full bg-transparent"
