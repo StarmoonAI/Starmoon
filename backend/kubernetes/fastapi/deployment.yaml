@@ -28,8 +28,6 @@ spec:
                     - "600"
                     - "--ws-ping-timeout"
                     - "600"
-                    - “log-level”
-                    - debug
                   ports:
                       - containerPort: 8000
                   envFrom:
