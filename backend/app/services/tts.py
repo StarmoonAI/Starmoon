@@ -52,6 +52,35 @@ def create_emotion_detection_task(
     return task_id
 
 
+async def check_task_result_hardware(task_id: str, response_queue: asyncio.Queue):
+    celery_task = AsyncResult(task_id)
+
+    while not celery_task.ready():
+        await asyncio.sleep(0.5)  # Wait for 1 second before checking again
+
+    result = celery_task.result
+
+    if isinstance(result, Exception):
+        result = {
+            "error": str(result),
+            "traceback": traceback.format_exception_only(type(result), result),
+        }
+
+    response_queue.put_nowait(
+        {
+            "type": "json",
+            "device": "web",
+            "data": {
+                "type": "task",
+                "audio_data": None,
+                "text_data": result,
+                "boundary": None,
+                "task_id": task_id,
+            },
+        }
+    )
+
+
 async def check_task_result(task_id: str, websocket: WebSocket):
     celery_task = AsyncResult(task_id)
 
@@ -118,35 +147,6 @@ def azure_speech_response(ssml: str):
     return None
 
 
-# async def fish_speech_response(
-#     websocket: WebSocket,
-#     sentence: str,
-#     boundary: str,
-#     task_id: str,
-#     ref_audio_dir: str = "public/gura.mp3",
-# ):
-#     buffer = bytearray()
-#     for chunk in voice_clone(sentence, ref_audio_dir, "Text in reference AUDIO"):
-#         buffer.extend(chunk)
-
-#     print(buffer)
-
-#     # Encode the audio data to base64
-#     audio_data_base64 = base64.b64encode(buffer).decode("utf-8")
-
-#     # Create a JSON object with the encoded data
-#     json_data = json.dumps(
-#         {
-#             "type": "response",  # Specify the type of message
-#             "audio_data": audio_data_base64,
-#             "text_data": sentence,
-#             "boundary": boundary,  # Use the boundary parameter instead of sentence
-#             "task_id": task_id,
-#         }
-#     )
-#     await websocket.send_json(json_data)
-
-
 async def azure_send_response_and_speech(
     sentence: str,
     boundary: str,
@@ -205,3 +205,57 @@ async def azure_send_response_and_speech(
         # Send an end-of-audio marker
         if boundary == "end":
             await websocket.send_text(json.dumps({"type": "end_of_audio"}))
+
+
+def azure_tts(
+    sentence: str,
+    boundary: str,
+    task_id: str,
+    toy_id: str,
+    device: str,
+    response_queue: asyncio.Queue,
+):
+    print("sentence+++", sentence)
+    voice_name = toyid2speechname[toy_id]
+    text_tone = azure_voice_systhesizer(
+        text=sentence.strip(),
+        voice_name=voice_name,
+        # emotion=emotion["tone"],
+        emotion="",
+        # emotion_degree=emotion["score"],
+        emotion_degree="",
+        rate=0,
+    )
+
+    result = azure_speech_response(text_tone)
+    print("result++++++++", result)
+
+    # Send the JSON object over the WebSocket connection
+    if device == "web":
+        audio_data_base64 = base64.b64encode(result.audio_data).decode("utf-8")
+        response_queue.put_nowait(
+            {
+                "type": "json",
+                "device": device,
+                "data": {
+                    "type": "response",
+                    "audio_data": audio_data_base64,
+                    "text_data": sentence,
+                    "boundary": boundary,
+                    "task_id": task_id,
+                },
+            }
+        )
+    else:
+        chunk_size = 1024  # Adjust this value based on your needs
+        audio_data = result.audio_data
+        for i in range(0, len(audio_data), chunk_size):
+            chunk = audio_data[i : i + chunk_size]
+            # print("Audio chunk+++++++++", i)
+            response_queue.put_nowait(
+                {
+                    "type": "bytes",
+                    "device": device,
+                    "data": chunk,
+                }
+            )
