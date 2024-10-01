@@ -7,7 +7,7 @@ export default async function Index() {
                 Terms and Conditions for Starmoon AI
             </p>
             <p className="font-light text-md">Last Updated: 9/29/24</p>
-            <div className="flex flex-col gap-4 mt-4">
+            <div className="flex flex-col gap-4 my-4">
                 <p>
                     {`Welcome to Starmoon AI ("we," "us," "our"). We offer engaging AI-characters on Starmoon devices that you can also converse with anytime through our website `}
                     <a

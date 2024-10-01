@@ -9,7 +9,7 @@ export default async function Index() {
                 Privacy Policy for Starmoon AI
             </p>
             <p className="font-light text-md">Last Updated: 9/29/24</p>
-            <div className="flex flex-col gap-4 mt-4">
+            <div className="flex flex-col gap-4 my-4">
                 <p>
                     {`Welcome to Starmoon AI ("we," "us," "our"). We are committed to protecting your personal information and your right to privacy. This Privacy Policy outlines how we handle, store, and use the information you provide us when you use our website, `}
                     <a
