@@ -36,14 +36,6 @@ app = FastAPI()
 #     allow_headers=["*"],
 # )
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # Adjust this to your needs
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 app.include_router(analyze_text.router, prefix="/api", tags=["LLM response"])
 app.include_router(db_user.router, prefix="/api", tags=["User"])
 app.include_router(generate_token.router, prefix="/api", tags=["Token"])

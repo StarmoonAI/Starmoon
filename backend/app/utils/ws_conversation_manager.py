@@ -16,10 +16,6 @@ from app.services.tts import (
 from app.utils.transcription_collector import TranscriptCollector
 from fastapi import WebSocket, WebSocketDisconnect
 
-import pyaudio
-
-p = pyaudio.PyAudio()
-
 transcript_collector = TranscriptCollector()
 client = Clients()
 
@@ -287,8 +283,8 @@ class ConversationManager:
                         "task_id": None,
                     }
                 )
-                await self.send_message(websocket, json_data)
-                await asyncio.sleep(10)
+            await self.send_message(websocket, json_data)
+            await asyncio.sleep(10)
             if (
                 not transcription_complete.is_set()
                 and self.client_transcription == ""
@@ -317,12 +313,11 @@ class ConversationManager:
         messages: list,
     ):
         previous_sentence = None
-        stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, output=True)
+        # stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, output=True)
 
         while True:
             try:
                 if not self.is_replying:
-                    print("Not replying")
                     transcription_complete = asyncio.Event()
                     transcription_task = asyncio.create_task(
                         self.get_transcript(data_stream, transcription_complete)
@@ -363,9 +358,8 @@ class ConversationManager:
                                         print("Received invalid JSON")
                                 elif bytes_data is not None:
                                     data = message["bytes"]
-                                    # stream.write(data)
                                     await data_stream.put(data)
-
+                                    # stream.write(data)
                         except WebSocketDisconnect:
                             self.connection_open = False
                             break
@@ -408,13 +402,11 @@ class ConversationManager:
                     self.client_transcription = ""
 
                 else:
-                    print("Received audio data")
                     message = await asyncio.wait_for(websocket.receive(), timeout=0.1)
                     if message["type"] == "websocket.receive":
                         text_data = message.get("text")
                         bytes_data = message.get("bytes")
                         if bytes_data is not None:
-
                             data = message["bytes"]
                             # Process incoming audio data if needed
                         elif text_data is not None:
@@ -444,129 +436,3 @@ class ConversationManager:
                 break
             if not self.connection_open:
                 break
-
-        # while True:
-        #     try:
-        #         if not self.is_replying:
-        #             print("Not replying")
-        #             transcription_complete = asyncio.Event()
-        #             transcription_task = asyncio.create_task(
-        #                 self.get_transcript(data_stream, transcription_complete)
-        #             )
-
-        #             timeout_task = asyncio.create_task(
-        #                 self.timeout_check(
-        #                     websocket,
-        #                     transcription_complete,
-        #                     self.is_replying,
-        #                     timeout=30,
-        #                 )
-        #             )
-
-        #             print("+++++++++++++++++++++++++++++++++++++++++++++++++")
-        #             print(transcription_complete.is_set())
-        #             print("+++++++++++++++++++++++++++++++++++++++++++++++++")
-
-        #             while not transcription_complete.is_set() and self.connection_open:
-        #                 try:
-        #                     message = await websocket.receive()
-        #                     if message["type"] == "websocket.receive":
-        #                         text_data = message.get("text")
-        #                         bytes_data = message.get("bytes")
-        #                         if text_data is not None:
-        #                             try:
-        #                                 data = json.loads(message["text"])
-        #                                 print("message++++", data)
-        #                                 if data.get("is_ending") == True:
-        #                                     self.connection_open = False
-        #                                     break
-        #                                 if data.get("is_interrupted") == True:
-        #                                     print(
-        #                                         "interrupted!11111!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        #                                     )
-        #                                     self.is_interrupted = True
-        #                             except json.JSONDecodeError:
-        #                                 print("Received invalid JSON")
-        #                         elif bytes_data is not None:
-        #                             data = message["bytes"]
-        #                             # stream.write(data)
-        #                             await data_stream.put(data)
-
-        #                 except WebSocketDisconnect:
-        #                     self.connection_open = False
-        #                     break
-
-        #             transcription_task.cancel()
-        #             try:
-        #                 await transcription_task
-        #             except asyncio.CancelledError:
-        #                 pass
-
-        #             timeout_task.cancel()
-        #             try:
-        #                 await timeout_task
-        #             except asyncio.CancelledError:
-        #                 pass
-
-        #             if not self.connection_open:
-        #                 break
-
-        #             if not self.client_transcription:
-        #                 self.connection_open = False
-        #                 break
-
-        #             self.is_replying = True
-        #             # get the return of create_task and send celery task
-        #             # speech_thread = threading.Thread(
-        #             #     target=self.run_speech_task,
-        #             #     args=(previous_sentence, websocket, messages, user),
-        #             # )
-        #             # speech_thread.start()
-        #             await self.speech_stream_response(
-        #                 previous_sentence,
-        #                 self.client_transcription,
-        #                 websocket,
-        #                 messages,
-        #                 user,
-        #                 user["most_recent_chat_group_id"],
-        #                 self.device,
-        #             )
-        #             self.client_transcription = ""
-
-        #         else:
-        #             print("Received audio data")
-        #             message = await asyncio.wait_for(websocket.receive(), timeout=0.1)
-        #             if message["type"] == "websocket.receive":
-        #                 text_data = message.get("text")
-        #                 bytes_data = message.get("bytes")
-        #                 if bytes_data is not None:
-
-        #                     data = message["bytes"]
-        #                     # Process incoming audio data if needed
-        #                 elif text_data is not None:
-        #                     print("message----", message)
-        #                     try:
-        #                         data = json.loads(message["text"])
-        #                         if data.get("is_ending") == True:
-        #                             # disconnect the websocket
-        #                             self.connection_open = False
-        #                             # speech_thread.join()
-
-        #                         if data.get("is_replying") == False:
-        #                             self.is_replying = False
-        #                             transcript_collector.reset()
-        #                         if data.get("is_interrupted") == True:
-        #                             print("interrupted!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        #                             # self.is_interrupted = False
-        #                             self.is_replying = False
-        #                             # transcription_complete = asyncio.Event()
-        #                     except json.JSONDecodeError:
-        #                         print("Received invalid JSON")
-        #     except asyncio.TimeoutError:
-        #         # No message received, continue the loop
-        #         pass
-        #     except WebSocketDisconnect:
-        #         self.connection_open = False
-        #         break
-        #     if not self.connection_open:
-        #         break
