@@ -35,7 +35,7 @@ const products: Product[] = [
         title: "Starmoon AI Device",
         description:
             "The Starmoon AI device provides all AI characters packed into one fully assembled compact device that can be added to any object",
-        imageSrc: "/images/front_view.png",
+        imageSrc: "/images/usecase2.png",
         features: [
             "2-month FREE access to Starmoon AI subscription",
             "Unlimited access to Starmoon characters till we deliver your device",
@@ -56,7 +56,7 @@ const products: Product[] = [
         title: "Starmoon AI DIY Dev Kit",
         description:
             "The Starmoon AI Dev Kit is a powerful tool for developers to create their own AI characters and integrate them into the Starmoon universe.",
-        imageSrc: "/case1.png",
+        imageSrc: "/images/front_view.png",
         features: [
             "All hardware components included in your Starmoon kit",
             "Unlimited access to Starmoon characters till we deliver your device",
@@ -127,7 +127,7 @@ export default async function Home() {
                                 </Button>
                             </Link>
                         </CardFooter>
-                        <CardHeader className="p-2">
+                        <CardHeader className="p-0">
                             <div className="w-full">
                                 <Image
                                     src={product.imageSrc}
@@ -136,18 +136,18 @@ export default async function Home() {
                                     height={400} // Specify desired height
                                     layout="responsive" // Use responsive layout
                                     objectFit="contain" // Ensure the image fits without cropping
-                                    className="px-4"
+                                    // className="px-4"
                                 />
                             </div>
                         </CardHeader>
 
-                        <CardContent className="p-8 relative">
+                        <CardContent className="p-14 relative">
                             <div className="flex justify-between items-start mb-4">
                                 <div className="mt-8">
-                                    <CardTitle className="text-3xl font-bold mb-2">
+                                    <CardTitle className="text-xl font-semibold mb-2">
                                         {product.title}
                                     </CardTitle>
-                                    <p className="text-muted-foreground">
+                                    <p className="text-md text-muted-foreground">
                                         {product.description}
                                     </p>
                                 </div>
@@ -163,7 +163,7 @@ export default async function Home() {
                                     <h3 className="font-semibold text-lg mb-2">
                                         Features
                                     </h3>
-                                    <ul className="space-y-2">
+                                    <ul className="space-y-4">
                                         {product.features.map((feature) => (
                                             <li
                                                 key={feature}
@@ -171,13 +171,15 @@ export default async function Home() {
                                             >
                                                 <CheckCircle
                                                     style={{
-                                                        height: "20px",
-                                                        width: "20px",
+                                                        height: 16,
+                                                        width: 16,
                                                     }}
                                                     strokeWidth={3}
-                                                    className="min-h-5 min-w-5 text-green-500 mr-2"
+                                                    className="min-h-4 min-w-4 text-green-500 mr-2"
                                                 />
-                                                <span>{feature}</span>
+                                                <span className="text-sm">
+                                                    {feature}
+                                                </span>
                                             </li>
                                         ))}
                                     </ul>
