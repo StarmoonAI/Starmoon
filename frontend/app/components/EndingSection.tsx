@@ -64,7 +64,7 @@ export default function EndingSection() {
                             className="flex flex-row items-center gap-2 font-medium text-base text-stone-800 leading-8 rounded-full bg-transparent"
                         >
                             <Star size={20} className="text-2xl" />
-                            <span>Star on GitHub</span>
+                            <span>Star us on GitHub</span>
                         </Button>
                     </Link>
                     <Link href={discordInviteLink} passHref>
