@@ -19,7 +19,7 @@ import { Analytics } from "@vercel/analytics/react";
 import Footer from "./components/Footer";
 import NavbarButtons from "./components/NavbarButtons";
 import StarmoonLogo from "./components/StarmoonLogo";
-import { ShoppingCart, Store } from "lucide-react";
+import { BriefcaseBusiness, ShoppingCart, Store } from "lucide-react";
 import PreorderModal from "./components/Upsell/PreorderModal";
 import { Button } from "@/components/ui/button";
 
