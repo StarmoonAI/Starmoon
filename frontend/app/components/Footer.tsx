@@ -9,7 +9,7 @@ export default function Footer() {
         <footer className="w-full flex flex-col sm:flex-row items-center sm:justify-center border-t-[1px] border-gray-200 dark:border-gray-800 mx-auto text-center text-xs sm:gap-8 sm:py-1 py-2">
             {/* <footer className="w-full flex items-center justify-center mx-auto text-center text-xs gap-8 py-1"> */}
             <div className="flex flex-row items-center gap-8">
-                <a href="mailto:akad3b@gmail.com" target="_blank">
+                <a href="https://forms.gle/2QmukEG2FXNwBdee7" target="_blank">
                     <Button
                         variant="link"
                         size="sm"
