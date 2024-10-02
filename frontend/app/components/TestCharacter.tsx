@@ -47,10 +47,10 @@ hover:scale-[1.01] transition-all duration-300 ease-in-out cursor-pointer shadow
                 <Button
                     size="icon"
                     variant="secondary"
-                    className="rounded-full absolute top-0 right-0"
+                    className="rounded-full w-8 h-8 absolute top-1 right-0"
                     onClick={handlePlayAudio}
                 >
-                    <Play size={20} fill="bg-gray-400" />
+                    <Play size={15} fill="bg-gray-400" />
                 </Button>
                 <audio ref={audioRef} src={audio_src} preload="auto" />
                 <h3 className="text-lg gap-4 font-medium text-gray-700 truncate  flex flex-row items-center">
@@ -58,7 +58,6 @@ hover:scale-[1.01] transition-all duration-300 ease-in-out cursor-pointer shadow
                         variant="outline"
                         className="flex flex-row items-center gap-1 text-sm font-normal"
                     >
-                        {toy.name}
                         <Image
                             objectFit="cover"
                             width={20}
@@ -74,13 +73,14 @@ hover:scale-[1.01] transition-all duration-300 ease-in-out cursor-pointer shadow
                                 "_starmoon.png"
                             }
                         />
+                        {toy.name}
                     </Badge>
                     <Badge
                         className="flex flex-row items-center gap-1  text-sm font-normal"
                         variant="outline"
                     >
-                        {personality.title}
                         <span>{personality.emoji}</span>
+                        {personality.title}
                     </Badge>
                 </h3>
                 <p className="text-sm text-gray-500 line-clamp-2 pr-4">
