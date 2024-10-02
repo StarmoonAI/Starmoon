@@ -52,11 +52,11 @@ def create_emotion_detection_task(
     return task_id
 
 
-async def check_task_result_hardware(task_id: str, response_queue: asyncio.Queue):
+async def check_task_result_hardware(task_id: str, text_queue: asyncio.Queue):
     celery_task = AsyncResult(task_id)
 
     while not celery_task.ready():
-        await asyncio.sleep(0.5)  # Wait for 1 second before checking again
+        await asyncio.sleep(1)  # Wait for 1 second before checking again
 
     result = celery_task.result
 
@@ -66,7 +66,7 @@ async def check_task_result_hardware(task_id: str, response_queue: asyncio.Queue
             "traceback": traceback.format_exception_only(type(result), result),
         }
 
-    response_queue.put_nowait(
+    text_queue.put_nowait(
         {
             "type": "json",
             "device": "web",
@@ -213,7 +213,7 @@ def azure_tts(
     task_id: str,
     toy_id: str,
     device: str,
-    response_queue: asyncio.Queue,
+    bytes_queue: asyncio.Queue,
 ):
     print("sentence+++", sentence)
     voice_name = toyid2speechname[toy_id]
@@ -233,7 +233,7 @@ def azure_tts(
     # Send the JSON object over the WebSocket connection
     if device == "web":
         audio_data_base64 = base64.b64encode(result.audio_data).decode("utf-8")
-        response_queue.put_nowait(
+        bytes_queue.put_nowait(
             {
                 "type": "json",
                 "device": device,
@@ -252,7 +252,7 @@ def azure_tts(
         for i in range(0, len(audio_data), chunk_size):
             chunk = audio_data[i : i + chunk_size]
             # print("Audio chunk+++++++++", i)
-            response_queue.put_nowait(
+            bytes_queue.put_nowait(
                 {
                     "type": "bytes",
                     "device": device,
