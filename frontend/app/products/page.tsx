@@ -107,7 +107,20 @@ export default async function Home() {
                         key={`productCard-${index}`}
                         className={`w-full rounded-3xl max-w-2xl overflow-hidden transition-all duration-300 shadow-md`}
                     >
-                        <CardFooter className="flex gap-6 justify-between items-center p-6 bg-muted/50">
+                        <CardHeader className="p-0">
+                            <div className="w-full">
+                                <Image
+                                    src={product.imageSrc}
+                                    alt={product.title}
+                                    width={600} // Specify desired width
+                                    height={400} // Specify desired height
+                                    layout="responsive" // Use responsive layout
+                                    objectFit="contain" // Ensure the image fits without cropping
+                                    // className="px-4"
+                                />
+                            </div>
+                        </CardHeader>
+                        <CardFooter className="flex gap-6 justify-between items-center py-6 px-14  bg-muted/50">
                             <div className="flex flex-row items-baseline gap-2">
                                 <div className="text-2xl font-bold">
                                     ${product.price}
@@ -127,21 +140,13 @@ export default async function Home() {
                                 </Button>
                             </Link>
                         </CardFooter>
-                        <CardHeader className="p-0">
-                            <div className="w-full">
-                                <Image
-                                    src={product.imageSrc}
-                                    alt={product.title}
-                                    width={600} // Specify desired width
-                                    height={400} // Specify desired height
-                                    layout="responsive" // Use responsive layout
-                                    objectFit="contain" // Ensure the image fits without cropping
-                                    // className="px-4"
-                                />
-                            </div>
-                        </CardHeader>
-
                         <CardContent className="p-14 relative">
+                            <Badge
+                                variant="secondary"
+                                className="text-sm border-0 absolute top-6 right-14 text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-center"
+                            >
+                                {product.tag}
+                            </Badge>
                             <div className="flex justify-between items-start mb-4">
                                 <div className="mt-8">
                                     <CardTitle className="text-xl font-semibold mb-2">
@@ -151,12 +156,6 @@ export default async function Home() {
                                         {product.description}
                                     </p>
                                 </div>
-                                <Badge
-                                    variant="secondary"
-                                    className="text-sm border-0 absolute top-6 right-6 text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-center"
-                                >
-                                    {product.tag}
-                                </Badge>
                             </div>
                             <div className="space-y-4 mb-2">
                                 <div>
@@ -185,7 +184,7 @@ export default async function Home() {
                                     </ul>
                                 </div>
                             </div>
-                            <div className="text-xs text-muted-foreground absolute bottom-3 right-3">
+                            <div className="text-xs text-muted-foreground absolute bottom-6 right-14">
                                 {DeliveryString}
                             </div>
                         </CardContent>

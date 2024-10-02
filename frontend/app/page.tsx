@@ -22,7 +22,7 @@ export default async function Index() {
         data: { user },
     } = await supabase.auth.getUser();
 
-    const allToys = await getAllToys(supabase);
+    const allToys = (await getAllToys(supabase)) ?? [];
     const allPersonalities = await getAllPersonalities(supabase);
 
     return (
