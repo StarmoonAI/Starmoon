@@ -31,6 +31,8 @@ async def get_deepgram_transcript(
         async def on_message(self, result, **kwargs):
             sentence = result.channel.alternatives[0].transcript
 
+            print("sentence---", sentence)
+
             if len(sentence.strip()) == 0:
                 return
 
