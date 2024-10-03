@@ -32,19 +32,37 @@ WiFiManager wm;
 int16_t sBuffer[bufferLen];
 
 // WiFi setup
-const char *ssid = "launchlab";          // replace your WiFi name
-const char *password = "LaunchLabRocks"; // replace your WiFi password
+// const char *ssid = "launchlab";          // replace your WiFi name
+// const char *password = "LaunchLabRocks"; // replace your WiFi password
+String ssid = "EE-P8CX8N";
+String password = "xd6UrFLd4kf9x4";
 // const char *ssid = "jPhone";
 // const char *password = "0987654321";
 
+// Function prototypes
+void simpleAPSetup();
+String createAuthTokenMessage(const char *token);
+void onWSConnectionOpened();
+void onWSConnectionClosed();
+void connectWiFi();
+void onEventsCallback(WebsocketsEvent event, String data);
+void connectWSServer();
+void onMessageCallback(WebsocketsMessage message);
+void i2s_install_mic();
+void i2s_setpin_mic();
+void i2s_install_speaker();
+void i2s_setpin_speaker();
+void micTask(void *parameter);
+void toggleConnection();
+
 // WebSocket server information
 // replace your WebSocket
-const char *websocket_server = "192.168.2.179";
+const char *websocket_server = "192.168.1.241";
 // WebSocket server port
 const uint16_t websocket_port = 8000;
 // const uint16_t websocket_port = 80;
 const char *websocket_path = "/starmoon"; // WebSocket path
-const char *auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNWFmNjJiMGUtM2RhNC00YzQ0LWFkZjctNWIxYjdjOWM0Y2I2IiwiZW1haWwiOiJhZG1pbkBzdGFybW9vbi5hcHAiLCJpYXQiOjE3Mjc4NjU0MTd9.jJn1ESU_N_uYk89Jui7ORMtfgTEmTVu123hpQtWBsQ4";
+const char *auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNWFmNjJiMGUtM2RhNC00YzQ0LWFkZjctNWIxYjdjOWM0Y2I2IiwiZW1haWwiOiJhZG1pbkBzdGFybW9vbi5hcHAiLCJpYXQiOjE3Mjc5MzgwMDR9.vBbmgfnJEZuGoMGmzi-4zlDng6Vzux-qufqsw9KVOSU";
 String authMessage;
 
 void simpleAPSetup()
