@@ -314,6 +314,7 @@ void setup()
 
     // xTaskCreatePinnedToCore(micTask, "micTask", 2048, NULL, 1, NULL, 1);
     // run callback when messages are received
+    xTaskCreatePinnedToCore(micTask, "micTask", 2048, NULL, 1, NULL, 1);
 
     // Initialize button pin
     pinMode(BUTTON_PIN, INPUT_PULLUP);
@@ -354,9 +355,6 @@ void loop()
             {
                 // Connect WebSocket
                 connectWSServer();
-
-                // Start micTask
-                xTaskCreatePinnedToCore(micTask, "micTask", 8192, NULL, 1, &micTaskHandle, 1);
                 Serial.println("WebSocket connected and micTask started.");
             }
         }
