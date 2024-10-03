@@ -3,7 +3,7 @@
 #include <ArduinoWebsockets.h>
 #include <ArduinoJson.h>
 #include <freertos/queue.h>
-#include <WiFiManager.h> // Include the WiFiManager library
+#include <WiFiManager.h>
 
 using namespace websockets;
 WebsocketsClient client;
@@ -11,11 +11,10 @@ bool isWebSocketConnected = false;
 WiFiManager wm;
 
 TaskHandle_t micTaskHandle = NULL;
-// Declare lastButtonState as a global variable
 bool lastButtonState = HIGH; // Initialize to HIGH (button not pressed)
+String authMessage;
 
-#define BUTTON_PIN D5 // Built-in BOOT button (GPIO 0)
-// #define LED_PIN LED_BUILTIN // Built-in LED (GPIO 10)
+#define BUTTON_PIN D5
 
 // I2S pins for Audio Input (INMP441 MEMS microphone)
 #define I2S_SD D9
@@ -37,16 +36,11 @@ int16_t sBuffer[bufferLen];
 
 #define I2S_READ_LEN (1024)
 
-// WiFi setup
-<<<<<<< Updated upstream
-String ssid = "launchlab";          // replace your WiFi name
-String password = "LaunchLabRocks"; // replace your WiFi password
 // Function prototypes
 void simpleAPSetup();
 String createAuthTokenMessage(const char *token);
 void onWSConnectionOpened();
 void onWSConnectionClosed();
-void connectWiFi();
 void onEventsCallback(WebsocketsEvent event, String data);
 void connectWSServer();
 void onMessageCallback(WebsocketsMessage message);
@@ -58,24 +52,10 @@ void micTask(void *parameter);
 void toggleConnection();
 
 // WebSocket server information
-// replace your WebSocket
 const char *websocket_server = "192.168.2.236";
-=======
-const char *ssid = "launchlab";          // replace your WiFi name
-const char *password = "LaunchLabRocks"; // replace your WiFi password
-// const char *ssid = "SKYCFZHN-2.4G";    // replace your WiFi name
-// const char *password = "CFaxCbZ9Y6CQ"; // replace your WiFi password
-
-// WebSocket server information
-// replace your WebSocket
-const char *websocket_server = "192.168.2.179";
->>>>>>> Stashed changes
-// WebSocket server port
 const uint16_t websocket_port = 8000;
-// const uint16_t websocket_port = 80;
-const char *websocket_path = "/starmoon"; // WebSocket path
-const char *auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNWFmNjJiMGUtM2RhNC00YzQ0LWFkZjctNWIxYjdjOWM0Y2I2IiwiZW1haWwiOiJhZG1pbkBzdGFybW9vbi5hcHAiLCJpYXQiOjE3Mjc5MzgwMDR9.vBbmgfnJEZuGoMGmzi-4zlDng6Vzux-qufqsw9KVOSU";
-String authMessage;
+const char *websocket_path = "/starmoon";
+const char *auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNWFmNjJiMGUtM2RhNC00YzQ0LWFkZjctNWIxYjdjOWM0Y2I2IiwiZW1haWwiOiJhZG1pbkBzdGFybW9vbi5hcHAiLCJpYXQiOjE3Mjc5NzE5OTJ9.UFK9IMhvF7mISGXbci5VX6kNdf1sAmDpdZmTKbHaTRc";
 
 void simpleAPSetup()
 {
@@ -117,7 +97,6 @@ void simpleAPSetup()
     // digitalWrite(LED_PIN, LOW); // LED ON when connected to Wi-Fi
 }
 
-// add a function to create a JSON message with the authentication token
 String createAuthTokenMessage(const char *token)
 {
     JsonDocument doc;
@@ -134,36 +113,13 @@ void onWSConnectionOpened()
     authMessage = createAuthTokenMessage(auth_token);
     client.send(authMessage);
     Serial.println("Connnection Opened");
-    // analogWrite(LED_PIN, 250);
     isWebSocketConnected = true;
-    // i2s_start(I2S_PORT_IN);
-    // i2s_start(I2S_PORT_OUT);
 }
 
 void onWSConnectionClosed()
 {
-    // analogWrite(LED_PIN, 0);
     Serial.println("Connnection Closed");
     isWebSocketConnected = false;
-    // i2s_stop(I2S_PORT_IN);
-    // i2s_stop(I2S_PORT_OUT);
-}
-
-void connectWiFi()
-{
-    WiFi.disconnect();
-    // WiFi.mode(WIFI_STA);
-    WiFi.begin(ssid, password);
-    Serial.println("Connecting to WiFi");
-    Serial.println("");
-    while (WiFi.status() != WL_CONNECTED)
-    {
-        delay(500);
-        Serial.print("|");
-    }
-    Serial.println("");
-    Serial.println("WiFi connected");
-    WiFi.setSleep(false);
 }
 
 void onEventsCallback(WebsocketsEvent event, String data)
@@ -276,45 +232,6 @@ void i2s_setpin_speaker()
     i2s_zero_dma_buffer(I2S_PORT_OUT);
 }
 
-void i2s_adc_data_scale(uint8_t *d_buff, uint8_t *s_buff, uint32_t len)
-{
-    uint32_t j = 0;
-    uint32_t dac_value = 0;
-    for (int i = 0; i < len; i += 2)
-    {
-        dac_value = ((((uint16_t)(s_buff[i + 1] & 0xf) << 8) | ((s_buff[i + 0]))));
-        d_buff[j++] = 0;
-        d_buff[j++] = dac_value * 256 / 2048;
-    }
-}
-
-// WITH DIFFERENT MICROPHONE
-// void micTask(void *parameter)
-// {
-
-//     i2s_install_mic();
-//     i2s_setpin_mic();
-//     i2s_start(I2S_PORT_IN);
-
-//     int i2s_read_len = I2S_READ_LEN;
-//     size_t bytes_read;
-
-//     char *i2s_read_buff = (char *)calloc(i2s_read_len, sizeof(char));
-//     uint8_t *flash_write_buff = (uint8_t *)calloc(i2s_read_len, sizeof(char));
-
-//     while (1)
-//     {
-//         i2s_read(I2S_PORT_IN, (void *)i2s_read_buff, i2s_read_len, &bytes_read, portMAX_DELAY);
-//         i2s_adc_data_scale(flash_write_buff, (uint8_t *)i2s_read_buff, i2s_read_len);
-//         client.sendBinary((const char *)flash_write_buff, i2s_read_len);
-//         ets_printf("Never Used Stack Size: %u\n", uxTaskGetStackHighWaterMark(NULL));
-//     }
-
-//     free(i2s_read_buff);
-//     i2s_read_buff = NULL;
-//     free(flash_write_buff);
-//     flash_write_buff = NULL;
-// }
 void micTask(void *parameter)
 {
 
@@ -333,27 +250,8 @@ void micTask(void *parameter)
     }
 }
 
-void setup()
+void toggleConnection()
 {
-    Serial.begin(115200);
-    connectWiFi();
-
-    i2s_install_speaker();
-    i2s_setpin_speaker();
-
-    // xTaskCreatePinnedToCore(micTask, "micTask", 2048, NULL, 1, NULL, 1);
-    // run callback when messages are received
-    xTaskCreatePinnedToCore(micTask, "micTask", 2048, NULL, 1, NULL, 1);
-
-    // Initialize button pin
-    pinMode(BUTTON_PIN, INPUT_PULLUP);
-    // Initialize lastButtonState
-    lastButtonState = digitalRead(BUTTON_PIN);
-}
-
-void loop()
-{
-    // Read the current button state
     int buttonState = digitalRead(BUTTON_PIN);
 
     // Detect button press (transition from HIGH to LOW)
@@ -391,6 +289,27 @@ void loop()
 
     // Update the last button state
     lastButtonState = buttonState;
+}
+
+void setup()
+{
+    Serial.begin(115200);
+    simpleAPSetup();
+
+    i2s_install_speaker();
+    i2s_setpin_speaker();
+
+    xTaskCreatePinnedToCore(micTask, "micTask", 2048, NULL, 1, NULL, 1);
+
+    // Initialize button pin
+    pinMode(BUTTON_PIN, INPUT_PULLUP);
+    lastButtonState = digitalRead(BUTTON_PIN);
+}
+
+void loop()
+{
+    // Read the current button state
+    toggleConnection();
 
     // Regularly poll the WebSocket client
     if (isWebSocketConnected)

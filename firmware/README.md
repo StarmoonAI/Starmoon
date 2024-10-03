@@ -21,7 +21,7 @@ This firmware turns your Seed Studio XIAO ESP32-S3 (or general ESP32 WROOM Dev m
 | LED                        | D4                            | GPIO 2                      |
 | Button                     | D5                            | GPIO 26                     |
 
-<!-- 
+<!--
           I2S Input (Microphone)
 
           -   SD: D9
@@ -66,9 +66,9 @@ This firmware turns your Seed Studio XIAO ESP32-S3 (or general ESP32 WROOM Dev m
 2. Create a new PlatformIO project:
 
     - Open PlatformIO Home
-    - Click "New Project"
+    - Open project directory "firmware"
     - Name your project (e.g., "FullDuplexWebSocketAudio")
-    - Select "Espressif ESP32 Dev Module" as the board
+    - Select "XIAO ESP32S3" as the board
     - Choose "Arduino" as the framework
     - Select a location for your project
 
@@ -76,33 +76,33 @@ This firmware turns your Seed Studio XIAO ESP32-S3 (or general ESP32 WROOM Dev m
 
 4. Add the required libraries to your `platformio.ini` file:
 
-   - For Seeed Studio XIAO ESP32S3
+    - For Seeed Studio XIAO ESP32S3
 
-       ```ini
-       [env:seeed_xiao_esp32s3]
-       platform = espressif32
-       board = seeed_xiao_esp32s3
-       framework = arduino
-       monitor_speed = 115200
-       lib_deps =
-           https://github.com/tzapu/WiFiManager.git
-           gilmaimon/ArduinoWebsockets@^0.5.4
-           bblanchon/ArduinoJson@^7.1.0
-       ```
+        ```ini
+        [env:seeed_xiao_esp32s3]
+        platform = espressif32
+        board = seeed_xiao_esp32s3
+        framework = arduino
+        monitor_speed = 115200
+        lib_deps =
+            https://github.com/tzapu/WiFiManager.git
+            gilmaimon/ArduinoWebsockets@^0.5.4
+            bblanchon/ArduinoJson@^7.1.0
+        ```
 
-   - For a general ESP32 Dev board
-       ```ini
-       [env:esp32dev]
-       platform = espressif32
-       board = esp32dev
-       framework = arduino
-       monitor_speed = 115200
-       lib_deps =
-           https://github.com/tzapu/WiFiManager.git
-           gilmaimon/ArduinoWebsockets @ ^0.5.3
-           bblanchon/ArduinoJson @ ^7.1.0
-       ```
-       
+    - For a general ESP32 Dev board
+        ```ini
+        [env:esp32dev]
+        platform = espressif32
+        board = esp32dev
+        framework = arduino
+        monitor_speed = 115200
+        lib_deps =
+            https://github.com/tzapu/WiFiManager.git
+            gilmaimon/ArduinoWebsockets @ ^0.5.3
+            bblanchon/ArduinoJson @ ^7.1.0
+        ```
+
 5. Update the WebSocket server details in the code:
 
     - Find the following lines in the code and update them with your information:
@@ -130,23 +130,17 @@ This firmware turns your Seed Studio XIAO ESP32-S3 (or general ESP32 WROOM Dev m
 9. Connect to WiFi using the WiFi Captive portal
     - It is straightforward to connect to your local Wifi network with an SSID (WiFi name) and Password.
     - Once the device is on, it acts as an Access Point to connect to a known WiFi network.
-    - Find the device name "Starmoon device" in your list of local wifi networks.
+    - Find the device name "Starmoon AI device" in your list of local wifi networks.
     - Press "Configure Wifi" and type in your SSID and PW for your Wifi and connect.
-    - The Seeed Stuido XIAO ESP32S3 should then automatically connect to your Wifi and save your Wifi details.
+    - The Seeed Studio XIAO ESP32S3 should then automatically connect to your Wifi and save your Wifi details.
 
 ## Usage
 
 1. Power on the ESP32 device.
 2. The device will automatically connect to the WiFi network as set on the Captive portal.
 3. Press the button to initiate a full-duplex WebSocket connection to the server.
-4. The LED indicates the current status:
-
-    - Off: Not connected
-    - Solid On: Connected and listening on microphone
-    - Pulsing: Streaming audio output (receiving from server)
-
-5. Speak into the microphone to send audio to the server.
-6. The device will play audio received from the server through the speaker.
+4. Speak into the microphone to send audio to the server.
+5. The device will play audio received from the server through the speaker.
 
 <!-- ## Features -->
 
@@ -165,20 +159,19 @@ This firmware turns your Seed Studio XIAO ESP32-S3 (or general ESP32 WROOM Dev m
 -   Push button (for connection control)
 -   USB Type-C or Micro USB power cable -->
 
-
 ## Functions
 
 -   `micTask`: Handles audio input from the microphone
--   `buttonTask`: Manages button presses for connection control
--   `ledControlTask`: Controls the LED status indicator
--   `handleTextMessage`: Processes text messages from the server
--   `handleBinaryAudio`: Processes binary audio data from the server
+    -   `onMessageCallback`: Handles audio data received from the server
+-   `createAuthTokenMessage`: Authenticates websocket client access
+-   `simpleAPSetup`: Sets up a captive wifi portal
 
 ## Customization
 
 You can modify the following parameters in the code:
 
 <!-- -   Audio sample rate (`SAMPLE_RATE`) -->
+
 -   Buffer sizes (`bufferCnt`, `bufferLen`)
 <!-- -   LED brightness levels (`MIN_BRIGHTNESS`, `MAX_BRIGHTNESS`) -->
 -   Debounce time for the button (`DEBOUNCE_TIME`)
