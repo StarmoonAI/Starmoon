@@ -42,7 +42,7 @@ export const useWebSocketHandler = (selectedUser: IUser) => {
             device: "web",
             user_id: selectedUser.user_id,
         });
-        console.log("WebSocket connection opened");
+        // console.log("WebSocket connection opened");
         connectionStartTimeRef.current = new Date();
     };
 
@@ -82,7 +82,7 @@ export const useWebSocketHandler = (selectedUser: IUser) => {
                 );
             },
             onClose: async () => {
-                console.log("closed");
+                // console.log("closed");
                 setConnectionStatus("Closed");
                 stopRecording(
                     streamRef,
@@ -98,7 +98,7 @@ export const useWebSocketHandler = (selectedUser: IUser) => {
                 setMessageHistory([]);
             },
             onError: () => {
-                console.log("connection error");
+                // console.log("connection error");
                 setConnectionStatus("Error");
                 stopRecording(
                     streamRef,
@@ -112,7 +112,7 @@ export const useWebSocketHandler = (selectedUser: IUser) => {
             },
         });
 
-    // console.log("lastJsonMessage", lastJsonMessage);
+    // // console.log("lastJsonMessage", lastJsonMessage);
 
     useEffect(() => {
         if (lastJsonMessage !== null) {
@@ -167,7 +167,7 @@ export const useWebSocketHandler = (selectedUser: IUser) => {
                     typedMessage.type === "warning" &&
                     typedMessage.text_data === "OFF"
                 ) {
-                    console.log("Connection closed by server");
+                    // console.log("Connection closed by server");
                     setConnectionStatus("Closed");
                     setSocketUrl(null);
                     stopRecording(
@@ -180,7 +180,7 @@ export const useWebSocketHandler = (selectedUser: IUser) => {
                     );
                 }
 
-                // console.log("text_data", typedMessage);
+                // // console.log("text_data", typedMessage);
             }
         }
     }, [lastJsonMessage]);
@@ -206,7 +206,7 @@ export const useWebSocketHandler = (selectedUser: IUser) => {
             // Send JSON message based on the boundary
             if (nextAudio.boundary === "end") {
                 const playbacTime = nextAudio.audio.length / 16000;
-                // console.log("playbackTime", playbacTime);
+                // // console.log("playbackTime", playbacTime);
                 // send sendJsonMessage after playbackTime
                 setTimeout(() => {
                     sendJsonMessage({ speaker: "user", is_replying: false });
@@ -245,7 +245,7 @@ export const useWebSocketHandler = (selectedUser: IUser) => {
             is_interrupted: true,
             is_ending: false,
         });
-        console.log("interrupted");
+        // console.log("interrupted");
         stopAudioPlayback(
             setMicrophoneStream,
             streamRef,
@@ -263,7 +263,7 @@ export const useWebSocketHandler = (selectedUser: IUser) => {
             process.env.NEXT_PUBLIC_VERCEL_ENV === "production"
                 ? "wss://api.starmoon.app/starmoon"
                 : "ws://localhost:8000/starmoon";
-        // console.log("opening ws connection", wsUrl);
+        // // console.log("opening ws connection", wsUrl);
         setSocketUrl(wsUrl);
         // setSocketUrl("wss://api.starmoon.app/starmoon");
     }, []);
