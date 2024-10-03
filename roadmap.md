@@ -8,3 +8,5 @@
 -   Agent implementation with LangChain
 -   Long-term memory cache with MemGPT
 -   Prompt caching with Anthropic's Claude models
+-   OpenAI real time API
+-   Hume Startup grant

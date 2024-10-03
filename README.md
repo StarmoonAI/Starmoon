@@ -9,7 +9,7 @@ Starmoon is an affordable, compact AI-enabled device, you can take anywhere and 
 <div align="center">
     <img src="./usecases.png" alt="Starmoon-logo" width="100%" padding-bottom: 20px"/>
 
-[![Discord Follow](https://dcbadge.vercel.app/api/server/HUpRgp2HG8?style=flat)](https://discord.gg)
+[![Discord Follow](https://dcbadge.limes.pink/api/server/https://discord.gg/KJWxDPBRUj)](https://discord.gg)
 
 [![License: GPLv3](https://img.shields.io/badge/license-GPLv3-blue)](https://www.gnu.org/licenses/gpl-3.0.en.html)&ensp;&ensp;&ensp;
 

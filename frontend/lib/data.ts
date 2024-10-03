@@ -4,7 +4,7 @@ export const defaultPersonalityId: string =
 
 export const productUrl = "https://www.starmoon.app/products";
 
-export const discordInviteLink = "https://discord.gg/BtaybK5dvU";
+export const discordInviteLink = "https://discord.gg/KJWxDPBRUj";
 export const githubPublicLink = "https://github.com/StarmoonAI/starmoon";
 
 export const userFormPersonaLabel =
