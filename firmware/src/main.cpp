@@ -7,7 +7,7 @@
 
 using namespace websockets;
 WebsocketsClient client;
-bool isWebSocketConnected;
+bool isWebSocketConnected = false;
 WiFiManager wm;
 
 #define BUTTON_PIN D5 // Built-in BOOT button (GPIO 0)
@@ -34,8 +34,11 @@ int16_t sBuffer[bufferLen];
 // WiFi setup
 // const char *ssid = "launchlab";          // replace your WiFi name
 // const char *password = "LaunchLabRocks"; // replace your WiFi password
-String ssid = "EE-P8CX8N";
-String password = "xd6UrFLd4kf9x4";
+// String ssid = "EE-P8CX8N";
+// String password = "xd6UrFLd4kf9x4";
+
+String ssid = "OBT For Small Biz_UUH4";
+String password = "eekshXXX";
 // const char *ssid = "jPhone";
 // const char *password = "0987654321";
 
@@ -57,7 +60,7 @@ void toggleConnection();
 
 // WebSocket server information
 // replace your WebSocket
-const char *websocket_server = "192.168.1.241";
+const char *websocket_server = "192.168.1.108";
 // WebSocket server port
 const uint16_t websocket_port = 8000;
 // const uint16_t websocket_port = 80;
@@ -124,6 +127,8 @@ void onWSConnectionOpened()
     Serial.println("Connnection Opened");
     // analogWrite(LED_PIN, 250);
     isWebSocketConnected = true;
+    // i2s_start(I2S_PORT_IN);
+    // i2s_start(I2S_PORT_OUT);
 }
 
 void onWSConnectionClosed()
@@ -131,6 +136,8 @@ void onWSConnectionClosed()
     // analogWrite(LED_PIN, 0);
     Serial.println("Connnection Closed");
     isWebSocketConnected = false;
+    // i2s_stop(I2S_PORT_IN);
+    // i2s_stop(I2S_PORT_OUT);
 }
 
 void connectWiFi()
@@ -184,11 +191,12 @@ void connectWSServer()
 
 void onMessageCallback(WebsocketsMessage message)
 {
-    if (message.isBinary())
+    if (message.isBinary() && isWebSocketConnected)
     {
         // Handle binary audio data
         size_t bytes_written;
-        i2s_write(I2S_PORT_OUT, message.c_str(), message.length(), &bytes_written, portMAX_DELAY);
+        // i2s_write(I2S_PORT_OUT, message.c_str(), message.length(), &bytes_written, portMAX_DELAY);
+        Serial.printf("Bytes written: %d\n", bytes_written);
     }
 }
 
@@ -264,16 +272,49 @@ void micTask(void *parameter)
 
     i2s_install_mic();
     i2s_setpin_mic();
-    i2s_start(I2S_PORT_IN);
 
     size_t bytesIn = 0;
     while (1)
     {
-        esp_err_t result = i2s_read(I2S_PORT_IN, &sBuffer, bufferLen, &bytesIn, portMAX_DELAY);
-        if (result == ESP_OK && isWebSocketConnected)
+        if (isWebSocketConnected)
         {
-            client.sendBinary((const char *)sBuffer, bytesIn);
+            esp_err_t result = i2s_read(I2S_PORT_IN, &sBuffer, bufferLen, &bytesIn, portMAX_DELAY);
+            if (result == ESP_OK)
+            {
+                client.sendBinary((const char *)sBuffer, bytesIn);
+            }
         }
+        else
+        {
+            vTaskDelay(pdMS_TO_TICKS(100)); // Small delay when not connected
+        }
+    }
+}
+
+void toggleConnection()
+{
+    if (!isWebSocketConnected)
+    {
+        // Start WebSocket connection
+        connectWSServer();
+    }
+    else
+    {
+        // Stop WebSocket connection
+        client.close();
+    }
+}
+
+void IRAM_ATTR handleButtonPress()
+{
+    static unsigned long lastDebounceTime = 0;
+    unsigned long debounceDelay = 200;
+
+    unsigned long currentMillis = millis();
+    if (currentMillis - lastDebounceTime > debounceDelay)
+    {
+        toggleConnection();
+        lastDebounceTime = currentMillis;
     }
 }
 
@@ -285,19 +326,30 @@ void setup()
     i2s_install_speaker();
     i2s_setpin_speaker();
 
-    connectWSServer();
+    // connectWSServer();
+    client.onMessage(onMessageCallback);
 
     xTaskCreatePinnedToCore(micTask, "micTask", 10000, NULL, 1, NULL, 1);
     // run callback when messages are received
-    client.onMessage(onMessageCallback);
+
+    pinMode(BUTTON_PIN, INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), handleButtonPress, FALLING);
 }
 
 void loop()
 {
-    if (client.available())
+    if (isWebSocketConnected)
     {
-        client.poll();
+        if (client.available())
+        {
+            client.poll();
+        }
     }
+    // delay(10);
+    // if (client.available())
+    // {
+    //     client.poll();
+    // }
     // Delay to avoid watchdog issues
     // delay(10);
 }
