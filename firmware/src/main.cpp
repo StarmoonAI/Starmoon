@@ -27,19 +27,21 @@ WiFiManager wm;
 #define I2S_SD_OUT D3
 
 #define SAMPLE_RATE 16000
-#define bufferCnt 10
+#define bufferCnt 20
 #define bufferLen 1024
 int16_t sBuffer[bufferLen];
 
+#define I2S_READ_LEN (1024)
+
 // WiFi setup
-const char *ssid = "launchlab";          // replace your WiFi name
-const char *password = "LaunchLabRocks"; // replace your WiFi password
-// const char *ssid = "jPhone";
-// const char *password = "0987654321";
+// const char *ssid = "launchlab";          // replace your WiFi name
+// const char *password = "LaunchLabRocks"; // replace your WiFi password
+const char *ssid = "SKYCFZHN-2.4G";    // replace your WiFi name
+const char *password = "CFaxCbZ9Y6CQ"; // replace your WiFi password
 
 // WebSocket server information
 // replace your WebSocket
-const char *websocket_server = "192.168.2.179";
+const char *websocket_server = "192.168.0.30";
 // WebSocket server port
 const uint16_t websocket_port = 8000;
 // const uint16_t websocket_port = 80;
@@ -241,6 +243,18 @@ void i2s_setpin_speaker()
     i2s_zero_dma_buffer(I2S_PORT_OUT);
 }
 
+void i2s_adc_data_scale(uint8_t *d_buff, uint8_t *s_buff, uint32_t len)
+{
+    uint32_t j = 0;
+    uint32_t dac_value = 0;
+    for (int i = 0; i < len; i += 2)
+    {
+        dac_value = ((((uint16_t)(s_buff[i + 1] & 0xf) << 8) | ((s_buff[i + 0]))));
+        d_buff[j++] = 0;
+        d_buff[j++] = dac_value * 256 / 2048;
+    }
+}
+
 void micTask(void *parameter)
 {
 
@@ -248,15 +262,24 @@ void micTask(void *parameter)
     i2s_setpin_mic();
     i2s_start(I2S_PORT_IN);
 
-    size_t bytesIn = 0;
+    int i2s_read_len = I2S_READ_LEN;
+    size_t bytes_read;
+
+    char *i2s_read_buff = (char *)calloc(i2s_read_len, sizeof(char));
+    uint8_t *flash_write_buff = (uint8_t *)calloc(i2s_read_len, sizeof(char));
+
     while (1)
     {
-        esp_err_t result = i2s_read(I2S_PORT_IN, &sBuffer, bufferLen, &bytesIn, portMAX_DELAY);
-        if (result == ESP_OK && isWebSocketConnected)
-        {
-            client.sendBinary((const char *)sBuffer, bytesIn);
-        }
+        i2s_read(I2S_PORT_IN, (void *)i2s_read_buff, i2s_read_len, &bytes_read, portMAX_DELAY);
+        i2s_adc_data_scale(flash_write_buff, (uint8_t *)i2s_read_buff, i2s_read_len);
+        client.sendBinary((const char *)flash_write_buff, i2s_read_len);
+        ets_printf("Never Used Stack Size: %u\n", uxTaskGetStackHighWaterMark(NULL));
     }
+
+    free(i2s_read_buff);
+    i2s_read_buff = NULL;
+    free(flash_write_buff);
+    flash_write_buff = NULL;
 }
 
 void setup()
@@ -269,7 +292,7 @@ void setup()
 
     connectWSServer();
 
-    xTaskCreatePinnedToCore(micTask, "micTask", 10000, NULL, 1, NULL, 1);
+    xTaskCreatePinnedToCore(micTask, "micTask", 2048, NULL, 1, NULL, 1);
     // run callback when messages are received
     client.onMessage(onMessageCallback);
 }
