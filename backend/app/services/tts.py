@@ -247,7 +247,7 @@ def azure_tts(
             }
         )
     else:
-        chunk_size = 1030  # Adjust this value based on your needs
+        chunk_size = 1024  # Adjust this value based on your needs
         audio_data = result.audio_data
         for i in range(0, len(audio_data), chunk_size):
             chunk = audio_data[i : i + chunk_size]

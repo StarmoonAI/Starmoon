@@ -4,7 +4,8 @@ import re
 import threading
 
 import emoji
-import pyaudio
+
+# import pyaudio
 from app.services.clients import Clients
 from app.services.stt import get_deepgram_transcript
 from app.services.tts import (
@@ -21,7 +22,7 @@ from fastapi import WebSocket, WebSocketDisconnect
 
 transcript_collector = TranscriptCollector()
 client = Clients()
-p = pyaudio.PyAudio()
+# p = pyaudio.PyAudio()
 
 CLAUSE_BOUNDARIES = r"\.|\?|!|。|;"
 
@@ -257,7 +258,7 @@ class ConversationManager:
         messages: list,
     ):
         previous_sentence = None
-        stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, output=True)
+        # stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, output=True)
         speech_thread = None
         speech_thread_stop_event = None
         text_queue = asyncio.Queue()
