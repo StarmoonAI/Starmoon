@@ -20,8 +20,8 @@ import Footer from "./components/Footer";
 import NavbarButtons from "./components/NavbarButtons";
 import StarmoonLogo from "./components/StarmoonLogo";
 import { BriefcaseBusiness, ShoppingCart, Store } from "lucide-react";
-import PreorderModal from "./components/Upsell/PreorderModal";
 import { Button } from "@/components/ui/button";
+import { productUrl } from "@/lib/data";
 
 const inter = Inter({
     subsets: ["latin"],
@@ -138,7 +138,7 @@ export default async function RootLayout({
                                         </Button>
                                     </Link>
                                     <NavbarButtons user={user} />
-                                    <Link href={"/products"} passHref>
+                                    <Link href={productUrl} passHref>
                                         <Button
                                             size="sm"
                                             variant="primary"
