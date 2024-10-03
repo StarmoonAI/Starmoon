@@ -10,6 +10,10 @@ WebsocketsClient client;
 bool isWebSocketConnected = false;
 WiFiManager wm;
 
+TaskHandle_t micTaskHandle = NULL;
+// Declare lastButtonState as a global variable
+bool lastButtonState = HIGH; // Initialize to HIGH (button not pressed)
+
 #define BUTTON_PIN D5 // Built-in BOOT button (GPIO 0)
 // #define LED_PIN LED_BUILTIN // Built-in LED (GPIO 10)
 
@@ -27,21 +31,15 @@ WiFiManager wm;
 #define I2S_SD_OUT D3
 
 #define SAMPLE_RATE 16000
-#define bufferCnt 10
+#define bufferCnt 20
 #define bufferLen 1024
 int16_t sBuffer[bufferLen];
 
+#define I2S_READ_LEN (1024)
+
 // WiFi setup
-// const char *ssid = "launchlab";          // replace your WiFi name
-// const char *password = "LaunchLabRocks"; // replace your WiFi password
-// String ssid = "EE-P8CX8N";
-// String password = "xd6UrFLd4kf9x4";
-
-String ssid = "OBT For Small Biz_UUH4";
-String password = "eekshXXX";
-// const char *ssid = "jPhone";
-// const char *password = "0987654321";
-
+String ssid = "launchlab";          // replace your WiFi name
+String password = "LaunchLabRocks"; // replace your WiFi password
 // Function prototypes
 void simpleAPSetup();
 String createAuthTokenMessage(const char *token);
@@ -60,7 +58,7 @@ void toggleConnection();
 
 // WebSocket server information
 // replace your WebSocket
-const char *websocket_server = "192.168.1.108";
+const char *websocket_server = "192.168.2.236";
 // WebSocket server port
 const uint16_t websocket_port = 8000;
 // const uint16_t websocket_port = 80;
@@ -187,6 +185,7 @@ void connectWSServer()
         Serial.print(".");
     }
     Serial.println("Websocket Connected!");
+    client.onMessage(onMessageCallback);
 }
 
 void onMessageCallback(WebsocketsMessage message)
@@ -195,8 +194,7 @@ void onMessageCallback(WebsocketsMessage message)
     {
         // Handle binary audio data
         size_t bytes_written;
-        // i2s_write(I2S_PORT_OUT, message.c_str(), message.length(), &bytes_written, portMAX_DELAY);
-        Serial.printf("Bytes written: %d\n", bytes_written);
+        i2s_write(I2S_PORT_OUT, message.c_str(), message.length(), &bytes_written, portMAX_DELAY);
     }
 }
 
@@ -267,55 +265,43 @@ void i2s_setpin_speaker()
     i2s_zero_dma_buffer(I2S_PORT_OUT);
 }
 
+void i2s_adc_data_scale(uint8_t *d_buff, uint8_t *s_buff, uint32_t len)
+{
+    uint32_t j = 0;
+    uint32_t dac_value = 0;
+    for (int i = 0; i < len; i += 2)
+    {
+        dac_value = ((((uint16_t)(s_buff[i + 1] & 0xf) << 8) | ((s_buff[i + 0]))));
+        d_buff[j++] = 0;
+        d_buff[j++] = dac_value * 256 / 2048;
+    }
+}
+
 void micTask(void *parameter)
 {
 
     i2s_install_mic();
     i2s_setpin_mic();
+    i2s_start(I2S_PORT_IN);
 
-    size_t bytesIn = 0;
+    int i2s_read_len = I2S_READ_LEN;
+    size_t bytes_read;
+
+    char *i2s_read_buff = (char *)calloc(i2s_read_len, sizeof(char));
+    uint8_t *flash_write_buff = (uint8_t *)calloc(i2s_read_len, sizeof(char));
+
     while (1)
     {
-        if (isWebSocketConnected)
-        {
-            esp_err_t result = i2s_read(I2S_PORT_IN, &sBuffer, bufferLen, &bytesIn, portMAX_DELAY);
-            if (result == ESP_OK)
-            {
-                client.sendBinary((const char *)sBuffer, bytesIn);
-            }
-        }
-        else
-        {
-            vTaskDelay(pdMS_TO_TICKS(100)); // Small delay when not connected
-        }
+        i2s_read(I2S_PORT_IN, (void *)i2s_read_buff, i2s_read_len, &bytes_read, portMAX_DELAY);
+        i2s_adc_data_scale(flash_write_buff, (uint8_t *)i2s_read_buff, i2s_read_len);
+        client.sendBinary((const char *)flash_write_buff, i2s_read_len);
+        ets_printf("Never Used Stack Size: %u\n", uxTaskGetStackHighWaterMark(NULL));
     }
-}
 
-void toggleConnection()
-{
-    if (!isWebSocketConnected)
-    {
-        // Start WebSocket connection
-        connectWSServer();
-    }
-    else
-    {
-        // Stop WebSocket connection
-        client.close();
-    }
-}
-
-void IRAM_ATTR handleButtonPress()
-{
-    static unsigned long lastDebounceTime = 0;
-    unsigned long debounceDelay = 200;
-
-    unsigned long currentMillis = millis();
-    if (currentMillis - lastDebounceTime > debounceDelay)
-    {
-        toggleConnection();
-        lastDebounceTime = currentMillis;
-    }
+    free(i2s_read_buff);
+    i2s_read_buff = NULL;
+    free(flash_write_buff);
+    flash_write_buff = NULL;
 }
 
 void setup()
@@ -326,30 +312,65 @@ void setup()
     i2s_install_speaker();
     i2s_setpin_speaker();
 
-    // connectWSServer();
-    client.onMessage(onMessageCallback);
-
-    xTaskCreatePinnedToCore(micTask, "micTask", 10000, NULL, 1, NULL, 1);
+    // xTaskCreatePinnedToCore(micTask, "micTask", 2048, NULL, 1, NULL, 1);
     // run callback when messages are received
 
+    // Initialize button pin
     pinMode(BUTTON_PIN, INPUT_PULLUP);
-    attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), handleButtonPress, FALLING);
+    // Initialize lastButtonState
+    lastButtonState = digitalRead(BUTTON_PIN);
 }
 
 void loop()
 {
-    if (isWebSocketConnected)
+    // Read the current button state
+    int buttonState = digitalRead(BUTTON_PIN);
+
+    // Detect button press (transition from HIGH to LOW)
+    if (buttonState == LOW && lastButtonState == HIGH)
     {
-        if (client.available())
+        // Debounce delay
+        delay(50);
+        // Read the button state again after debounce delay
+        buttonState = digitalRead(BUTTON_PIN);
+
+        if (buttonState == LOW)
         {
-            client.poll();
+            // Toggle WebSocket connection
+            if (isWebSocketConnected)
+            {
+                // Disconnect WebSocket
+                client.close();
+
+                // Delete micTask if running
+                if (micTaskHandle != NULL)
+                {
+                    vTaskDelete(micTaskHandle);
+                    micTaskHandle = NULL;
+                }
+                Serial.println("WebSocket disconnected.");
+            }
+            else
+            {
+                // Connect WebSocket
+                connectWSServer();
+
+                // Start micTask
+                xTaskCreatePinnedToCore(micTask, "micTask", 8192, NULL, 1, &micTaskHandle, 1);
+                Serial.println("WebSocket connected and micTask started.");
+            }
         }
     }
-    // delay(10);
-    // if (client.available())
-    // {
-    //     client.poll();
-    // }
-    // Delay to avoid watchdog issues
-    // delay(10);
+
+    // Update the last button state
+    lastButtonState = buttonState;
+
+    // Regularly poll the WebSocket client
+    if (isWebSocketConnected)
+    {
+        client.poll();
+    }
+
+    // Optional delay to prevent watchdog issues
+    delay(10);
 }
