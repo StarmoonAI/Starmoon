@@ -277,6 +277,33 @@ void i2s_adc_data_scale(uint8_t *d_buff, uint8_t *s_buff, uint32_t len)
     }
 }
 
+// WITH DIFFERENT MICROPHONE
+// void micTask(void *parameter)
+// {
+
+//     i2s_install_mic();
+//     i2s_setpin_mic();
+//     i2s_start(I2S_PORT_IN);
+
+//     int i2s_read_len = I2S_READ_LEN;
+//     size_t bytes_read;
+
+//     char *i2s_read_buff = (char *)calloc(i2s_read_len, sizeof(char));
+//     uint8_t *flash_write_buff = (uint8_t *)calloc(i2s_read_len, sizeof(char));
+
+//     while (1)
+//     {
+//         i2s_read(I2S_PORT_IN, (void *)i2s_read_buff, i2s_read_len, &bytes_read, portMAX_DELAY);
+//         i2s_adc_data_scale(flash_write_buff, (uint8_t *)i2s_read_buff, i2s_read_len);
+//         client.sendBinary((const char *)flash_write_buff, i2s_read_len);
+//         ets_printf("Never Used Stack Size: %u\n", uxTaskGetStackHighWaterMark(NULL));
+//     }
+
+//     free(i2s_read_buff);
+//     i2s_read_buff = NULL;
+//     free(flash_write_buff);
+//     flash_write_buff = NULL;
+// }
 void micTask(void *parameter)
 {
 
@@ -284,24 +311,15 @@ void micTask(void *parameter)
     i2s_setpin_mic();
     i2s_start(I2S_PORT_IN);
 
-    int i2s_read_len = I2S_READ_LEN;
-    size_t bytes_read;
-
-    char *i2s_read_buff = (char *)calloc(i2s_read_len, sizeof(char));
-    uint8_t *flash_write_buff = (uint8_t *)calloc(i2s_read_len, sizeof(char));
-
+    size_t bytesIn = 0;
     while (1)
     {
-        i2s_read(I2S_PORT_IN, (void *)i2s_read_buff, i2s_read_len, &bytes_read, portMAX_DELAY);
-        i2s_adc_data_scale(flash_write_buff, (uint8_t *)i2s_read_buff, i2s_read_len);
-        client.sendBinary((const char *)flash_write_buff, i2s_read_len);
-        ets_printf("Never Used Stack Size: %u\n", uxTaskGetStackHighWaterMark(NULL));
+        esp_err_t result = i2s_read(I2S_PORT_IN, &sBuffer, bufferLen, &bytesIn, portMAX_DELAY);
+        if (result == ESP_OK && isWebSocketConnected)
+        {
+            client.sendBinary((const char *)sBuffer, bytesIn);
+        }
     }
-
-    free(i2s_read_buff);
-    i2s_read_buff = NULL;
-    free(flash_write_buff);
-    flash_write_buff = NULL;
 }
 
 void setup()
