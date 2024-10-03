@@ -87,7 +87,6 @@ export default function InsightsDemo() {
         </div>
     );
 
-    console.log(cardData?.["change_1"]);
     return (
         <div className="">
             {/* <div className="text-3xl font-medium mb-8 text-gray-800">Insights</div>

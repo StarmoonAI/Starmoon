@@ -28,29 +28,29 @@ const Charts: React.FC<ChartsProps> = async ({ user, filter }) => {
     );
 
     // get the user data from the selected user and period
-    //   console.log("user", user);
+    //   // console.log("user", user);
 
     const supabase = createClient();
 
     if (user) {
         const data = await dbGetConversation(supabase, user.user_id);
-        // console.log("rawData+++", data);
+        // // console.log("rawData+++", data);
         const processedData = processData(data, filter);
         const { cardData, barData, lineData, pieData, suggestions } =
             await processedData;
 
-        console.log("cardData", cardData);
-        console.log("barData", barData);
-        console.log("lineData", lineData);
+        // console.log("cardData", cardData);
+        // console.log("barData", barData);
+        // console.log("lineData", lineData);
 
         // loop pieData and print data key
         for (let i = 0; i < lineData.length; i++) {
-            console.log("pieData", lineData[i].data);
+            // console.log("pieData", lineData[i].data);
         }
 
-        console.log("pieData", pieData);
+        // console.log("pieData", pieData);
 
-        console.log("suggestions", suggestions);
+        // console.log("suggestions", suggestions);
 
         return (
             <div>
