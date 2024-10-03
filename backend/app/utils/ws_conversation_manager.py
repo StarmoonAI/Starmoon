@@ -4,6 +4,7 @@ import re
 import threading
 
 import emoji
+import pyaudio
 from app.services.clients import Clients
 from app.services.stt import get_deepgram_transcript
 from app.services.tts import (
@@ -20,7 +21,7 @@ from fastapi import WebSocket, WebSocketDisconnect
 
 transcript_collector = TranscriptCollector()
 client = Clients()
-
+p = pyaudio.PyAudio()
 
 CLAUSE_BOUNDARIES = r"\.|\?|!|。|;"
 
@@ -371,6 +372,7 @@ class ConversationManager:
         print("timeout_check:", is_replying)
         try:
             await asyncio.sleep(timeout - 10)
+            json_data = None
             if (
                 not transcription_complete.is_set()
                 and self.client_transcription == ""
@@ -416,13 +418,13 @@ class ConversationManager:
         messages: list,
     ):
         previous_sentence = None
-        # stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, output=True)
+        stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, output=True)
         speech_thread = None
         speech_thread_stop_event = None
         text_queue = asyncio.Queue()
         bytes_queue = asyncio.Queue()
 
-        while self.connection_open:
+        while True:
             try:
                 if not self.is_replying:
                     transcription_complete = asyncio.Event()
@@ -549,8 +551,11 @@ class ConversationManager:
                                 response_data = bytes_queue.get_nowait()
                                 if response_data["type"] == "bytes":
                                     await websocket.send_bytes(response_data["data"])
+                                    print("response_data---")
                                     if bytes_queue.qsize() == 0:
                                         self.is_replying = False
+                                        # wait 0.1s
+                                        # await asyncio.sleep(0.2)
                                         transcript_collector.reset()
                                 else:
                                     await websocket.send_json(

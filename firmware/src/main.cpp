@@ -38,6 +38,7 @@ int16_t sBuffer[bufferLen];
 #define I2S_READ_LEN (1024)
 
 // WiFi setup
+<<<<<<< Updated upstream
 String ssid = "launchlab";          // replace your WiFi name
 String password = "LaunchLabRocks"; // replace your WiFi password
 // Function prototypes
@@ -59,6 +60,16 @@ void toggleConnection();
 // WebSocket server information
 // replace your WebSocket
 const char *websocket_server = "192.168.2.236";
+=======
+const char *ssid = "launchlab";          // replace your WiFi name
+const char *password = "LaunchLabRocks"; // replace your WiFi password
+// const char *ssid = "SKYCFZHN-2.4G";    // replace your WiFi name
+// const char *password = "CFaxCbZ9Y6CQ"; // replace your WiFi password
+
+// WebSocket server information
+// replace your WebSocket
+const char *websocket_server = "192.168.2.179";
+>>>>>>> Stashed changes
 // WebSocket server port
 const uint16_t websocket_port = 8000;
 // const uint16_t websocket_port = 80;
