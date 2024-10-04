@@ -31,7 +31,7 @@ docker run -p 6379:6379 --name starmoon-redis -d redis
 ### Run server (in different terminals)
 
 ```bash
-poetry run uvicorn app.main:app --ws-ping-interval 600 --ws-ping-timeout 600 --reload
+poetry run uvicorn app.main:app --ws-ping-interval 600 --ws-ping-timeout 600 --reload --host 0.0.0.0
 poetry run celery -A app.celery.worker.celery_app worker --loglevel=info
 poetry run celery -A app.celery.worker.celery_app flower --port=5555
 poetry run celery -A app.celery.worker.celery_app beat --loglevel=info
