@@ -54,10 +54,11 @@ def emotion_detection(
     )
 
     res = response.json()
-    print(res)
+    print("11111111", res)
 
     # Extract the raw scores
-    # raw_scores = np.array([item["score"] for item in res])
+    raw_scores = np.array([item["score"] for item in res])
+    print("22222222", raw_scores)
 
     # # Apply softmax to normalize the scores
     # exp_scores = np.exp(
@@ -66,7 +67,11 @@ def emotion_detection(
     # softmax_scores = exp_scores / exp_scores.sum()
 
     # Create the converted data dictionary with normalized scores
-    converted_data = {"scores": {res[i]["label"]: i for i in range(len(res))}}
+    # converted_data = {"scores": {res[i]["label"]: i for i in range(len(res))}}
+
+    converted_data = {
+        "scores": {res[i]["label"]: res[i]["score"] for i in range(len(res))}
+    }
 
     print(converted_data)
 
