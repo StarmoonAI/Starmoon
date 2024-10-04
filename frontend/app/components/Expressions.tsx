@@ -42,7 +42,7 @@ export default function Expressions({
                         </Badge> */}
                         <div className="flex flex-row items-center gap-2">
                             <div
-                                className="rounded-full w-4 h-4"
+                                className="rounded-full w-4 h-4 opacity-50"
                                 style={
                                     {
                                         backgroundColor: isExpressionColor(key)
