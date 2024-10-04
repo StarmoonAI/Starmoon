@@ -5,7 +5,7 @@ import Expressions from "../Expressions";
 import { cn, getMessageRoleName } from "@/lib/utils";
 
 interface MessagesProps {
-    messageHistory: any[];
+    // messageHistory: any[];
     selectedUser: any;
     selectedToy: any;
     emotionDictionary: any;
@@ -14,13 +14,41 @@ interface MessagesProps {
 }
 
 export const Messages: React.FC<MessagesProps> = ({
-    messageHistory,
+    // messageHistory,
     selectedUser,
     selectedToy,
     emotionDictionary,
     handleScroll,
     isScrolledToBottom,
 }) => {
+    const messageHistory = [
+        {
+            type: "input",
+            text_data: "I'm feeling okay.",
+            task_id: "94edb460-2d05-471e-b6b6-145b55bf1d35",
+        },
+        {
+            type: "response",
+            text_data: "That's good to hear, Tim.",
+            task_id: "8672fee7-67a4-410a-bd57-a8b88ae9aea6",
+        },
+        {
+            type: "response",
+            text_data:
+                "Remember, this is a quick and simple process, and you're doing great already.",
+            task_id: "e46b0285-8184-4a61-a76c-bd4348bf7c47",
+        },
+        {
+            type: "response",
+            text_data: "Do you have any questions about the blood test?",
+            task_id: "472694fa-e1f5-4edd-8aaa-4a4bad2a4f5b",
+        },
+        {
+            type: "response",
+            text_data: "Anything you're curious about?",
+            task_id: "3ba9c036-944f-444b-97d1-80a170f8950f",
+        },
+    ];
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const ref: any = useRef(null);

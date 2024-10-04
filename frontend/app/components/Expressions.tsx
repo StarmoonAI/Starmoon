@@ -1,4 +1,5 @@
 "use client";
+import { Badge } from "@/components/ui/badge";
 import { expressionColors, isExpressionColor } from "@/lib/expressionColors";
 import { motion } from "framer-motion";
 import { CSSProperties } from "react";
@@ -30,12 +31,35 @@ export default function Expressions({
                             "flex items-center justify-between gap-1 font-mono pb-1"
                         }
                     >
-                        <div className={"font-medium truncate"}>{key}</div>
-                        <div className={"tabular-nums opacity-50"}>
-                            {value.toFixed(2)}
+                        {/* <Badge
+                            variant="outline"
+                            className="font-medium truncate text-xs opacity-70 text-white"
+                            style={
+                                
+                            }
+                        >
+                            {key}
+                        </Badge> */}
+                        <div className="flex flex-row items-center gap-2">
+                            <div
+                                className="rounded-full w-4 h-4"
+                                style={
+                                    {
+                                        backgroundColor: isExpressionColor(key)
+                                            ? expressionColors[key]
+                                            : "var(--bg)",
+                                    } as CSSProperties
+                                }
+                            />
+                            <div className={"font-medium truncate"}>{key}</div>
+                            <div className={"tabular-nums text-xs opacity-40"}>
+                                {Math.round(100 * value)}%
+                            </div>
                         </div>
+
+                        {/*  */}
                     </div>
-                    <div
+                    {/* <div
                         className={"relative h-1"}
                         style={
                             {
@@ -63,7 +87,7 @@ export default function Expressions({
                                 )}`,
                             }}
                         />
-                    </div>
+                    </div> */}
                 </div>
             ))}
         </div>
