@@ -49,7 +49,7 @@ export default async function Index() {
                 <p className="font-inter font-light mt-14 text-lg sm:text-xl leading-8 text-stone-800">
                     With a platform that supports real-time conversations safe
                     for all ages, manages your AI characters, with long-term
-                    memory, RAG-based responses, and more.
+                    memory, empathic responses, and more.
                 </p>
             </div>
 
