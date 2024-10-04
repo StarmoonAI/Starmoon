@@ -48,7 +48,7 @@ def emotion_detection(
     headers = {"Authorization": f"Bearer {token}"}
 
     response = requests.post(
-        "HF_EMOTION_API_URL",
+        HF_EMOTION_API_URL,
         headers=headers,
         json={"inputs": text, "parameters": {"top_k": 30}},
     )
