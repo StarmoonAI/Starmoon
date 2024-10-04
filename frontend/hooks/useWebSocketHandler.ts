@@ -8,7 +8,7 @@ import {
 } from "./useAudioService";
 import { updateUser } from "@/db/users";
 import { createClient } from "@/utils/supabase/client";
-import _ from "lodash";
+import _, { delay } from "lodash";
 import { generateStarmoonAuthKey } from "@/app/actions";
 
 export const useWebSocketHandler = (selectedUser: IUser) => {
@@ -73,13 +73,15 @@ export const useWebSocketHandler = (selectedUser: IUser) => {
                 const accessToken = await generateStarmoonAuthKey(selectedUser);
                 onOpenAuth(accessToken);
                 setConnectionStatus("Open");
-                startRecording(
-                    setMicrophoneStream,
-                    streamRef,
-                    audioContextRef,
-                    audioWorkletNodeRef,
-                    sendMessage
-                );
+                setTimeout(() => {
+                    startRecording(
+                        setMicrophoneStream,
+                        streamRef,
+                        audioContextRef,
+                        audioWorkletNodeRef,
+                        sendMessage
+                    );
+                }, 100);
             },
             onClose: async () => {
                 // console.log("closed");
