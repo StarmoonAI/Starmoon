@@ -71,6 +71,9 @@ class Settings(BaseSettings):
     HF_ACCESS_TOKEN: str = Field(
         default_factory=lambda: os.getenv("HF_ACCESS_TOKEN", "")
     )
+    HF_EMOTION_API_URL: str = Field(
+        default_factory=lambda: os.getenv("HF_EMOTION_API_URL", "")
+    )
 
     # DB
     NEXT_PUBLIC_SUPABASE_URL: str = Field(
