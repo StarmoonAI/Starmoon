@@ -5,7 +5,6 @@ import { createClient } from "@/utils/supabase/server";
 import { defaultToyId } from "@/lib/data";
 
 import Products from "../components/Products";
-import Preorder from "../components/Preorder";
 import LandingPageSection from "../components/LandingPageSection";
 
 const Sections = [

@@ -6,7 +6,11 @@ import BookDemoModal from "./BookDemoModal";
 import { CalendarCheck, ShoppingCart, Star, Store } from "lucide-react";
 import { FaDiscord, FaGithub } from "react-icons/fa";
 import Link from "next/link";
-import { discordInviteLink, githubPublicLink } from "@/lib/data";
+import {
+    discordInviteLink,
+    githubPublicLink,
+    starmoonProductsLink,
+} from "@/lib/data";
 
 export default function EndingSection() {
     return (
@@ -38,7 +42,7 @@ export default function EndingSection() {
 
             <div className="mt-20 flex flex-col items-center justify-center gap-8">
                 <div className="flex items-center justify-center gap-8 flex-wrap">
-                    <Link href="/products" passHref>
+                    <Link href={starmoonProductsLink} passHref>
                         <Button className="flex flex-row items-center gap-2 font-medium text-base bg-stone-800 leading-8 rounded-full">
                             <ShoppingCart size={20} />
                             <span>Preorder Now</span>

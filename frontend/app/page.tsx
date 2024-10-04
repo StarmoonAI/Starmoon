@@ -14,6 +14,7 @@ import Link from "next/link";
 import PreorderModal from "./components/Upsell/PreorderModal";
 import { Gamepad2, ShoppingCart } from "lucide-react";
 import { getAllPersonalities } from "@/db/personalities";
+import { starmoonProductsLink } from "@/lib/data";
 
 export default async function Index() {
     const supabase = createClient();
@@ -54,7 +55,7 @@ export default async function Index() {
             </div>
 
             <div className="flex items-center justify-center gap-x-8 mt-10">
-                <Link href="/products" passHref>
+                <Link href={starmoonProductsLink} passHref>
                     <Button className="flex flex-row items-center gap-2 font-medium text-base bg-stone-800 leading-8 rounded-full">
                         <ShoppingCart size={20} />
                         <span>Preorder</span>
