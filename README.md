@@ -9,7 +9,7 @@ Starmoon is an affordable, compact AI-enabled device, you can take anywhere and 
 <div align="center">
     <img src="./usecases.png" alt="Starmoon-logo" width="100%" padding-bottom: 20px"/>
 
-[![Discord Follow](https://dcbadge.limes.pink/api/server/https://discord.gg/KJWxDPBRUj)](https://discord.gg)
+[![Discord Follow](https://dcbadge.vercel.app/api/server/KJWxDPBRUj?style=flat)](https://discord.gg/KJWxDPBRUj)
 
 [![License: GPLv3](https://img.shields.io/badge/license-GPLv3-blue)](https://www.gnu.org/licenses/gpl-3.0.en.html)&ensp;&ensp;&ensp;
 
@@ -19,7 +19,7 @@ Starmoon is an affordable, compact AI-enabled device, you can take anywhere and 
 
 ## Demo Highlights 🎥
 
-Video
+https://github.com/user-attachments/assets/d0274d4a-ce1b-47f0-b51f-fa2cdabac045
 
 ## Key features 🎯
 
@@ -134,7 +134,7 @@ Video
     -   Click the `Upload` button to run the upload task, or `Upload and Monitor` button to run the upload task and monitor the device.
 -   **Step 5**: Hardware usage
 
-    -   Power the device -> Use your phone/tablet/pc to connect "Starmoon AI device" WiFi and follow the instructions to set up internet connection (only support 2.4Ghz WiFi).
+    -   Power the device -> Use your phone/tablet/pc to connect "Starmoon device" WiFi and follow the instructions to set up internet connection (only support 2.4Ghz WiFi).
     -   Once the software and firmware are set up, you can push the button to power on the ESP32 device and start talking to the device.
 
         <!-- -   The LED indicates the current status:

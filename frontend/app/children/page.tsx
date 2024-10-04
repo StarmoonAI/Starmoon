@@ -5,6 +5,7 @@ import { createClient } from "@/utils/supabase/server";
 import { defaultToyId } from "@/lib/data";
 
 import Products from "../components/Products";
+import Preorder from "../components/Preorder";
 import LandingPageSection from "../components/LandingPageSection";
 
 const Sections = [
@@ -103,6 +104,9 @@ export default async function Home() {
                     />
                 </div>
             </div>
+
+            {/* <Preorder /> */}
+
             <div className="relative -z-10 px-6 lg:px-8">
                 <div
                     aria-hidden="true"

@@ -8,7 +8,7 @@ import {
 } from "./useAudioService";
 import { updateUser } from "@/db/users";
 import { createClient } from "@/utils/supabase/client";
-import _ from "lodash";
+import _, { delay } from "lodash";
 import { generateStarmoonAuthKey } from "@/app/actions";
 
 export const useWebSocketHandler = (selectedUser: IUser) => {
@@ -36,14 +36,26 @@ export const useWebSocketHandler = (selectedUser: IUser) => {
     const connectionStartTimeRef = useRef<Date | null>(null);
     const connectionDurationRef = useRef<number | null>(null);
 
-    const onOpenAuth = (accessToken: string) => {
+    const onOpenAuth = async (accessToken: string) => {
         sendJsonMessage({
             token: accessToken,
             device: "web",
             user_id: selectedUser.user_id,
         });
-        // console.log("WebSocket connection opened");
         connectionStartTimeRef.current = new Date();
+    };
+
+    const onOpen = async () => {
+        const accessToken = await generateStarmoonAuthKey(selectedUser);
+        await onOpenAuth(accessToken);
+        setConnectionStatus("Open");
+        startRecording(
+            setMicrophoneStream,
+            streamRef,
+            audioContextRef,
+            audioWorkletNodeRef,
+            sendMessage
+        );
     };
 
     const setDurationOnClose = async () => {
@@ -69,18 +81,7 @@ export const useWebSocketHandler = (selectedUser: IUser) => {
 
     const { sendMessage, sendJsonMessage, lastJsonMessage, readyState } =
         useWebSocket(socketUrl, {
-            onOpen: async () => {
-                const accessToken = await generateStarmoonAuthKey(selectedUser);
-                onOpenAuth(accessToken);
-                setConnectionStatus("Open");
-                startRecording(
-                    setMicrophoneStream,
-                    streamRef,
-                    audioContextRef,
-                    audioWorkletNodeRef,
-                    sendMessage
-                );
-            },
+            onOpen,
             onClose: async () => {
                 // console.log("closed");
                 setConnectionStatus("Closed");

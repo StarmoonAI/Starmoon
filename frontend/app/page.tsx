@@ -14,7 +14,6 @@ import Link from "next/link";
 import PreorderModal from "./components/Upsell/PreorderModal";
 import { Gamepad2, ShoppingCart } from "lucide-react";
 import { getAllPersonalities } from "@/db/personalities";
-import { productUrl } from "@/lib/data";
 
 export default async function Index() {
     const supabase = createClient();
@@ -50,12 +49,12 @@ export default async function Index() {
                 <p className="font-inter font-light mt-14 text-lg sm:text-xl leading-8 text-stone-800">
                     With a platform that supports real-time conversations safe
                     for all ages, manages your AI characters, with long-term
-                    memory, RAG-based responses, and more.
+                    memory, empathic responses, and more.
                 </p>
             </div>
 
             <div className="flex items-center justify-center gap-x-8 mt-10">
-                <Link href={productUrl} passHref>
+                <Link href="/products" passHref>
                     <Button className="flex flex-row items-center gap-2 font-medium text-base bg-stone-800 leading-8 rounded-full">
                         <ShoppingCart size={20} />
                         <span>Preorder</span>

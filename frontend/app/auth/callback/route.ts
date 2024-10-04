@@ -22,7 +22,11 @@ export async function GET(request: Request) {
         const {
             data: { user },
         } = await supabase.auth.getUser();
+
+        // console.log("user+++++", user);
+
         if (user) {
+            // console.log("user+++++2", user);
             const userExists = await doesUserExist(supabase, user);
             if (!userExists) {
                 // Create user if they don't exist

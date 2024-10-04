@@ -21,6 +21,7 @@ interface Product {
     description: string;
     imageSrc: string;
     features: string[];
+    components: string[];
     price: number;
     tag: string;
     paymentLink: string;
@@ -35,8 +36,9 @@ const products: Product[] = [
         title: "Starmoon AI Device",
         description:
             "The Starmoon AI device provides all AI characters packed into one fully assembled compact device that can be added to any object",
-        imageSrc: "/images/usecase2.png",
+        imageSrc: "/images/front_view.png",
         features: [
+            "Dimensions: 4.5cm x 3.8cm x 1.9cm",
             "2-month FREE access to Starmoon AI subscription",
             "Unlimited access to Starmoon characters till we deliver your device",
             "On-the-go empathic companion for anyone",
@@ -46,8 +48,9 @@ const products: Product[] = [
             "Over 4 days standby and 6 hours of continuous voice interaction",
             "Understand your conversational insights",
         ],
+        components: ["The Starmoon AI device", "USB-C cable"],
         originalPrice: 89,
-        price: 59,
+        price: 57.99,
         tag: "Most Popular",
         paymentLink: "https://buy.stripe.com/eVa3cfb5E9TJ3cs6ou",
         shadow: "0 4px 6px rgba(255, 215, 0, 0.2), 0 8px 24px rgba(218, 165, 32, 0.5) !important;",
@@ -55,18 +58,27 @@ const products: Product[] = [
     {
         title: "Starmoon AI DIY Dev Kit",
         description:
-            "The Starmoon AI Dev Kit is a powerful tool for developers to create their own AI characters and integrate them into the Starmoon universe.",
-        imageSrc: "/images/front_view.png",
+            "The Starmoon AI Dev Kit is a fully programmable set of components for developers to create their own AI characters and integrate them into their projects.",
+        imageSrc: "/images/devkit.png",
         features: [
-            "All hardware components included in your Starmoon kit",
-            "Unlimited access to Starmoon characters till we deliver your device",
+            "All hardware components included in your Starmoon kit. No soldering required.",
+            "Unlimited access to Starmoon characters on our website till we deliver your device",
             "Tools to create your own AI character",
-            "Integrate your AI character into the Starmoon universe",
+            "Integrate your AI character into your projects",
             "Access to the Starmoon AI SDK",
             "Access to the Starmoon AI Discord community",
         ],
-        originalPrice: 79,
-        price: 49,
+        components: [
+            "Mini ESP32-S3 device",
+            "Microphone module",
+            "Speaker module",
+            "Battery module",
+            "LED light module",
+            "Switch",
+            "USB-C cable",
+        ],
+        originalPrice: 69,
+        price: 45.99,
         tag: "Best Value",
         paymentLink: "https://buy.stripe.com/3cs6ora1A2rheVa3cj",
         shadow: "0 4px 6px rgba(135, 206, 235, 0.2), 0 8px 24px rgba(70, 130, 180, 0.5) !important;",
@@ -162,25 +174,54 @@ export default async function Home() {
                                     <h3 className="font-semibold text-lg mb-2">
                                         Features
                                     </h3>
-                                    <ul className="space-y-4">
-                                        {product.features.map((feature) => (
-                                            <li
-                                                key={feature}
-                                                className="flex flex-row gap-1 items-center"
-                                            >
-                                                <CheckCircle
-                                                    style={{
-                                                        height: 16,
-                                                        width: 16,
-                                                    }}
-                                                    strokeWidth={3}
-                                                    className="min-h-4 min-w-4 text-green-500 mr-2"
-                                                />
-                                                <span className="text-sm">
-                                                    {feature}
-                                                </span>
-                                            </li>
-                                        ))}
+                                    <ul className="space-y-4 ml-4">
+                                        {product.features.map(
+                                            (feature, index) => (
+                                                <li
+                                                    key={"feature_" + feature}
+                                                    className="flex flex-row gap-1 items-start"
+                                                >
+                                                    <CheckCircle
+                                                        style={{
+                                                            height: 16,
+                                                            width: 16,
+                                                        }}
+                                                        strokeWidth={3}
+                                                        className="mt-0.5 min-h-4 min-w-4 text-green-500 mr-2"
+                                                    />
+                                                    <span className="text-sm">
+                                                        {feature}
+                                                    </span>
+                                                </li>
+                                            )
+                                        )}
+                                        <li className="flex flex-row gap-1 items-start">
+                                            <CheckCircle
+                                                style={{
+                                                    height: 16,
+                                                    width: 16,
+                                                }}
+                                                strokeWidth={3}
+                                                className="mt-0.5 min-h-4 min-w-4 text-green-500 mr-2"
+                                            />
+                                            <span className="text-sm">
+                                                <span>Components</span>:{" "}
+                                                {product.components.map(
+                                                    (components, index) => (
+                                                        <span
+                                                            key={
+                                                                "components_" +
+                                                                index
+                                                            }
+                                                            className="mr-2"
+                                                        >
+                                                            {index + 1}.{" "}
+                                                            {components}
+                                                        </span>
+                                                    )
+                                                )}
+                                            </span>
+                                        </li>
                                     </ul>
                                 </div>
                             </div>

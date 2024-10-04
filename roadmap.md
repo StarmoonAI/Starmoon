@@ -5,8 +5,6 @@
 -   Add battery module within the same size of the device
 -   Custom voice clone
 -   RAG on personal documents
--   Agent implementation with LangChain
+-   Agent implementation
 -   Long-term memory cache with MemGPT
--   Prompt caching with Anthropic's Claude models
--   OpenAI real time API
--   Hume Startup grant
+-   Prompt caching

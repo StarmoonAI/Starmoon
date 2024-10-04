@@ -34,6 +34,7 @@ export default function GoogleLoginButton({
     toy_id,
     personality_id,
 }: GoogleLoginButtonProps) {
+    // console.log("1324355345435", toy_id);
     return (
         <Button
             variant="default"
