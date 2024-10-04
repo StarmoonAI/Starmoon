@@ -50,7 +50,7 @@ const products: Product[] = [
         ],
         components: ["The Starmoon AI device", "USB-C cable"],
         originalPrice: 89,
-        price: 59,
+        price: 57.99,
         tag: "Most Popular",
         paymentLink: "https://buy.stripe.com/eVa3cfb5E9TJ3cs6ou",
         shadow: "0 4px 6px rgba(255, 215, 0, 0.2), 0 8px 24px rgba(218, 165, 32, 0.5) !important;",
@@ -59,7 +59,7 @@ const products: Product[] = [
         title: "Starmoon AI DIY Dev Kit",
         description:
             "The Starmoon AI Dev Kit is a fully programmable set of components for developers to create their own AI characters and integrate them into their projects.",
-        imageSrc: "/images/usecase2.png",
+        imageSrc: "/images/devkit.png",
         features: [
             "All hardware components included in your Starmoon kit. No soldering required.",
             "Unlimited access to Starmoon characters on our website till we deliver your device",
@@ -77,8 +77,8 @@ const products: Product[] = [
             "Switch",
             "USB-C cable",
         ],
-        originalPrice: 79,
-        price: 49,
+        originalPrice: 69,
+        price: 45.99,
         tag: "Best Value",
         paymentLink: "https://buy.stripe.com/3cs6ora1A2rheVa3cj",
         shadow: "0 4px 6px rgba(135, 206, 235, 0.2), 0 8px 24px rgba(70, 130, 180, 0.5) !important;",
