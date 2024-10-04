@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { cn, getCreditsRemaining } from "@/lib/utils";
 import ControlPanel from "./ControlPanel";
 import { Messages } from "./Messages";
-import { getAssistantAvatar, getUserAvatar } from "@/lib/utils";
 import { MoonStar, Sparkles } from "lucide-react";
 import Image from "next/image";
 import PickPersonality from "./PickPersonality";
