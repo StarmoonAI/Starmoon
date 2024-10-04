@@ -19,7 +19,7 @@ export default function Expressions({
     return (
         <div
             className={
-                "text-xs p-3 w-full border-t border-border flex flex-col md:flex-row gap-3 bg-stone-50"
+                "text-xs p-3 w-full border-t border-border flex flex-col md:flex-row gap-3 bg-stone-50 rounded-b-[7px]"
             }
         >
             {top3.map(([key, value], index) => (
@@ -29,9 +29,9 @@ export default function Expressions({
                             "flex items-center justify-between gap-1 font-mono pb-1"
                         }
                     >
-                        <div className="flex flex-row items-center gap-2">
+                        <div className="flex flex-row items-center gap-2 px-2">
                             <div
-                                className="rounded-full w-4 h-4 opacity-50"
+                                className="rounded-full w-4 h-4 opacity-70"
                                 style={
                                     {
                                         backgroundColor: isExpressionColor(key)
@@ -42,7 +42,7 @@ export default function Expressions({
                             />
                             <div className={"font-medium truncate"}>{key}</div>
                             <div className={"tabular-nums text-xs opacity-40"}>
-                                {Math.round(100 * value)}%
+                                {Math.round(value)}%
                             </div>
                         </div>
                     </div>

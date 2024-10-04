@@ -1,2 +1,3 @@
 .github/workflows/* merge=ours
 backend/kubernetes/* merge=ours
+firmware/test/* merge=ours

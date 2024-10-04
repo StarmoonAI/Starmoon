@@ -43,30 +43,30 @@ def print_current_time(utterance: str, messages: list):
 def emotion_detection(
     text: str, user: dict, role: str, session_id: str, is_sensitive: bool = False
 ):
-    # API_URL = "https://api-inference.huggingface.co/models/michellejieli/emotion_text_classifier"
-    API_URL = (
-        "https://api-inference.huggingface.co/models/SamLowe/roberta-base-go_emotions"
-    )
+    HF_EMOTION_API_URL = settings.HF_EMOTION_API_URL
     token = settings.HF_ACCESS_TOKEN
     headers = {"Authorization": f"Bearer {token}"}
 
-    response = requests.post(API_URL, headers=headers, json={"inputs": text})
+    response = requests.post(
+        HF_EMOTION_API_URL,
+        headers=headers,
+        json={"inputs": text, "parameters": {"top_k": 30}},
+    )
 
     res = response.json()
+    print(res)
 
     # Extract the raw scores
-    raw_scores = np.array([item["score"] for item in res[0]])
+    # raw_scores = np.array([item["score"] for item in res])
 
-    # Apply softmax to normalize the scores
-    exp_scores = np.exp(
-        raw_scores - np.max(raw_scores)
-    )  # Subtract max for numerical stability
-    softmax_scores = exp_scores / exp_scores.sum()
+    # # Apply softmax to normalize the scores
+    # exp_scores = np.exp(
+    #     raw_scores - np.max(raw_scores)
+    # )  # Subtract max for numerical stability
+    # softmax_scores = exp_scores / exp_scores.sum()
 
     # Create the converted data dictionary with normalized scores
-    converted_data = {
-        "scores": {res[0][i]["label"]: softmax_scores[i] for i in range(len(res[0]))}
-    }
+    converted_data = {"scores": {res[i]["label"]: i for i in range(len(res))}}
 
     print(converted_data)
 

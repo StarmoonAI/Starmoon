@@ -58,6 +58,7 @@ jobs:
           SPEECH_REGION=${{ secrets.SPEECH_REGION }}
           DG_API_KEY=${{ secrets.DG_API_KEY }}
           HF_ACCESS_TOKEN=${{ secrets.HF_ACCESS_TOKEN }}
+          HF_EMOTION_API_URL=${{ secrets.HF_EMOTION_API_URL }}
           AZURE_OPENAI_ENDPOINT=${{ secrets.AZURE_OPENAI_ENDPOINT }}
           AZURE_OPENAI_API_KEY=${{ secrets.AZURE_OPENAI_API_KEY }}
           NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
