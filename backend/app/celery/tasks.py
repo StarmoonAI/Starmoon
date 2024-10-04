@@ -48,17 +48,16 @@ def emotion_detection(
     headers = {"Authorization": f"Bearer {token}"}
 
     response = requests.post(
-        HF_EMOTION_API_URL,
+        "HF_EMOTION_API_URL",
         headers=headers,
         json={"inputs": text, "parameters": {"top_k": 30}},
     )
 
     res = response.json()
-    print("11111111", res)
 
     # Extract the raw scores
-    raw_scores = np.array([item["score"] for item in res])
-    print("22222222", raw_scores)
+    # raw_scores = np.array([item["score"] for item in res])
+    # print("22222222", raw_scores)
 
     # # Apply softmax to normalize the scores
     # exp_scores = np.exp(
