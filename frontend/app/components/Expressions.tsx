@@ -1,5 +1,7 @@
 "use client";
+import { Badge } from "@/components/ui/badge";
 import { expressionColors, isExpressionColor } from "@/lib/expressionColors";
+import { motion } from "framer-motion";
 import { CSSProperties } from "react";
 import * as R from "remeda";
 
@@ -49,7 +51,7 @@ export default function Expressions({
               />
               <div className={"font-medium truncate"}>{key}</div>
               <div className={"tabular-nums text-xs opacity-40"}>
-                {Math.round(value)}%
+                {Math.round(100 * value)}%
               </div>
             </div>
 
