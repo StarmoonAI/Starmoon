@@ -117,7 +117,7 @@ https://github.com/user-attachments/assets/01018944-36a3-447d-bd28-ac80d402d4c2
 
 -   **Step 2**: Update and WebSocket server details in `src/main.cpp`
 
-    -   Find your WiFi ip adress (websocket_server_host) by command `ipconfig` (under `Default Gateway`) in Windows or `ifconfig` (under `inet xxx.x.x.x netmask 0xff000000`) in Linux/MacOS, or you can also follow the instructions [here](https://nordvpn.com/blog/find-router-ip-address/)
+    -   Find your WiFi ip address (websocket_server_host) by command `ipconfig` (under `Default Gateway`) in Windows or `ifconfig` (under `inet xxx.x.x.x netmask 0xff000000`) in Linux/MacOS, or you can also follow the instructions [here](https://nordvpn.com/blog/find-router-ip-address/)
 
         ```cpp
 
