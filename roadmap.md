@@ -8,3 +8,4 @@
 -   Agent implementation
 -   Long-term memory cache with MemGPT
 -   Prompt caching
+-   Intergrate Local LLM and TTS models
