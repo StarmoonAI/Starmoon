@@ -15,6 +15,7 @@ import {
 import { CheckCircle, Info } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import StripePricingTable from "../components/PricingTable";
 
 interface Product {
     title: string;
@@ -231,6 +232,9 @@ export default async function Home() {
                         </CardContent>
                     </Card>
                 ))}
+            </div>
+            <div className="overflow-hidden rounded-3xl shadow-md">
+                <StripePricingTable />
             </div>
         </div>
     );
