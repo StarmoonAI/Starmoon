@@ -26,6 +26,14 @@ interface ITestCharacter {
 
 const testCharacters: ITestCharacter[] = [
   {
+    toy_id: "56224f7f-250d-4351-84ee-e4a13b881c7b",
+    personality_id: "3f7556df-3c95-4bba-a6e0-0058d1dd256c",
+    character_description:
+      "Aria is our neutral child voice. Specialty: Your eco-champion, helping you make daily environment-friendly choices.",
+    audio_src: "/audio/chester.wav",
+    image_src: "aria_sherlock.png",
+  },
+  {
     toy_id: "6c3eb71a-8d68-4fc6-85c5-27d283ecabc8",
     personality_id: "f2385cc0-2dd2-482b-81b4-5bc1ebf7f527",
     character_description:
@@ -40,15 +48,6 @@ const testCharacters: ITestCharacter[] = [
       "San is our female-voice. Specialty: Your fitness coach whenever you need her to give you a boost.",
     audio_src: "/audio/sandra.wav",
     image_src: "mama_mia_fitness_coach.png",
-  },
-
-  {
-    toy_id: "56224f7f-250d-4351-84ee-e4a13b881c7b",
-    personality_id: "3f7556df-3c95-4bba-a6e0-0058d1dd256c",
-    character_description:
-      "Aria is our neutral-voice. Specialty: Your eco-champion, helping you make daily environment-friendly choices.",
-    audio_src: "/audio/chester.wav",
-    image_src: "aria_sherlock.png",
   },
 ];
 
