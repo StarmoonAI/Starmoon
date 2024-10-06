@@ -13,8 +13,6 @@ Starmoon is an affordable, compact AI-enabled device, you can take anywhere and 
 
 [![License: GPLv3](https://img.shields.io/badge/license-GPLv3-blue)](https://www.gnu.org/licenses/gpl-3.0.en.html)&ensp;&ensp;&ensp;
 
-<!-- [![GitHub Repo stars](https://img.shields.io/github/stars/quivrhq/quivr?style=social)](https://github.com/StarmoonAI/Starmoon) -->
-<!-- [![Twitter Follow](https://img.shields.io/twitter/follow/StanGirard?style=social)](https://twitter.com/_StanGirard) -->
 </div>
 
 ## Demo Highlights 🎥
