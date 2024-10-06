@@ -55,7 +55,7 @@ export default async function Index() {
 
       <div className="flex items-center justify-center gap-x-8 mt-10">
         <Link href="/products" passHref>
-          <Button className="flex flex-row items-center gap-2 font-medium text-base bg-stone-800 leading-8 rounded-full">
+          <Button className="flex flex-row items-center gap-2 font-medium text-base bg-white leading-8 rounded-full">
             <ShoppingCart size={20} />
             <span>Preorder</span>
           </Button>
