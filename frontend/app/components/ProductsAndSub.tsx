@@ -12,7 +12,7 @@ import {
     PopoverTrigger,
     PopoverContent,
 } from "@/components/ui/popover";
-import { CheckCircle, Info, Sparkles } from "lucide-react";
+import { CheckCircle, Info, Sparkles, Truck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import StripePricingTable from "../components/PricingTable";
@@ -185,12 +185,21 @@ const ProductsAndSub = () => {
                                     </Link>
                                 </CardFooter>
                                 <CardContent className="p-14 relative flex flex-col gap-2">
-                                    <Badge
-                                        variant="secondary"
-                                        className="text-sm border-0 absolute top-6 right-14 text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-center"
-                                    >
-                                        {product.tag}
-                                    </Badge>
+                                    <div className="flex flex-row items-center gap-2 absolute top-6 right-14">
+                                        <Badge
+                                            variant="secondary"
+                                            className="text-sm border-0  text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-center"
+                                        >
+                                            {product.tag}
+                                        </Badge>
+                                        <Badge
+                                            variant="secondary"
+                                            className="text-sm font-medium rounded-lg text-center flex flex-row items-center gap-1"
+                                        >
+                                            <Truck size={16} />{" "}
+                                            {"FREE Shipping"}
+                                        </Badge>
+                                    </div>
                                     <div className="flex justify-between items-start">
                                         <div className="mt-8 flex flex-col gap-2">
                                             <CardTitle className="text-xl font-semibold mb-2">
