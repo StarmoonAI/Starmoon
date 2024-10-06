@@ -178,7 +178,7 @@ const ProductsAndSub = () => {
                                         <Button
                                             size="sm"
                                             variant="primary"
-                                            className="rounded-full"
+                                            className="rounded-full shadow-xl"
                                         >
                                             Preorder Now
                                         </Button>
