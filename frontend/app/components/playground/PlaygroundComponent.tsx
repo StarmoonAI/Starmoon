@@ -178,7 +178,7 @@ const Playground: React.FC<PlaygroundProps> = ({
                                         }}
                                     >
                                         {creditsRemaining <= 0 ? (
-                                            <Link href="/products" passHref>
+                                            <Link href="/subscription" passHref>
                                                 <Button
                                                     className={
                                                         "z-50 flex items-center gap-1.5 rounded-full"

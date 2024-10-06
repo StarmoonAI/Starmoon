@@ -17,7 +17,7 @@ const CreditsRemaining: React.FC<{ user: IUser }> = ({ user }) => {
                 {creditsRemaining} credits remaining
             </p>
             {creditsRemaining <= 50 && (
-                <Link href="/products" passHref>
+                <Link href="/subscription" passHref>
                     <Button
                         variant="upsell_link"
                         className="flex flex-row items-center gap-2 pl-0"

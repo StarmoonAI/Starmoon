@@ -3,7 +3,7 @@ import ProductsAndSub from "../components/ProductsAndSub";
 
 export default async function Home() {
     return (
-        <Tabs defaultValue="products">
+        <Tabs defaultValue="subscription">
             <ProductsAndSub />
         </Tabs>
     );
