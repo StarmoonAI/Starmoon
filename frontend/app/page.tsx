@@ -1,5 +1,4 @@
 import { createToys, getAllToys, getToyById } from "@/db/toys";
-import { getUserById } from "@/db/users";
 import { createClient } from "@/utils/supabase/server";
 import Illustration from "@/public/hero_section.svg";
 
@@ -11,7 +10,6 @@ import InsightsDemoSection from "./components/InsightsDemoSection";
 import FeaturesSection from "./components/FeaturesSection";
 import EndingSection from "./components/EndingSection";
 import Link from "next/link";
-import PreorderModal from "./components/Upsell/PreorderModal";
 import { Gamepad2, ShoppingCart } from "lucide-react";
 import { getAllPersonalities } from "@/db/personalities";
 

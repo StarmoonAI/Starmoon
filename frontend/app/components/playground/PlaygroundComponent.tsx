@@ -16,6 +16,7 @@ import { updateUser } from "@/db/users";
 import _ from "lodash";
 import CreditsRemaining from "../CreditsRemaining";
 import AddCreditsModal from "../Upsell/AddCreditsModal";
+import Link from "next/link";
 
 interface PlaygroundProps {
     selectedUser: IUser;
@@ -177,10 +178,10 @@ const Playground: React.FC<PlaygroundProps> = ({
                                         }}
                                     >
                                         {creditsRemaining <= 0 ? (
-                                            <AddCreditsModal>
+                                            <Link href="/products" passHref>
                                                 <Button
                                                     className={
-                                                        "z-50 flex items-center gap-1.5"
+                                                        "z-50 flex items-center gap-1.5 rounded-full"
                                                     }
                                                     size="sm"
                                                     variant={"upsell_primary"}
@@ -191,10 +192,10 @@ const Playground: React.FC<PlaygroundProps> = ({
                                                         stroke={"currentColor"}
                                                     />
                                                     <span className="text-md font-semibold">
-                                                        Add credits
+                                                        Subscribe
                                                     </span>
                                                 </Button>
-                                            </AddCreditsModal>
+                                            </Link>
                                         ) : (
                                             <Button
                                                 disabled={!selectedUser}
