@@ -50,8 +50,8 @@ If you can't see the video, you can watch it [here](https://www.youtube.com/watc
     - [Speaker (3525)](https://www.aliexpress.us/item/3256805515112434.html)
     - [LED light](https://www.aliexpress.us/item/3256805384408000.html)
     - [Button](https://www.aliexpress.us/item/3256803815119722.html)
-    - [PCB prototype board](https://www.aliexpress.com/item/1005005038301414.html)
-    - [3D printed case](case_model.ufp)
+    - [PCB prototype board](https://www.aliexpress.com/item/1005005038301414.html) or [custom PCB](https://www.aliexpress.com/item/1005005038301414.html)
+    - [3D printed case](case_model.stl)
     - Tools: [28AWG wires](https://www.aliexpress.us/item/3256801511896966.html) + [soldering toolset](https://www.aliexpress.com/item/1005007010143403.html) + [flux](https://www.aliexpress.com/item/1005007003481283.html)
 
 ### Software setup 🖥️
