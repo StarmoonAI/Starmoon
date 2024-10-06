@@ -12,7 +12,7 @@ import {
     PopoverTrigger,
     PopoverContent,
 } from "@/components/ui/popover";
-import { CheckCircle, Info } from "lucide-react";
+import { CheckCircle, Info, Sparkles } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import StripePricingTable from "../components/PricingTable";
@@ -89,6 +89,26 @@ const products: Product[] = [
 ];
 
 const ProductsAndSub = () => {
+    const SubscriptionNode = (
+        <p className="inline-block text-sm mt-4">
+            *{SubscriptionString}
+            {/* <Link href="/subscription" passHref>
+                <Button
+                    className={"flex items-center gap-1 p-0"}
+                    size="sm"
+                    variant={"link"}
+                >
+                    <Sparkles
+                        size={16}
+                        strokeWidth={2.5}
+                        stroke={"currentColor"}
+                    />
+                    <span className="text-md font-semibold">Subscribe</span>
+                </Button>
+            </Link> */}
+        </p>
+    );
+
     return (
         <>
             <TabsList className="w-full">
@@ -123,14 +143,6 @@ const ProductsAndSub = () => {
                                     </p>
                                 </PopoverContent>
                             </Popover>
-                        </p>
-                        <p className="text-gray-600 inline-block text-sm mt-4">
-                            *{SubscriptionString}
-                            <Link href="/subscription" passHref>
-                                <Button variant="link" size="sm">
-                                    Subscribe
-                                </Button>
-                            </Link>
                         </p>
                     </div>
                     <div className="flex flex-col gap-10">
@@ -172,14 +184,14 @@ const ProductsAndSub = () => {
                                         </Button>
                                     </Link>
                                 </CardFooter>
-                                <CardContent className="p-14 relative">
+                                <CardContent className="p-14 relative flex flex-col gap-2">
                                     <Badge
                                         variant="secondary"
                                         className="text-sm border-0 absolute top-6 right-14 text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-center"
                                     >
                                         {product.tag}
                                     </Badge>
-                                    <div className="flex justify-between items-start mb-4">
+                                    <div className="flex justify-between items-start">
                                         <div className="mt-8 flex flex-col gap-2">
                                             <CardTitle className="text-xl font-semibold mb-2">
                                                 {product.title}
@@ -189,9 +201,10 @@ const ProductsAndSub = () => {
                                             </p>
                                         </div>
                                     </div>
-                                    <div className="space-y-4 mb-2">
+                                    {SubscriptionNode}
+                                    <div className="space-y-4">
                                         <div>
-                                            <h3 className="font-semibold text-lg mb-2">
+                                            <h3 className="font-semibold text-lg my-2">
                                                 Features
                                             </h3>
                                             <ul className="space-y-4 ml-4">
