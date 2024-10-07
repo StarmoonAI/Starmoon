@@ -43,7 +43,7 @@ export default function EndingSection() {
             <div className="mt-20 flex flex-col items-center justify-center gap-8">
                 <div className="flex items-center justify-center gap-8 flex-wrap">
                     <Link href={starmoonProductsLink} passHref>
-                        <Button className="flex flex-row items-center gap-2 font-medium text-base bg-stone-800 leading-8 rounded-full">
+                        <Button className="flex flex-row items-center gap-2 font-medium text-base bg-stone-800 leading-8 rounded-full border-2 border-black text-white hover:text-black">
                             <ShoppingCart size={20} />
                             <span>Preorder Now</span>
                         </Button>
@@ -54,7 +54,7 @@ export default function EndingSection() {
                     >
                         <Button
                             variant="secondary"
-                            className="flex flex-row bg-white items-center gap-2 font-medium text-base text-stone-800 leading-8 rounded-full border-2 border-stone-900"
+                            className="flex flex-row bg-white hover:text-white items-center gap-2 font-medium text-base text-stone-800 leading-8 rounded-full border-2 border-stone-900"
                         >
                             <CalendarCheck size={20} />
                             <span>Book a Demo</span>
@@ -76,8 +76,8 @@ export default function EndingSection() {
                             variant="link"
                             className="flex flex-row items-center gap-2 font-medium text-base text-stone-800 leading-8 rounded-full bg-transparent"
                         >
-                            <FaDiscord className="text-2xl" />
-                            <span>Join our Discord</span>
+                            <FaDiscord className="text-2xl bg-black rounded-sm" />
+                            <span className="text-black font-bold ">Join our Discord</span>
                         </Button>
                     </Link>
                 </div>

@@ -55,13 +55,13 @@ export default async function Index() {
 
       <div className="flex items-center justify-center gap-x-8 mt-10">
         <Link href="/products" passHref>
-          <Button className="flex flex-row items-center gap-2 font-medium text-base bg-stone-800 leading-8 rounded-full">
+          <Button className="flex flex-row items-center gap-2 font-medium text-base bg-stone-800 text-white leading-8 rounded-full border-2 border-black hover:text-black">
             <ShoppingCart size={20} />
             <span>Preorder</span>
           </Button>
         </Link>
         <Link href={user ? "/home" : "/login"}>
-          <Button className="flex flex-row items-center bg-white gap-2 font-medium text-base text-stone-800 leading-8 rounded-full border-2 border-stone-900 hover:bg-gray-100">
+          <Button className="flex flex-row items-center bg-white gap-2 font-medium text-base text-stone-800 leading-8 rounded-full border-2  hover:bg-black hover:text-white ">
             <Gamepad2 size={20} />
             <span>Play Online</span>
           </Button>

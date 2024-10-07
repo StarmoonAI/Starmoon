@@ -43,7 +43,7 @@ hover:scale-[1.01] transition-all duration-300 ease-in-out cursor-pointer shadow
                     className="rounded-[30px]"
                 />
             </div>
-            <div className="text-left py-2 flex flex-col gap-y-2 relative">
+            {/* <div className="text-left py-2 flex flex-col gap-y-2 relative">
                 <Button
                     size="icon"
                     variant="secondary"
@@ -86,7 +86,7 @@ hover:scale-[1.01] transition-all duration-300 ease-in-out cursor-pointer shadow
                 <p className="text-sm text-gray-500 line-clamp-2 pr-4">
                     {character_description}
                 </p>
-            </div>
+            </div> */}
         </div>
     );
 };

@@ -130,7 +130,7 @@ export default async function RootLayout({
                                         <Button
                                             size="sm"
                                             variant="secondary"
-                                            className="flex flex-row gap-2 items-center rounded-full bg-nav-bar"
+                                            className="flex flex-row gap-2 items-center rounded-full bg-nav-bar border-2 hover:bg-white hover:text-black hover:border-black"
                                         >
                                             <FaGithub className="text-xl" />
                                             <p className="hidden sm:flex font-medium">
@@ -143,7 +143,7 @@ export default async function RootLayout({
                                         <Button
                                             size="sm"
                                             variant="primary"
-                                            className="flex flex-row gap-2 items-center rounded-full"
+                                            className="flex flex-row gap-2 items-center rounded-full border-2 text-black border-black hover:bg-black"
                                         >
                                             <ShoppingCart size={18} />
                                             <p className="hidden sm:flex font-medium">

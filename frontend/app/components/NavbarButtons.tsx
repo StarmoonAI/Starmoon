@@ -28,11 +28,11 @@ const NavbarButtons: React.FC<NavbarButtonsProps> = ({ user }) => {
             <Button
                 variant="secondary"
                 size="sm"
-                className="font-medium flex flex-row items-center gap-2 rounded-full bg-nav-bar"
+                className="font-medium flex flex-row items-center gap-2 rounded-full  bg-nav-bar border-2 hover:bg-white hover:text-black hover:border-black"
             >
                 {/* <LogIn size={ICON_SIZE} strokeWidth={STROKE_WIDTH} /> */}
                 <Gamepad2 size={22} />
-                <span className="hidden sm:block">Play Online</span>
+                <span className="hidden sm:block  ">Play Online</span>
             </Button>
         </Link>
     );
