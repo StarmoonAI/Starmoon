@@ -14,7 +14,7 @@ export const createUser = async (
             email: user.email,
             supervisor_name: user.user_metadata?.name ?? "",
             supervisee_name: "",
-            supervisee_age: 16,
+            supervisee_age: 14,
             supervisee_persona: "",
             toy_id: userProps.toy_id, // selecting default toy
             personality_id: userProps.personality_id, // selecting default personality
