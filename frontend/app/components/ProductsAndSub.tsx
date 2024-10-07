@@ -197,7 +197,9 @@ const ProductsAndSub = () => {
                                                 className="mt-0.5 min-h-4 min-w-4 text-green-500 mr-2"
                                             />
                                             <span className="text-sm">
-                                                <span>Components included</span>
+                                                <span>
+                                                    Components in package
+                                                </span>
                                                 :{" "}
                                                 {product.components.map(
                                                     (components, index) => (
