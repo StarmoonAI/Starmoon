@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import StripePricingTable from "../PricingTable";
 
 interface AddCreditsModalProps {
     children: React.ReactNode;
@@ -53,20 +54,20 @@ function ProfileForm({ className }: React.ComponentProps<"form">) {
 const AddCreditsModal: React.FC<AddCreditsModalProps> = ({ children }) => {
     const [open, setOpen] = React.useState(false);
     const isDesktop = useMediaQuery("(min-width: 768px)");
-    const title = "Explore Starmoon's Premium Plans";
+    const title = "Explore Starmoon's Voice Subscription Plans";
     const subtitle =
-        "Unlock more features and get more done with Starmoon Premium.";
+        "Unlock more features and get more done with Starmoon Voice Premium Plans.";
 
     if (isDesktop) {
         return (
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>{children}</DialogTrigger>
-                <DialogContent className="sm:max-w-[560px]">
+                <DialogContent className="sm:max-w-[670px]">
                     <DialogHeader>
                         <DialogTitle>{title}</DialogTitle>
                         <DialogDescription>{subtitle}</DialogDescription>
                     </DialogHeader>
-                    <ProfileForm />
+                    <StripePricingTable />
                 </DialogContent>
             </Dialog>
         );
@@ -80,12 +81,7 @@ const AddCreditsModal: React.FC<AddCreditsModalProps> = ({ children }) => {
                     <DrawerTitle>{title}</DrawerTitle>
                     <DrawerDescription>{subtitle}</DrawerDescription>
                 </DrawerHeader>
-                <ProfileForm className="px-4" />
-                <DrawerFooter className="pt-2">
-                    <DrawerClose asChild>
-                        <Button variant="outline">Cancel</Button>
-                    </DrawerClose>
-                </DrawerFooter>
+                <StripePricingTable />
             </DrawerContent>
         </Drawer>
     );

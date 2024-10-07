@@ -178,7 +178,7 @@ const Playground: React.FC<PlaygroundProps> = ({
                                         }}
                                     >
                                         {creditsRemaining <= 0 ? (
-                                            <Link href="/subscription" passHref>
+                                            <AddCreditsModal>
                                                 <Button
                                                     className={
                                                         "z-50 flex items-center gap-1.5 rounded-full"
@@ -195,7 +195,7 @@ const Playground: React.FC<PlaygroundProps> = ({
                                                         Subscribe
                                                     </span>
                                                 </Button>
-                                            </Link>
+                                            </AddCreditsModal>
                                         ) : (
                                             <Button
                                                 disabled={!selectedUser}

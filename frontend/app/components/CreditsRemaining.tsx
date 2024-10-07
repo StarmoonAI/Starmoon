@@ -17,7 +17,7 @@ const CreditsRemaining: React.FC<{ user: IUser }> = ({ user }) => {
                 {creditsRemaining} credits remaining
             </p>
             {creditsRemaining <= 50 && (
-                <Link href="/subscription" passHref>
+                <AddCreditsModal>
                     <Button
                         variant="upsell_link"
                         className="flex flex-row items-center gap-2 pl-0"
@@ -28,7 +28,7 @@ const CreditsRemaining: React.FC<{ user: IUser }> = ({ user }) => {
                             ? "Subscribe to continue"
                             : "Get unlimited access"}
                     </Button>
-                </Link>
+                </AddCreditsModal>
             )}
         </div>
     );
