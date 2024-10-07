@@ -73,14 +73,14 @@ hover:scale-[1.01] transition-all duration-300 ease-in-out cursor-pointer shadow
                                 "_starmoon.png"
                             }
                         />
-                        {toy.name}
+                        <span className="text-gray-800">{toy.name}</span>
                     </Badge>
                     <Badge
                         className="flex flex-row items-center gap-1  text-sm font-normal"
                         variant="outline"
                     >
                         <span>{personality.emoji}</span>
-                        {personality.title}
+                        <span className="text-gray-800">{personality.title}</span>
                     </Badge>
                 </h3>
                 <p className="text-sm text-gray-500 line-clamp-2 pr-4">
