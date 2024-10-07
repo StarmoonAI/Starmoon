@@ -164,7 +164,7 @@ const ProductsAndSub = () => {
                                         />
                                     </div>
                                 </CardHeader>
-                                <CardFooter className="flex gap-6 justify-between items-center py-6 px-14  bg-muted/50">
+                                <CardFooter className="flex gap-6 justify-between items-center py-6 sm:px-14  bg-muted/50">
                                     <div className="flex flex-row items-baseline gap-2">
                                         <div className="text-2xl font-bold">
                                             ${product.price}
@@ -184,8 +184,8 @@ const ProductsAndSub = () => {
                                         </Button>
                                     </Link>
                                 </CardFooter>
-                                <CardContent className="p-14 relative flex flex-col gap-2">
-                                    <div className="flex flex-row items-center gap-2 absolute top-6 right-14">
+                                <CardContent className="sm:p-14 py-14 relative flex flex-col gap-2">
+                                    <div className="flex flex-row items-center gap-2 absolute top-6 right-6 sm:right-14">
                                         <Badge
                                             variant="secondary"
                                             className="text-sm border-0  text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-center"
@@ -202,7 +202,7 @@ const ProductsAndSub = () => {
                                     </div>
                                     <div className="flex justify-between items-start">
                                         <div className="mt-8 flex flex-col gap-2">
-                                            <CardTitle className="text-xl font-semibold mb-2">
+                                            <CardTitle className="text-xl font-medium mb-2">
                                                 {product.title}
                                             </CardTitle>
                                             <p className="text-md text-muted-foreground">
@@ -273,7 +273,7 @@ const ProductsAndSub = () => {
                                             </ul>
                                         </div>
                                     </div>
-                                    <div className="text-xs text-muted-foreground absolute bottom-6 right-14">
+                                    <div className="text-xs text-muted-foreground absolute bottom-6 right-6 sm:right-14">
                                         {DeliveryString}
                                     </div>
                                 </CardContent>
@@ -308,7 +308,7 @@ const ProductsAndSub = () => {
                             </Popover>
                         </p>
                     </div>
-                    <div className="overflow-hidden rounded-3xl shadow-md ">
+                    <div className="overflow-hidden rounded-3xl shadow-md w-full">
                         <StripePricingTable />
                     </div>
                 </div>
