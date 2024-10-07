@@ -113,7 +113,7 @@ export default async function RootLayout({
                                         width={33}
                                         height={33}
                                     ></StarmoonLogo>
-                                    <p className="flex items-center font-chewy font-medium text-xl text-stone-800 dark:text-stone-100">
+                                    <p className="flex items-center font-chewy font-medium text-xl text-stone-800 dark:text-gray-700">
                                         Starmoon AI
                                     </p>
                                     {/* <p className="text-xs text-gray-500">beta</p> */}
@@ -143,7 +143,7 @@ export default async function RootLayout({
                                         <Button
                                             size="sm"
                                             variant="primary"
-                                            className="flex flex-row gap-2 items-center rounded-full"
+                                            className="flex flex-row gap-2 items-center rounded-full border-2 border-gray-400"
                                         >
                                             <ShoppingCart size={18} />
                                             <p className="hidden sm:flex font-medium">
