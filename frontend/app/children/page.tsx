@@ -7,17 +7,18 @@ import { defaultToyId } from "@/lib/data";
 import Products from "../components/Products";
 import Preorder from "../components/Preorder";
 import LandingPageSection from "../components/LandingPageSection";
+import { Stethoscope } from "lucide-react";
 
 const Sections = [
     {
-        title: "Growth Mindset",
+        title: "Fosters a growth minndset",
         progress: "A companion for your child that fosters a growth mindset",
         description:
             "Our toys are designed to be thoughtful and engaging companions that foster a growth mindset by design.",
         imageSrc: "/growth.jpg",
     },
     {
-        title: "Learning and Screen Time",
+        title: "Increase learning and cut screen time",
         progress: "Supplementing learning while reducing screen time",
         description:
             "AI designed to supplement learning while reducing screen time and providing a more engaging experience for your child.",
@@ -25,14 +26,14 @@ const Sections = [
         isImageRight: true,
     },
     {
-        title: "Safety and Guidelines",
+        title: "Safety and guidelines",
         progress: "Prioritising safety and content guidelines.",
         description:
             "All content is carefully curated and designed to foster a safe environment for children. Additionally we give parents granular controls to set content guidelines.",
         imageSrc: "/safety.jpg",
     },
     {
-        title: "Privacy and Trends",
+        title: "Privacy and trends",
         progress: "AI-driven trends. With privacy first.",
         description:
             "We provide insights & trends to parents on their child's learning and emotional growth. We take privacy seriously and all personal data is encrypted.",
@@ -71,19 +72,19 @@ export default async function Home() {
                     <div className="mx-auto max-w-7xl">
                         <div className="mx-auto max-w-3xl text-center">
                             <h1
-                                className="font-inter text-4xl font-bold tracking-tight text-stone-800 sm:text-6xl"
+                                className="font-inter text-4xl font-bold inline tracking-tight text-stone-800 sm:text-6xl"
                                 style={{ lineHeight: "1.25" }}
                             >
-                                An open-source{", "}
+                                A compact{", "}
                                 <span className="text-amber-500">
-                                    affordable
+                                    voice-enabled
                                 </span>
                                 {", "}
-                                voice-enabled AI device{" "}
+                                conversational AI device
                             </h1>
                             <p className="mt-6 text-2xl leading-8 text-stone-600">
-                                for companionship, entertainment, learning and
-                                more...
+                                for relieving anxiety and stress, & providing
+                                comfort in pediatric care.
                             </p>
                         </div>
                     </div>
