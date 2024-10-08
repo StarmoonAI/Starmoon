@@ -70,7 +70,7 @@ export default async function Home() {
                 </div>
                 <div className="py-4 sm:py-6">
                     <div className="mx-auto max-w-7xl">
-                        <div className="mx-auto max-w-3xl text-center">
+                        <div className="mx-auto max-w-4xl text-center">
                             <h1
                                 className="font-inter text-4xl font-bold inline tracking-tight text-stone-800 sm:text-6xl"
                                 style={{ lineHeight: "1.25" }}
@@ -80,11 +80,16 @@ export default async function Home() {
                                     voice-enabled
                                 </span>
                                 {", "}
-                                conversational AI device
+                                conversational AI device{" "}
                             </h1>
                             <p className="mt-6 text-2xl leading-8 text-stone-600">
                                 for relieving anxiety & stress, and providing
-                                comfort in pediatric care.
+                                comfort in pediatric care{" "}
+                                <Stethoscope
+                                    size={28}
+                                    strokeWidth={2}
+                                    className="inline-block rotate-12"
+                                />
                             </p>
                         </div>
                     </div>
