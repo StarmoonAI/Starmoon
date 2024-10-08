@@ -83,7 +83,7 @@ export default async function Home() {
                                 conversational AI device
                             </h1>
                             <p className="mt-6 text-2xl leading-8 text-stone-600">
-                                for relieving anxiety and stress, & providing
+                                for relieving anxiety & stress, and providing
                                 comfort in pediatric care.
                             </p>
                         </div>
