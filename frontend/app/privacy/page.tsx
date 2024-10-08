@@ -4,7 +4,7 @@ import OurAddressSign from "../components/OurAddressSign";
 
 export default async function Index() {
     return (
-        <div className="flex w-full  max-w-xl mx-auto mt-8 flex-col lg:w-1/2 px-4  gap-2 text-left m-2">
+        <div className="flex w-full max-w-xl mx-auto mt-8 flex-col lg:w-1/2 px-4 gap-2 text-left m-2 bg-white text-black">
             <p className="font-semibold text-2xl">
                 Privacy Policy for Starmoon AI
             </p>
