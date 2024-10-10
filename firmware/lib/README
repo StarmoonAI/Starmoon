@@ -1,11 +1,11 @@
 
-This directory is intended for project specific (private) libraries.
-PlatformIO will compile them to static libraries and link into executable file.
+This directory is intended for project-specific (private) libraries.
+PlatformIO will compile them to static libraries and link them into executable files.
 
-The source code of each library should be placed in an own separate directory
+The source code of each library should be placed in its own separate directory
 ("lib/your_library_name/[here are source files]").
 
-For example, see a structure of the following two libraries `Foo` and `Bar`:
+For example, see the structure of the following two libraries `Foo` and `Bar`:
 
 |--lib
 |  |
