@@ -2,6 +2,7 @@
 
 Starmoon is an affordable, compact AI-enabled device, you can take anywhere and converse with. It can understand your emotions and respond with empathy, offering supportive conversations and personalized learning assistance.
 
+
 [Check our Roadmap](roadmap.md)
 
 <!-- Put on a toy, Hanging on the hand, put on the desktop near macbook -->
@@ -12,6 +13,11 @@ Starmoon is an affordable, compact AI-enabled device, you can take anywhere and 
 [![Discord Follow](https://dcbadge.vercel.app/api/server/KJWxDPBRUj?style=flat)](https://discord.gg/KJWxDPBRUj)
 
 [![License: GPLv3](https://img.shields.io/badge/license-GPLv3-blue)](https://www.gnu.org/licenses/gpl-3.0.en.html)&ensp;&ensp;&ensp;
+
+![GitHub forks](https://img.shields.io/github/forks/StarmoonAI/Starmoon.svg?style=social&label=Fork)
+![GitHub stars](https://img.shields.io/github/stars/StarmoonAI/Starmoon.svg?style=social&label=Star)
+![Node.js](https://img.shields.io/badge/Node.js-14.17.0-brightgreen.svg)
+![React](https://img.shields.io/badge/React-17.0.2-blue.svg)
 
 </div>
 
