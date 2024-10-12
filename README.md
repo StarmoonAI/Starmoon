@@ -59,7 +59,7 @@ If you can't see the video, you can watch it [here](https://www.youtube.com/watc
 -   **Step 0**: Clone the repository:
 
     ```bash
-    git clone https://github.com/StarmoonAI/Starmoon.git && cd starmoon
+    git clone https://github.com/StarmoonAI/Starmoon.git && cd Starmoon
     ```
 
 -   **Step 1**: Set up Supabase:
