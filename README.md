@@ -112,16 +112,14 @@ If you can't see the video, you can watch it [here](https://www.youtube.com/watc
     -   Click "Pick a folder"
     -   Select the location of the `firmware` folder in the current project.
 
--   **Step 2**: Update and WebSocket server details in `src/main.cpp`
+-   **Step 2**: Update and WebSocket server details in `src/Config.cpp`
 
     -   Find your WiFi ip adress (websocket_server_host) by command `ipconfig` (under `Default Gateway`) in Windows or `ifconfig` (under `inet xxx.x.x.x netmask 0xff000000`) in Linux/MacOS, or you can also follow the instructions [here](https://nordvpn.com/blog/find-router-ip-address/)
 
         ```cpp
-
-        // WebSocket setup
-        const char *websocket_server_host = "<your-server-host-ip>"; // Wifi settings -> Your Wifi I.P.
-        const uint16_t websocket_server_port = 8000;
-        const char *websocket_server_path = "/starmoon";
+        const char *websocket_server = "<your-server-host-ip>"; // Wifi settings -> Your Wifi I.P.
+        const uint16_t websocket_port = 8000; 
+        const char *websocket_path = "/starmoon";
         const char *auth_token = "<your-STARMOON_API_KEY-here>"; // generate your STARMOON_API_KEY in your starmoon account settings page
         ```
 
