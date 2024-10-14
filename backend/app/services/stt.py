@@ -19,6 +19,7 @@ async def get_deepgram_transcript(
 ):
     try:
         config = DeepgramClientOptions(options={"keepalive": "true"})
+        # config = DeepgramClientOptions()
         # DEEPGRAM_API_KEY = settings.DEEPGRAM_API_KEY
         # deepgram = DeepgramClient(DEEPGRAM_API_KEY, config)
         deepgram = DeepgramClient(os.getenv("DG_API_KEY"), config)
@@ -30,7 +31,6 @@ async def get_deepgram_transcript(
 
         async def on_message(self, result, **kwargs):
             sentence = result.channel.alternatives[0].transcript
-
             print("sentence---", sentence)
 
             if len(sentence.strip()) == 0:

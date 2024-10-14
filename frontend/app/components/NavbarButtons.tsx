@@ -32,7 +32,7 @@ const NavbarButtons: React.FC<NavbarButtonsProps> = ({ user }) => {
             >
                 {/* <LogIn size={ICON_SIZE} strokeWidth={STROKE_WIDTH} /> */}
                 <Gamepad2 size={22} />
-                <span className="hidden sm:block">Play Online</span>
+                <span className="hidden sm:block">Try Online</span>
             </Button>
         </Link>
     );

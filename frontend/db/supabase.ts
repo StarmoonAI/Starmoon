@@ -15,7 +15,10 @@ export type Database = {
           content: string
           conversation_id: string
           created_at: string
+          emotion_model: string | null
+          is_sensitive: boolean | null
           metadata: Json | null
+          personality_id: string
           role: string
           toy_id: string
           user_id: string
@@ -25,7 +28,10 @@ export type Database = {
           content: string
           conversation_id?: string
           created_at?: string
+          emotion_model?: string | null
+          is_sensitive?: boolean | null
           metadata?: Json | null
+          personality_id?: string
           role: string
           toy_id?: string
           user_id?: string
@@ -35,12 +41,22 @@ export type Database = {
           content?: string
           conversation_id?: string
           created_at?: string
+          emotion_model?: string | null
+          is_sensitive?: boolean | null
           metadata?: Json | null
+          personality_id?: string
           role?: string
           toy_id?: string
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "conversations_personality_id_fkey"
+            columns: ["personality_id"]
+            isOneToOne: false
+            referencedRelation: "personalities"
+            referencedColumns: ["personality_id"]
+          },
           {
             foreignKeyName: "conversations_toy_id_fkey"
             columns: ["toy_id"]
@@ -50,6 +66,38 @@ export type Database = {
           },
           {
             foreignKeyName: "conversations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      devices: {
+        Row: {
+          created_at: string
+          device_id: string
+          mac_address: string
+          user_code: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          device_id?: string
+          mac_address: string
+          user_code: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          device_id?: string
+          mac_address?: string
+          user_code?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "devices_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
@@ -113,6 +161,33 @@ export type Database = {
           },
         ]
       }
+      personalities: {
+        Row: {
+          created_at: string
+          emoji: string | null
+          personality_id: string
+          subtitle: string
+          title: string
+          trait: string
+        }
+        Insert: {
+          created_at?: string
+          emoji?: string | null
+          personality_id?: string
+          subtitle: string
+          title: string
+          trait: string
+        }
+        Update: {
+          created_at?: string
+          emoji?: string | null
+          personality_id?: string
+          subtitle?: string
+          title?: string
+          trait?: string
+        }
+        Relationships: []
+      }
       toys: {
         Row: {
           created_at: string
@@ -149,50 +224,69 @@ export type Database = {
       users: {
         Row: {
           avatar_url: string
+          created_at: string
+          email: string
+          is_premium: boolean
+          modules: string[] | null
+          most_recent_chat_group_id: string | null
+          personality_id: string
+          session_time: number
           supervisee_age: number
           supervisee_name: string
           supervisee_persona: string
-          created_at: string
-          email: string
-          modules: string[] | null
-          most_recent_chat_group_id: string | null
           supervisor_name: string
-          session_time: number
           toy_id: string | null
           toy_name: string | null
           user_id: string
+          user_info: Json
+          volume_control: number
         }
         Insert: {
           avatar_url?: string
-          supervisee_age?: number
-          supervisee_name: string
-          supervisee_persona: string
           created_at?: string
           email?: string
+          is_premium?: boolean
           modules?: string[] | null
           most_recent_chat_group_id?: string | null
-          supervisor_name: string
+          personality_id?: string
           session_time?: number
+          supervisee_age?: number
+          supervisee_name: string
+          supervisee_persona?: string
+          supervisor_name: string
           toy_id?: string | null
           toy_name?: string | null
           user_id?: string
+          user_info?: Json
+          volume_control?: number
         }
         Update: {
           avatar_url?: string
+          created_at?: string
+          email?: string
+          is_premium?: boolean
+          modules?: string[] | null
+          most_recent_chat_group_id?: string | null
+          personality_id?: string
+          session_time?: number
           supervisee_age?: number
           supervisee_name?: string
           supervisee_persona?: string
-          created_at?: string
-          email?: string
-          modules?: string[] | null
-          most_recent_chat_group_id?: string | null
           supervisor_name?: string
-          session_time?: number
           toy_id?: string | null
           toy_name?: string | null
           user_id?: string
+          user_info?: Json
+          volume_control?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "users_personality_id_fkey"
+            columns: ["personality_id"]
+            isOneToOne: false
+            referencedRelation: "personalities"
+            referencedColumns: ["personality_id"]
+          },
           {
             foreignKeyName: "users_toy_id_fkey"
             columns: ["toy_id"]

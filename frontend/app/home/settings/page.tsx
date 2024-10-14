@@ -1,4 +1,4 @@
-import SettingsDashboard from "@/app/components/SettingsDashboard";
+import SettingsDashboard from "@/app/components/Settings/SettingsDashboard";
 import { getUserById } from "@/db/users";
 import { createAccessToken } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/server";

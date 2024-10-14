@@ -1,6 +1,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { getUserById } from "@/db/users";
-import Onboard from "../components/Onboard";
+import Steps from "../components/Onboarding/Steps";
 
 export default async function Home() {
     const supabase = createClient();
@@ -12,8 +12,8 @@ export default async function Home() {
     const dbUser = user ? await getUserById(supabase, user.id) : undefined;
 
     return (
-        <div className="flex flex-col gap-2 font-quicksand">
-            {dbUser && <Onboard selectedUser={dbUser} />}
+        <div className="flex flex-col gap-2">
+            {dbUser && <Steps selectedUser={dbUser} />}
         </div>
     );
 }

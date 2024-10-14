@@ -153,6 +153,8 @@ class ConversationManager:
                             device,
                             bytes_queue,
                         )
+
+                        bytes_queue
                         if device == "web":
                             task_id_queue.put_nowait(task_id)
                             # task = asyncio.create_task(
@@ -186,6 +188,8 @@ class ConversationManager:
             #     )
             #     self.check_task_result_tasks.append(task)
             previous_sentence = accumulated_text_
+
+        bytes_queue.put_nowait({"type": "info", "device": device, "data": "END"})
 
         messages.append({"role": "assistant", "content": response_text})
 
@@ -264,6 +268,9 @@ class ConversationManager:
         text_queue = asyncio.Queue()
         task_id_queue = asyncio.Queue()
         bytes_queue = asyncio.Queue()
+
+        # # send ws metadata
+        # await self.send_message(websocket, json.dumps({"type": "metadata", "text_data": user["volume_control"]}))
 
         while True:
             try:
@@ -382,6 +389,7 @@ class ConversationManager:
                                         # speech_thread.join()
 
                                     if data.get("is_replying") == False:
+                                        #  wait 0.1s
                                         self.is_replying = False
                                         transcript_collector.reset()
                                     if data.get("is_interrupted") == True:
@@ -398,20 +406,57 @@ class ConversationManager:
                             if bytes_queue.qsize() > 0:
                                 response_data = bytes_queue.get_nowait()
                                 if response_data["type"] == "bytes":
-                                    await websocket.send_bytes(response_data["data"])
-                                    print("response_data---")
-                                    if bytes_queue.qsize() == 0:
-                                        self.is_replying = False
-                                        # wait 0.1s
-                                        # await asyncio.sleep(0.2)
-                                        transcript_collector.reset()
-                                else:
+                                    if response_data["id"] == 0:
+                                        await websocket.send_bytes(
+                                            response_data["data"]
+                                        )
+                                        for i in range(
+                                            min(15, bytes_queue.qsize() - 1)
+                                        ):
+                                            response_data = bytes_queue.get_nowait()
+                                            if response_data["type"] == "bytes":
+                                                await websocket.send_bytes(
+                                                    response_data["data"]
+                                                )
+                                            else:
+                                                await websocket.send_text(
+                                                    response_data["data"]
+                                                )
+                                    else:
+                                        await websocket.send_text(response_data["data"])
+
+                                elif response_data["type"] == "json":
                                     await websocket.send_json(
                                         json.dumps(response_data["data"])
                                     )
                                     if bytes_queue.qsize() == 0:
                                         #     self.is_replying = False
                                         transcript_collector.reset()
+
+                                else:
+                                    print("response_data-++++++++--")
+                                    await websocket.send_text(response_data["data"])
+
+                                # # wait 0.1s
+                                # await asyncio.sleep(3)
+                                # self.is_replying = False
+                                # transcript_collector.reset()
+
+                            # if response_data["type"] == "bytes":
+                            #     await websocket.send_bytes(response_data["data"])
+                            #     print("response_data---")
+                            #     if bytes_queue.qsize() == 0:
+                            #         self.is_replying = False
+                            #         # wait 0.1s
+                            #         # await asyncio.sleep(0.2)
+                            #         transcript_collector.reset()
+                            # else:
+                            #     await websocket.send_json(
+                            #         json.dumps(response_data["data"])
+                            #     )
+                            #     if bytes_queue.qsize() == 0:
+                            #         #     self.is_replying = False
+                            #         transcript_collector.reset()
 
                     except WebSocketDisconnect:
                         self.connection_open = False

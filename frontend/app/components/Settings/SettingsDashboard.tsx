@@ -20,8 +20,6 @@ import { Separator } from "@/components/ui/separator";
 import { updateUser } from "@/db/users";
 import { createClient } from "@/utils/supabase/client";
 import React from "react";
-import CreditsRemaining from "./CreditsRemaining";
-import AuthTokenModal from "./AuthTokenModal";
 import {
   userFormAgeDescription,
   userFormAgeLabel,
@@ -29,9 +27,11 @@ import {
   userFormPersonaPlaceholder,
 } from "@/lib/data";
 import { LogOut } from "lucide-react";
-import { signOutAction } from "../actions";
 import { Slider } from "@/components/ui/slider";
 import _ from "lodash";
+import CreditsRemaining from "../CreditsRemaining";
+import AuthTokenModal from "../AuthTokenModal";
+import { signOutAction } from "@/app/actions";
 
 interface SettingsDashboardProps {
   selectedUser: IUser;

@@ -69,7 +69,7 @@ export default function FeaturesSection() {
                     <h2 className="font-inter-tight text-3xl md:text-4xl font-semibold text-stone-800">
                         Packed with features
                     </h2>
-                    <p className="font-inter font-light mt-12 text-lg sm:text-xl leading-8 text-stone-800">
+                    <p className="font-light mt-12 text-lg sm:text-xl leading-8 text-stone-800">
                         We designed our AI platform to be a suitable companion
                         that you can engage with anytime. Here are some of the
                         features that we have implemented and are actively

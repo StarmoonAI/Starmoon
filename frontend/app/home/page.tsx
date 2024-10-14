@@ -35,15 +35,13 @@ export default async function Home() {
     const allPersonalities = await getAllPersonalities(supabase);
 
     return (
-        <div className="">
+        <div>
             {dbUser && (
-                <div className="">
-                    <Playground
-                        allPersonalities={allPersonalities}
-                        selectedUser={dbUser}
-                        allToys={allToys}
-                    />
-                </div>
+                <Playground
+                    allPersonalities={allPersonalities}
+                    selectedUser={dbUser}
+                    allToys={allToys}
+                />
             )}
         </div>
     );
