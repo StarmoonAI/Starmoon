@@ -134,9 +134,18 @@ export const signOutAction = async () => {
     return redirect("/login");
 };
 
+export const checkDoctorAction = async (authCode: string) => {
+    return authCode === "STARDOCTOR";
+};
+
 export const generateStarmoonAuthKey = async (user: IUser) => {
     return createAccessToken(process.env.JWT_SECRET_KEY!, {
         user_id: user.user_id,
         email: user.email,
     });
 };
+
+export const connectUserToDevice = async (
+    userId: string,
+    deviceCode: string
+) => {};

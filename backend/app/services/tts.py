@@ -248,14 +248,14 @@ def azure_tts(
         )
     else:
         chunk_size = 1024  # Adjust this value based on your needs
-        audio_data = result.audio_data
+        max_len = len(result.audio_data)
+        if max_len > 100:
+            audio_data = result.audio_data[100:]
+        else:
+            audio_data = result.audio_data
         for i in range(0, len(audio_data), chunk_size):
             chunk = audio_data[i : i + chunk_size]
             # print("Audio chunk+++++++++", i)
             bytes_queue.put_nowait(
-                {
-                    "type": "bytes",
-                    "device": device,
-                    "data": chunk,
-                }
+                {"type": "bytes", "device": device, "data": chunk, "id": i}
             )

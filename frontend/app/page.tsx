@@ -12,6 +12,7 @@ import EndingSection from "./components/EndingSection";
 import Link from "next/link";
 import { Gamepad2, ShoppingCart } from "lucide-react";
 import { getAllPersonalities } from "@/db/personalities";
+import StarmoonLogo from "./components/StarmoonLogo";
 
 export default async function Index() {
     const supabase = createClient();
@@ -35,20 +36,17 @@ export default async function Index() {
             </div>
 
             <div className="max-w-4xl text-center mx-8 md:mx-auto">
+                <h1 className="text-4xl flex justify-center items-center flex-row gap-2 sm:hidden mb-5 font-semibold">
+                    Starmoon AI
+                </h1>
                 <h1
-                    className="font-inter-tight- text-4xl md:text-6xl font-semibold sm:mt-14 tracking-tight text-stone-900 "
+                    className="font-inter-tight- text-3xl sm:text-4xl md:text-6xl font-semibold sm:mt-14 tracking-tight text-stone-900"
                     style={{ lineHeight: "1.25" }}
                 >
                     A compact, conversational, and open-source AI device for
                 </h1>
 
                 <AnimatedText />
-
-                <p className="font-inter font-light mt-14 text-lg sm:text-xl leading-8 text-stone-800">
-                    With a platform that supports real-time topic-controlled
-                    conversations for all ages, manages your AI characters, with
-                    long-term memory, empathic responses, and more.
-                </p>
             </div>
 
             <div className="flex items-center justify-center gap-x-8 mt-10">
@@ -61,19 +59,27 @@ export default async function Index() {
                 <Link href={user ? "/home" : "/login"}>
                     <Button className="flex flex-row items-center bg-white gap-2 font-medium text-base text-stone-800 leading-8 rounded-full border-2 border-stone-900 hover:bg-gray-100">
                         <Gamepad2 size={20} />
-                        <span>Play Online</span>
+                        <span>Try Online</span>
                     </Button>
                 </Link>
+            </div>
+
+            <div className="max-w-4xl text-center mx-8 md:mx-auto">
+                <p className="font-light mt-14 text-lg sm:text-xl leading-8 text-stone-800">
+                    With a platform that supports real-time topic-controlled
+                    conversations for all ages, manages your AI characters, with
+                    long-term memory, empathic responses, and more.
+                </p>
             </div>
 
             <CharacterPicker
                 allToys={allToys}
                 allPersonalities={allPersonalities}
             />
-            <Usecases></Usecases>
-            <InsightsDemoSection></InsightsDemoSection>
-            <FeaturesSection></FeaturesSection>
-            <EndingSection></EndingSection>
+            <Usecases />
+            <InsightsDemoSection />
+            <FeaturesSection />
+            <EndingSection />
         </main>
     );
 }

@@ -9,6 +9,11 @@ import Link from "next/link";
 const CreditsRemaining: React.FC<{ user: IUser }> = ({ user }) => {
     const creditsRemaining = getCreditsRemaining(user);
     const hasNoCredits = creditsRemaining <= 0;
+
+    if (user.user_info.user_type === "doctor") {
+        return null;
+    }
+
     return (
         <div className="flex flex-row items-center gap-4">
             <p

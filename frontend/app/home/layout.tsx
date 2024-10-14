@@ -1,15 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
 import { SidebarNav } from "../components/SidebarNavItems";
-import Footer from "../components/Footer";
-import {
-    AudioLines,
-    ChartSpline,
-    Drum,
-    Flame,
-    Gamepad2,
-    Settings,
-} from "lucide-react";
+import { Flame, Gamepad2, Settings } from "lucide-react";
 
 const ICON_SIZE = 20;
 
@@ -45,6 +37,7 @@ export default async function RootLayout({
     if (!user) {
         redirect("/login");
     }
+
     return (
         <div className="flex flex-1 flex-col mx-auto w-full max-w-[1400px] gap-6 py-2 sm:py-4 md:flex-row">
             <aside className="w-full md:w-[250px] sm:py-6 md:overflow-y-auto md:fixed md:h-screen">

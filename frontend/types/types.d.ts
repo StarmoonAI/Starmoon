@@ -7,6 +7,7 @@ declare global {
         email: string;
         type: "demo" | "preorder";
     }
+
     interface IUser {
         user_id: string;
         avatar_url: string;
@@ -18,12 +19,39 @@ declare global {
         supervisee_age: number;
         toy_id: string;
         personality_id: string;
+        volume_control: number;
         toy?: IToy;
         personality?: IPersonality;
         modules: Module[];
         most_recent_chat_group_id: string | null;
         session_time: number;
+        user_info: UserInfo;
     }
+
+    type UserInfo =
+        | {
+              user_type: "user";
+              user_metadata: IUserMetadata;
+          }
+        | {
+              user_type: "doctor";
+              user_metadata: IDoctorMetadata;
+          }
+        | {
+              user_type: "business";
+              user_metadata: IBusinessMetadata;
+          };
+
+    interface IBusinessMetadata {}
+
+    interface IDoctorMetadata {
+        doctor_name: string;
+        specialization: string;
+        hospital_name: string;
+        favorite_phrases: string;
+    }
+
+    interface IUserMetadata {}
 
     interface IConversation {
         conversation_id?: string;

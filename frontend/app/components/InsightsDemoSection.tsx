@@ -23,7 +23,7 @@ export default function InsightsDemoSection() {
                     <h2 className="font-inter-tight text-3xl md:text-4xl font-semibold text-stone-800">
                         Get trends and insights
                     </h2>
-                    <p className="font-inter font-light mt-12 text-lg sm:text-xl leading-8 text-stone-800">
+                    <p className="font-light mt-12 text-lg sm:text-xl leading-8 text-stone-800">
                         Our AI platform can analyse human-speech and emotion,
                         and respond with empathy, offering supportive
                         conversations and personalized learning assistance.

@@ -56,7 +56,7 @@ hover:scale-[1.01] transition-all duration-300 ease-in-out cursor-pointer shadow
                 <h3 className="text-lg gap-4 font-medium text-gray-700 truncate  flex flex-row items-center">
                     <Badge
                         variant="outline"
-                        className="flex flex-row items-center gap-1 text-sm font-normal"
+                        className="flex flex-row items-center gap-1 text-xs sm:text-sm  font-normal"
                     >
                         <Image
                             objectFit="cover"
@@ -76,14 +76,14 @@ hover:scale-[1.01] transition-all duration-300 ease-in-out cursor-pointer shadow
                         {toy.name}
                     </Badge>
                     <Badge
-                        className="flex flex-row items-center gap-1  text-sm font-normal"
+                        className="flex flex-row items-center gap-1 text-xs sm:text-sm font-normal"
                         variant="outline"
                     >
                         <span>{personality.emoji}</span>
                         {personality.title}
                     </Badge>
                 </h3>
-                <p className="text-sm text-gray-500 line-clamp-2 pr-4">
+                <p className="text-xs sm:text-sm  text-gray-500 line-clamp-2 pr-4">
                     {character_description}
                 </p>
             </div>

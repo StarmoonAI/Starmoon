@@ -9,7 +9,6 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Copy } from "lucide-react";
 import { generateStarmoonAuthKey } from "../actions";
 import { useState } from "react";
@@ -49,7 +48,7 @@ const AuthTokenModal: React.FC<AuthTokenModalProps> = ({ user }) => {
                         id="api_key"
                         value={apiKey ?? ""}
                         disabled
-                        placeholder="API Key"
+                        placeholder="Loading your API Key"
                     />
                     <Button
                         size="icon"
