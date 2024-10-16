@@ -1,11 +1,6 @@
 import { defaultPersonalityId } from "@/lib/data";
 import { SupabaseClient } from "@supabase/supabase-js";
 
-export interface IPersonality {
-  personality_id: string;
-  // Add other properties of IPersonality here
-}
-
 export const getAllPersonalities = async (supabase: SupabaseClient): Promise<IPersonality[]> => {
   try {
     const { data, error } = await supabase.from("personalities").select("*");
