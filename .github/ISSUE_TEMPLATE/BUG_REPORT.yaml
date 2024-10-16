@@ -27,17 +27,21 @@ body:
       value: "A bug happened!"
     validations:
       required: true
-  - type: dropdown
-    id: version
+  - type: markdown
     attributes:
-      label: Version
-      description: What version of our software are you running?
-      options:
-        - 1.0.2 (Default)
-        - 1.0.3 (Edge)
-      default: 0
-    validations:
-      required: true
+      value: |
+        **To Reproduce**  
+        Steps to reproduce the behavior:
+        1. Go to '...'
+        2. Click on '....'
+        3. Scroll down to '....'
+        4. See error
+
+  - type: input
+    id: os
+    attributes:
+      label: OS
+      description: Specify the operating system (e.g., iOS).
   - type: dropdown
     id: browsers
     attributes:
