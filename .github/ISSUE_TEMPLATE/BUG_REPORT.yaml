@@ -24,12 +24,7 @@ body:
       label: What happened?
       description: Also tell us, what did you expect to happen?
       placeholder: Tell us what you see and steps to reproduce.
-      value: "A bug happened! 
-      Steps to reproduce the behavior:
-      1. Go to '...'
-      2. Click on '....'
-      3. Scroll down to '....'
-      4. See error"
+      value: "A bug happened!\nSteps to reproduce the behavior:\n1. Go to '...'\n2. Click on '....'\n3. Scroll down to '....'\n4. See error"
     validations:
       required: true
   - type: input
