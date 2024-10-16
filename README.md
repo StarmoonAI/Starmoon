@@ -11,10 +11,10 @@ Starmoon is an affordable, compact AI-enabled device, you can take anywhere and 
     <img src="./usecases.png" alt="Starmoon-logo" width="100%" padding-bottom: 20px"/>
 
 [![Discord Follow](https://dcbadge.vercel.app/api/server/KJWxDPBRUj?style=flat)](https://discord.gg/KJWxDPBRUj)
-[![License: GPLv3](https://img.shields.io/badge/license-GPLv3-blue)](https://www.gnu.org/licenses/gpl-3.0.en.html)&ensp;&ensp;&ensp;
-
 ![GitHub forks](https://img.shields.io/github/forks/StarmoonAI/Starmoon.svg?style=social&label=Fork)
 ![GitHub stars](https://img.shields.io/github/stars/StarmoonAI/Starmoon.svg?style=social&label=Star)
+
+[![License: GPLv3](https://img.shields.io/badge/license-GPLv3-blue)](https://www.gnu.org/licenses/gpl-3.0.en.html)&ensp;&ensp;&ensp;
 ![Node.js](https://img.shields.io/badge/Node.js-14.17.0-brightgreen.svg)
 ![React](https://img.shields.io/badge/React-17.0.2-blue.svg)
 
