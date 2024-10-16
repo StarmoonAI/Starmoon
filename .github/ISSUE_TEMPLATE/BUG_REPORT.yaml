@@ -23,8 +23,13 @@ body:
     attributes:
       label: What happened?
       description: Also tell us, what did you expect to happen?
-      placeholder: Tell us what you see!
-      value: "A bug happened!"
+      placeholder: Tell us what you see and steps to reproduce.
+      value: "A bug happened! 
+      Steps to reproduce the behavior:
+      1. Go to '...'
+      2. Click on '....'
+      3. Scroll down to '....'
+      4. See error"
     validations:
       required: true
   - type: input
