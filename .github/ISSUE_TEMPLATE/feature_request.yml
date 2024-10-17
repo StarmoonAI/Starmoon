@@ -19,7 +19,7 @@ body:
     validations:
       required: true
     attributes:
-      label: "🎤 Why is this feature needed ?"
+      label: "🎤 Why is this feature needed?"
       description: "Please explain why this feature should be implemented and how it would be used. Add examples, if applicable."
       placeholder: "In my use-case, ..."
   - type: textarea
@@ -44,14 +44,15 @@ body:
       label: "👀 Have you spent some time to check if this feature request has been raised before?"
       options:
         - label: "I checked and didn't find similar issue"
-          required: true
+    validations:
+      required: true
   - type: dropdown
     id: willing-to-submit-pr
     attributes:
-      label: Are you willing to submit PR?
-      description: This is absolutely not required, but we are happy to guide you in the contribution process.
+      label: "Are you willing to submit PR?"
+      description: "This is absolutely not required, but we are happy to guide you in the contribution process."
       options:
         - "Yes I am willing to submit a PR!"
         - "No"
-      validations:
-       required: true
+    validations:
+      required: true
