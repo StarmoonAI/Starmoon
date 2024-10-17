@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to help improve our documentation! Please provide the following details
+        Thanks for taking the time to help improve our documentation! Please provide the following details:
 
   - type: input
     id: current_section
@@ -30,20 +30,19 @@ body:
       placeholder: "e.g., Links to related documentation, screenshots, etc."
 
   - type: checkboxes
-    id: no-duplicate-issues
+    id: no_duplicate_issues
     attributes:
       label: "👀 Have you spent some time to check if this issue has been raised before?"
       options:
-        - label: "I checked and didn't find similar issue"
+        - label: "I checked and didn't find a similar issue"
           required: true
 
   - type: dropdown
-    id: willing-to-submit-pr
+    id: willing_to_submit_pr
     attributes:
       label: "Are you willing to submit PR?"
       description: "This is absolutely not required, but we are happy to guide you in the contribution process."
       options:
-        - "Yes I am willing to submit a PR!"
+        - "Yes, I am willing to submit a PR!"
         - "No"
-      validations:
-        required: true
+      required: true
