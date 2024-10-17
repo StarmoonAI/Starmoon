@@ -19,7 +19,7 @@ body:
   - type: textarea
     id: steps-to-reproduce
     validations:
-      required: true
+      required: false
     attributes:
       label: "👟 Reproduction steps"
       description: "How do you trigger this bug? Please walk us through it step by step."
@@ -31,7 +31,7 @@ body:
   - type: textarea
     id: expected-behavior
     validations:
-      required: true
+      required: false
     attributes:
       label: "👍 Expected behavior"
       description: "What did you think should happen?"
@@ -40,7 +40,7 @@ body:
   - type: textarea
     id: actual-behavior
     validations:
-      required: true
+      required: false
     attributes:
       label: "👎 Actual Behavior with Screenshots"
       description: "What did actually happen? Add screenshots, if applicable."
