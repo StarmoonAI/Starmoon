@@ -1,4 +1,5 @@
 #include "Config.h"
+#include <Arduino.h>
 
 // WiFi credentials
 // use this for enterprise networks
