@@ -7,18 +7,21 @@ from openai import AsyncAzureOpenAI, AsyncOpenAI, AzureOpenAI, OpenAI
 
 load_dotenv()
 
+
 class Clients:
     def __init__(self):
         self.client_azure_4o = self._create_client(sync=True)
         self.aclient_azure_4o = self._create_client(sync=False)
 
-    def _create_client(self, sync: bool = True) -> Union[OpenAI, AzureOpenAI, AsyncOpenAI, AsyncAzureOpenAI]:
+    def _create_client(
+        self, sync: bool = True
+    ) -> Union[OpenAI, AzureOpenAI, AsyncOpenAI, AsyncAzureOpenAI]:
         """
         Create and return an OpenAI client based on the environment configuration.
-        
+
         Args:
             sync (bool): If True, return a synchronous client. If False, return an asynchronous client.
-        
+
         Returns:
             Union[OpenAI, AzureOpenAI, AsyncOpenAI, AsyncAzureOpenAI]: The appropriate OpenAI client.
         """
@@ -59,12 +62,13 @@ class Clients:
         """
         return self.default_client.models.list()
 
+
 # Example usage
 if __name__ == "__main__":
     clients = Clients()
     print(f"Default client: {type(clients.default_client)}")
     print(f"Default async client: {type(clients.default_async_client)}")
-    
+
     try:
         models = clients.get_model_list()
         print(f"Available models: {models}")

@@ -5,6 +5,7 @@ import { createClient } from "@/utils/supabase/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createAccessToken } from "@/lib/utils";
+import { addUserToDevice, dbCheckUserCode } from "@/db/devices";
 
 export const signUpAction = async (formData: FormData) => {
     const email = formData.get("email")?.toString();
@@ -135,7 +136,7 @@ export const signOutAction = async () => {
 };
 
 export const checkDoctorAction = async (authCode: string) => {
-    return authCode === "STARDOCTOR";
+    return authCode === "kiwi-subtle-emu";
 };
 
 export const generateStarmoonAuthKey = async (user: IUser) => {
@@ -147,5 +148,20 @@ export const generateStarmoonAuthKey = async (user: IUser) => {
 
 export const connectUserToDevice = async (
     userId: string,
-    deviceCode: string
-) => {};
+    userDeviceCode: string
+) => {
+    const supabase = createClient();
+
+    const isCodeValid = await dbCheckUserCode(supabase, userDeviceCode.trim());
+    if (!isCodeValid) {
+        return false;
+    }
+
+    // if user code is valid, add user to device
+    const successfullyAdded = await addUserToDevice(
+        supabase,
+        userDeviceCode,
+        userId
+    );
+    return successfullyAdded;
+};

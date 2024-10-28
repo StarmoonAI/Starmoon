@@ -57,7 +57,7 @@ export default async function Login({ searchParams }: LoginProps) {
         });
 
         if (signUpError) {
-            return redirect("/login?message=Could not authenticate user");
+            return redirect(`/login?message=${signUpError.message}`);
         }
 
         // if (process.env.NEXT_PUBLIC_ENV === "local") {
@@ -73,7 +73,7 @@ export default async function Login({ searchParams }: LoginProps) {
 
     return (
         <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
-            <Card>
+            <Card className="sm:border-2 border-0 sm:bg-white bg-transparent shadow-none">
                 <CardHeader>
                     <CardTitle className="flex flex-row gap-1 items-center">
                         Playground

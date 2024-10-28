@@ -1,6 +1,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include <Arduino.h>
+#include <ArduinoJson.h>
 #include <driver/i2s.h>
 
 // WiFi credentials
@@ -12,9 +14,11 @@ extern const char *ssid;
 extern const char *ssid_peronal;
 extern const char *password_personal;
 
+extern String authTokenGlobal;
+
 // WebSocket server details
-extern const char *websocket_server;
-extern const uint16_t websocket_port;
+extern const char *backend_server;
+extern const uint16_t backend_port;
 extern const char *websocket_path;
 extern const char *auth_token;
 
@@ -30,6 +34,9 @@ extern int16_t sBuffer[];
 #define USE_XIAO_ESP32
 // #define USE_NORMAL_ESP32
 
+extern const int LED_PIN;
+extern const int BUTTON_PIN;
+
 // I2S Microphone pins
 extern const int I2S_SD;
 extern const int I2S_WS;
@@ -43,10 +50,9 @@ extern const int I2S_DATA_OUT;
 extern const i2s_port_t I2S_PORT_OUT;
 extern const int I2S_SD_OUT;
 
-// Button pin
-extern const int BUTTON_PIN;
-
 // SSL certificate
 extern const char *rootCACertificate;
+void clearNVS();
+void goToSleep();
 
 #endif

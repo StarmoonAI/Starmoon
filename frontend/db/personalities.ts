@@ -1,42 +1,28 @@
 import { defaultPersonalityId } from "@/lib/data";
 import { SupabaseClient } from "@supabase/supabase-js";
 
-export const getAllPersonalities = async (supabase: SupabaseClient): Promise<IPersonality[]> => {
-  try {
+export const getAllPersonalities = async (supabase: SupabaseClient) => {
     const { data, error } = await supabase.from("personalities").select("*");
 
     if (error) {
-      console.error("Error in getAllPersonalities:", error);
-      return [];
+        // console.log("error getAllPersonalities", error);
+        return [];
     }
 
-    if (!data || !Array.isArray(data)) {
-      console.warn("No data returned from personalities table");
-      return [];
-    }
-
-    // Use reduce for a single pass through the array
-    const { defaultPersonality, otherPersonalities } = data.reduce<{
-      defaultPersonality: IPersonality | null;
-      otherPersonalities: IPersonality[];
-    }>(
-      (acc, personality: IPersonality) => {
-        if (personality.personality_id === defaultPersonalityId) {
-          acc.defaultPersonality = personality;
-        } else {
-          acc.otherPersonalities.push(personality);
-        }
-        return acc;
-      },
-      { defaultPersonality: null, otherPersonalities: [] }
+    // Filter out the default personality
+    const defaultPersonality = data.find(
+        (personality: IPersonality) =>
+            personality.personality_id === defaultPersonalityId
+    );
+    const otherPersonalities = data.filter(
+        (personality: IPersonality) =>
+            personality.personality_id !== defaultPersonalityId
     );
 
-    // Place the default personality at the 0th index if it exists
-    return defaultPersonality
-      ? [defaultPersonality, ...otherPersonalities]
-      : otherPersonalities;
-  } catch (err) {
-    console.error("Unexpected error in getAllPersonalities:", err);
-    return [];
-  }
+    // Place the default personality at the 0th index
+    const sortedData = defaultPersonality
+        ? [defaultPersonality, ...otherPersonalities]
+        : otherPersonalities;
+
+    return sortedData as IPersonality[];
 };

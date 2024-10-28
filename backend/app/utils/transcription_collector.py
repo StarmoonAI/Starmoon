@@ -13,6 +13,3 @@ class TranscriptCollector:
 
     def get_length(self):
         return len(self.transcript_parts)
-
-
-# transcript_collector = TranscriptCollector()
