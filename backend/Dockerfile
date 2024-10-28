@@ -21,6 +21,10 @@ RUN pip install poetry
 # Install poetry dependencies
 RUN poetry install --only main
 
+# Install NLTK and download 'punkt'
+# RUN poetry run pip install nltk \
+#     && poetry run python -m nltk.downloader punkt_tab
+
 # Command to run the application
 # without debug
 # CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--ws-ping-interval", "600", "--ws-ping-timeout", "600"]

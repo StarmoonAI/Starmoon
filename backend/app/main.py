@@ -18,7 +18,12 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
+import nltk
 
+try:
+    nltk.data.find("tokenizers/punkt_tab")
+except LookupError:
+    nltk.download("punkt_tab")
 
 load_dotenv()
 

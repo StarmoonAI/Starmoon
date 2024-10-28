@@ -101,7 +101,8 @@ void webSocketEvent(WStype_t type, uint8_t *payload, size_t length)
         break;
     case WStype_CONNECTED:
         Serial.printf("[WSc] Connected to url: %s\n", payload);
-        authMessage = createAuthTokenMessage(authTokenGlobal);
+        // authMessage = createAuthTokenMessage(authTokenGlobal);
+        authMessage = createAuthTokenMessage(auth_token);
         webSocket.sendTXT(authMessage);
         digitalWrite(LED_PIN, HIGH);
         break;

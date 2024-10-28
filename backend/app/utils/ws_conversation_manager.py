@@ -23,10 +23,6 @@ transcript_collector = TranscriptCollector()
 client = Clients()
 # p = pyaudio.PyAudio()
 
-try:
-    nltk.data.find("tokenizers/punkt")
-except LookupError:
-    nltk.download("punkt")
 
 CLAUSE_BOUNDARIES = r"\.|\?|!|。|;"
 
@@ -87,160 +83,124 @@ class ConversationManager:
         bytes_queue: asyncio.Queue,
         is_greeting=False,
     ):
-        try:
+        # try:
 
-            if not is_greeting:
-                messages.append({"role": "user", "content": utterance})
-                response = client.client_azure_4o.chat.completions.create(
-                    model="gpt-4o",
-                    messages=messages,
-                    stream=True,
-                )
-                # send utterance to celery task
-                task_id = create_emotion_detection_task(
-                    f"{previous_sentence}\n\n{utterance}", user, "user", session_id
-                )
-                if device == "web":
-                    bytes_queue.put_nowait(
-                        {
-                            "type": "json",
-                            "device": device,
-                            "data": {
-                                "type": "input",
-                                "audio_data": None,
-                                "text_data": utterance,
-                                "boundary": None,
-                                "task_id": task_id,
-                            },
-                        }
-                    )
-                    # add id to the queue
-                    task_id_queue.put_nowait(task_id)
-                    # task = asyncio.create_task(check_task_result_hardware(task_id, text_queue))
-                    # # ! will check tasks in the main loop
-                    # self.check_task_result_tasks.append(task)
-            else:
-                messages_ = messages.copy()
-                messages_.append({"role": "user", "content": utterance})
-                response = client.client_azure_4o.chat.completions.create(
-                    model="gpt-4o",
-                    messages=messages_,
-                    stream=True,
-                    temperature=1,
-                )
-
-            accumulated_text = []
-            response_text = ""
-            is_first_chunk = True
-            previous_sentence = utterance
-
-            for chunk in response:
-                if (
-                    self.is_interrupted
-                    or stop_event.is_set()
-                    or not self.connection_open
-                ):
-                    self.is_interrupted = False
-                    # clear bytes_queue
-                    while not bytes_queue.empty():
-                        bytes_queue.get_nowait()
-                    self.check_task_result_tasks.clear()
-                    break
-
-                if chunk.choices and chunk.choices[0].delta.content:
-                    chunk_text = emoji.replace_emoji(
-                        chunk.choices[0].delta.content, replace=""
-                    )
-                    accumulated_text.append(chunk_text)
-                    response_text += chunk_text
-                    sentences = chunk_text_by_clause("".join(accumulated_text))
-                    sentences = [sentence for sentence in sentences if sentence]
-
-                    if len(sentences) > 1:
-                        for sentence in sentences[:-1]:
-                            if is_first_chunk:
-                                boundary = "start"
-                            # elif chunk.choices[0]["finish_reason"] == "stop":
-                            #     boundary = "end"
-                            else:
-                                boundary = "mid"
-                            task_id = create_emotion_detection_task(
-                                f"{previous_sentence}\n\n{sentence}",
-                                user,
-                                "assistant",
-                                session_id,
-                            )
-                            azure_tts(
-                                sentence,
-                                boundary,
-                                task_id,
-                                user["toy_id"],
-                                device,
-                                bytes_queue,
-                            )
-
-                            bytes_queue
-                            if device == "web":
-                                task_id_queue.put_nowait(task_id)
-                                # task = asyncio.create_task(
-                                #     check_task_result_hardware(task_id, text_queue)
-                                # )
-                                # self.check_task_result_tasks.append(task)
-                            previous_sentence = sentence
-                            is_first_chunk = False
-
-                            bytes_queue.put_nowait(
-                                {
-                                    "type": "info",
-                                    "device": device,
-                                    "data": "END_OF_SENTENCE",
-                                }
-                            )
-
-                        accumulated_text = [sentences[-1]]
-
-            if accumulated_text and (
-                not self.is_interrupted or not stop_event.is_set()
-            ):
-                accumulated_text_ = "".join(accumulated_text)
-                task_id = create_emotion_detection_task(
-                    f"{previous_sentence}\n\n{accumulated_text_}",
-                    user,
-                    "assistant",
-                    session_id,
-                )
-                azure_tts(
-                    accumulated_text_,
-                    "end",
-                    task_id,
-                    user["toy_id"],
-                    device,
-                    bytes_queue,
-                )
-                if device == "web":
-                    task_id_queue.put_nowait(task_id)
-                previous_sentence = accumulated_text_
-
-            bytes_queue.put_nowait(
-                {
-                    "type": "info",
-                    "device": device,
-                    "data": "END_OF_SENTENCE",
-                }
+        if not is_greeting:
+            messages.append({"role": "user", "content": utterance})
+            response = client.client_azure_4o.chat.completions.create(
+                model="gpt-4o",
+                messages=messages,
+                stream=True,
             )
-
-            bytes_queue.put_nowait({"type": "info", "device": device, "data": "END"})
-            messages.append({"role": "assistant", "content": response_text})
-
-        except Exception as e:
-            print(f"Error in speech_stream_response: {e}")
-            error_message = "Oops, it looks like we encountered some sensitive content, how about we talk about other topics?"
+            # send utterance to celery task
             task_id = create_emotion_detection_task(
-                error_message, user, "assistant", session_id, is_sensitive=True
+                f"{previous_sentence}\n\n{utterance}", user, "user", session_id
+            )
+            if device == "web":
+                bytes_queue.put_nowait(
+                    {
+                        "type": "json",
+                        "device": device,
+                        "data": {
+                            "type": "input",
+                            "audio_data": None,
+                            "text_data": utterance,
+                            "boundary": None,
+                            "task_id": task_id,
+                        },
+                    }
+                )
+                # add id to the queue
+                task_id_queue.put_nowait(task_id)
+                # task = asyncio.create_task(check_task_result_hardware(task_id, text_queue))
+                # # ! will check tasks in the main loop
+                # self.check_task_result_tasks.append(task)
+        else:
+            messages_ = messages.copy()
+            messages_.append({"role": "user", "content": utterance})
+            response = client.client_azure_4o.chat.completions.create(
+                model="gpt-4o",
+                messages=messages_,
+                stream=True,
+                temperature=1,
             )
 
+        accumulated_text = []
+        response_text = ""
+        is_first_chunk = True
+        previous_sentence = utterance
+
+        for chunk in response:
+            if self.is_interrupted or stop_event.is_set() or not self.connection_open:
+                self.is_interrupted = False
+                # clear bytes_queue
+                while not bytes_queue.empty():
+                    bytes_queue.get_nowait()
+                self.check_task_result_tasks.clear()
+                break
+
+            if chunk.choices and chunk.choices[0].delta.content:
+                chunk_text = emoji.replace_emoji(
+                    chunk.choices[0].delta.content, replace=""
+                )
+                accumulated_text.append(chunk_text)
+                response_text += chunk_text
+                sentences = chunk_text_by_clause("".join(accumulated_text))
+                sentences = [sentence for sentence in sentences if sentence]
+
+                if len(sentences) > 1:
+                    for sentence in sentences[:-1]:
+                        if is_first_chunk:
+                            boundary = "start"
+                        # elif chunk.choices[0]["finish_reason"] == "stop":
+                        #     boundary = "end"
+                        else:
+                            boundary = "mid"
+                        task_id = create_emotion_detection_task(
+                            f"{previous_sentence}\n\n{sentence}",
+                            user,
+                            "assistant",
+                            session_id,
+                        )
+                        azure_tts(
+                            sentence,
+                            boundary,
+                            task_id,
+                            user["toy_id"],
+                            device,
+                            bytes_queue,
+                        )
+
+                        bytes_queue
+                        if device == "web":
+                            task_id_queue.put_nowait(task_id)
+                            # task = asyncio.create_task(
+                            #     check_task_result_hardware(task_id, text_queue)
+                            # )
+                            # self.check_task_result_tasks.append(task)
+                        previous_sentence = sentence
+                        is_first_chunk = False
+
+                        bytes_queue.put_nowait(
+                            {
+                                "type": "info",
+                                "device": device,
+                                "data": "END_OF_SENTENCE",
+                            }
+                        )
+
+                    accumulated_text = [sentences[-1]]
+
+        if accumulated_text and (not self.is_interrupted or not stop_event.is_set()):
+            accumulated_text_ = "".join(accumulated_text)
+            task_id = create_emotion_detection_task(
+                f"{previous_sentence}\n\n{accumulated_text_}",
+                user,
+                "assistant",
+                session_id,
+            )
             azure_tts(
-                error_message,
+                accumulated_text_,
                 "end",
                 task_id,
                 user["toy_id"],
@@ -249,10 +209,40 @@ class ConversationManager:
             )
             if device == "web":
                 task_id_queue.put_nowait(task_id)
-            previous_sentence = error_message
+            previous_sentence = accumulated_text_
 
-            bytes_queue.put_nowait({"type": "info", "device": device, "data": "END"})
-            messages.append({"role": "assistant", "content": error_message})
+        bytes_queue.put_nowait(
+            {
+                "type": "info",
+                "device": device,
+                "data": "END_OF_SENTENCE",
+            }
+        )
+
+        bytes_queue.put_nowait({"type": "info", "device": device, "data": "END"})
+        messages.append({"role": "assistant", "content": response_text})
+
+        # except Exception as e:
+        #     print(f"Error in speech_stream_response: {e}")
+        #     error_message = "Oops, it looks like we encountered some sensitive content, how about we talk about other topics?"
+        #     task_id = create_emotion_detection_task(
+        #         error_message, user, "assistant", session_id, is_sensitive=True
+        #     )
+
+        #     azure_tts(
+        #         error_message,
+        #         "end",
+        #         task_id,
+        #         user["toy_id"],
+        #         device,
+        #         bytes_queue,
+        #     )
+        #     if device == "web":
+        #         task_id_queue.put_nowait(task_id)
+        #     previous_sentence = error_message
+
+        #     bytes_queue.put_nowait({"type": "info", "device": device, "data": "END"})
+        #     messages.append({"role": "assistant", "content": error_message})
 
         return previous_sentence
 

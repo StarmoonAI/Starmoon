@@ -14,12 +14,11 @@ const char *ssid_peronal = "SKYCFZHN-2.4G";
 const char *password_personal = "CFaxCbZ9Y6CQ";
 
 // WebSocket server details
-// const char *backend_server = "51.8.202.78";
-// const uint16_t backend_port = 80;
 const char *backend_server = "192.168.2.179";
 const uint16_t backend_port = 8000;
 
 const char *websocket_path = "/starmoon";
+const char *auth_token = "<your-STARMOON_API_KEY-here>";
 
 String authTokenGlobal;
 
