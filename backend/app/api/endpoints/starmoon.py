@@ -116,3 +116,43 @@ async def websocket_endpoint(websocket: WebSocket):
     #     print(f"Error in websocket_endpoint: {e}")
     # finally:
     #     manager.disconnect(websocket)
+
+
+# ----- If you want to test voice playback from client, comment out lines 19-118 and uncomment the following -----
+
+# import pyaudio
+
+# p = pyaudio.PyAudio()
+# stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, output=True)
+
+
+# @router.websocket("/starmoon")
+# async def websocket_endpoint(websocket: WebSocket):
+#     await manager.connect(websocket)
+#     conversation_manager = ConversationManager()
+#     main_task = None
+#     try:
+#         num = 0
+#         while True:
+#             message = await websocket.receive()
+#             print("message", message)
+#             if message["type"] == "websocket.receive":
+#                 if "bytes" in message:
+#                     data = message["bytes"]
+#                     stream.write(data)
+#                     print(f"Received data length: {len(data)}")
+#                     print("received bytes")
+#                     # send back to the client
+#                     print("Audio chunk+++++++++", num)
+#                     print(f"Sent data length: {len(data)}")
+#                     await websocket.send_bytes(data)
+
+#     except WebSocketDisconnect:
+#         conversation_manager.connection_open = False
+#     except Exception as e:
+#         conversation_manager.connection_open = False
+#         print(f"Error in websocket_endpoint: {e}")
+#     finally:
+#         if main_task and not main_task.done():
+#             main_task.cancel()
+#         manager.disconnect(websocket)
