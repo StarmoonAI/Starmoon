@@ -2,7 +2,6 @@
 
 Starmoon is an affordable, compact AI-enabled device, you can take anywhere and converse with. It can understand your emotions and respond with empathy, offering supportive conversations and personalized learning assistance.
 
-
 [Check our Roadmap](roadmap.md)
 
 <!-- Put on a toy, Hanging on the hand, put on the desktop near macbook -->
@@ -33,6 +32,25 @@ If you can't see the video, you can watch it [here](https://www.youtube.com/watc
 -   **Open-source**: Fully open-source, you can deploy Starmoon locally and self-host to ensure the privacy of your data.
 -   **Compact device**: Only slightly larger than an Apple Watch, you can carry the device anywhere.
 -   **Reduced screen time**: A myriad of AI companions are screen-based, and our intention is to give your eyes a rest.
+
+## Founding Team
+
+<div align="left">
+  <table>
+    <tr>
+          <td align="center">
+        <img src="https://i.ibb.co/YB9ZTqG/junru.jpg" width="100" height="100" style="border-radius: 50%;" alt="Junru Xiong"/>
+        <br /><strong>Junru Xiong</strong><br/>
+      </td>
+      <td align="center">
+        <img src="https://i.ibb.co/dDbdM8p/Screenshot-2024-10-29-at-10-14-12-AM.png" width="100" height="100" style="border-radius: 50%;" alt="Akashdeep Deb"/>
+        <br /><strong>Akashdeep Deb</strong><br/>
+      </td>
+    </tr>
+  </table>
+</div>
+
+Junru and Akash bring together a shared passion for AI-driven, personalized user experiences. With backgrounds in design and engineering, they are on a mission to make interactive, customizable AI characters accessible to everyone.
 
 ## Getting Started 🚀
 
@@ -123,7 +141,7 @@ If you can't see the video, you can watch it [here](https://www.youtube.com/watc
 
         ```cpp
         const char *websocket_server = "<your-server-host-ip>"; // Wifi settings -> Your Wifi I.P.
-        const uint16_t websocket_port = 8000; 
+        const uint16_t websocket_port = 8000;
         const char *websocket_path = "/starmoon";
         const char *auth_token = "<your-STARMOON_API_KEY-here>"; // generate your STARMOON_API_KEY in your starmoon account settings page
         ```
