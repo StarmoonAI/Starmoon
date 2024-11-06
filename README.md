@@ -5,10 +5,10 @@ Starmoon is an affordable, compact AI-enabled companion device, you can take any
 <!-- Put on a toy, Hanging on the hand, put on the desktop near macbook -->
 
 <div align="center">
-<div width="100%" style="padding-bottom: 20px; height: 350px; display: flex; flex-direction: row; justify-content: center; align-items: center;">
-    <img src="./frontend/public/images/decomposation_view.gif" alt="Starmoon-device" width="30%"/>
-    <img src="./frontend/public/images/front_view.png" alt="Starmoon-device" width="70%"/>
-</div>
+<p align="center">
+  <img src="./frontend/public/images/decomposation_view.gif" alt="Starmoon-device" width="30%" />
+  <img src="./frontend/public/images/front_view.png" alt="Starmoon-device" width="70%" />
+</p>
     <img src="./usecases.png" alt="Starmoon-logo" width="100%" style="padding-bottom: 20px"/>
 
 [![Discord Follow](https://dcbadge.vercel.app/api/server/KJWxDPBRUj?style=flat)](https://discord.gg/KJWxDPBRUj)
@@ -20,10 +20,10 @@ Starmoon is an affordable, compact AI-enabled companion device, you can take any
 ![React](https://img.shields.io/badge/React-17.0.2-blue.svg)
 
 </div>
-<div style="display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 20px">
-    <h2><a href="https://www.starmoon.app">Homepage 🔗</a> </h2>
-    <h2><a href="https://www.starmoon.app/products">Buy the Starmoon AI device 🎮</a></h2>
-</div>
+<h2 align="center">
+  <a href="https://www.starmoon.app">Homepage 🔗</a>&nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="https://www.starmoon.app/products">Buy the Starmoon AI device 🎮</a>
+</h2>
 
 ## Demo Highlights 🎥
 
