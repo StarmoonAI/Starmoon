@@ -1,7 +1,7 @@
 ## Items on our roadmap
 
 -   Wake word detection
--   ~~Audio interruption~~
+-   Audio interruption
 -   ~~Add battery module within the same size of the device~~
 -   Custom voice clone
 -   RAG on personal documents

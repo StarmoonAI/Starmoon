@@ -41,25 +41,6 @@ If you can't see the video, you can watch it [here](https://www.youtube.com/watc
 
 [Check out our Roadmap](roadmap.md)
 
-## Founding Team
-
-<div align="left">
-  <table>
-    <tr>
-          <td align="center">
-        <img src="https://i.ibb.co/YB9ZTqG/junru.jpg" width="100" height="100" style="border-radius: 50%;" alt="Junru Xiong"/>
-        <br /><strong>Junru Xiong</strong><br/>
-      </td>
-      <td align="center">
-        <img src="https://i.ibb.co/dDbdM8p/Screenshot-2024-10-29-at-10-14-12-AM.png" width="100" height="100" style="border-radius: 50%;" alt="Akashdeep Deb"/>
-        <br /><strong>Akashdeep Deb</strong><br/>
-      </td>
-    </tr>
-  </table>
-</div>
-
-Junru and Akash bring together a shared passion for AI-driven, personalized user experiences. With backgrounds in design and engineering, they are on a mission to make interactive, customizable AI characters accessible to everyone.
-
 ## Getting Started 🚀
 
 ### Prerequisites 📋
@@ -184,6 +165,25 @@ Junru and Akash bring together a shared passion for AI-driven, personalized user
     ```bash
     supabase migration up
     ```
+
+## Founding Team
+
+<div align="left">
+  <table>
+    <tr>
+          <td align="center">
+        <img src="https://i.ibb.co/YB9ZTqG/junru.jpg" width="100" height="100" style="border-radius: 50%;" alt="Junru Xiong"/>
+        <br /><strong>Junru Xiong</strong><br/>
+      </td>
+      <td align="center">
+        <img src="https://i.ibb.co/dDbdM8p/Screenshot-2024-10-29-at-10-14-12-AM.png" width="100" height="100" style="border-radius: 50%;" alt="Akashdeep Deb"/>
+        <br /><strong>Akashdeep Deb</strong><br/>
+      </td>
+    </tr>
+  </table>
+</div>
+
+Junru and Akash bring together a shared passion for AI-driven, personalized user experiences. With backgrounds in design and engineering, they are on a mission to make interactive, customizable AI characters accessible to everyone.
 
 ## License
 
