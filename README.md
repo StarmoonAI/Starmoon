@@ -1,13 +1,15 @@
-# <span ><img style='vertical-align:middle; display:inline;' src="./logo.png"  width="5%" height="5%"><span style='vertical-align: middle; line-height: normal;'>&nbsp;Starmoon - An affordable, empathic, and conversational AI companion</span></span>
+# <span ><img style='vertical-align:middle; display:inline;' src="./logo.png"  width="5%" height="5%"><span style='vertical-align: middle; line-height: normal;'>&nbsp;Starmoon - An affordable, empathic, and conversational AI device</span></span>
 
-Starmoon is an affordable, compact AI-enabled device, you can take anywhere and converse with. It can understand your emotions and respond with empathy, offering supportive conversations and personalized learning assistance.
-
-[Check our Roadmap](roadmap.md)
+Starmoon is an affordable, compact AI-enabled companion device, you can take anywhere and converse with. It can understand your emotions and respond with empathy, offering supportive conversations and personalized learning assistance.
 
 <!-- Put on a toy, Hanging on the hand, put on the desktop near macbook -->
 
 <div align="center">
-    <img src="./usecases.png" alt="Starmoon-logo" width="100%" padding-bottom: 20px"/>
+<div width="100%" style="padding-bottom: 20px; height: 350px; display: flex; flex-direction: row; justify-content: center; align-items: center;">
+    <img src="./frontend/public/images/decomposation_view.gif" alt="Starmoon-device" width="30%"/>
+    <img src="./frontend/public/images/front_view.png" alt="Starmoon-device" width="70%"/>
+</div>
+    <img src="./usecases.png" alt="Starmoon-logo" width="100%" style="padding-bottom: 20px"/>
 
 [![Discord Follow](https://dcbadge.vercel.app/api/server/KJWxDPBRUj?style=flat)](https://discord.gg/KJWxDPBRUj)
 ![GitHub forks](https://img.shields.io/github/forks/StarmoonAI/Starmoon.svg?style=social&label=Fork)
@@ -17,6 +19,10 @@ Starmoon is an affordable, compact AI-enabled device, you can take anywhere and 
 ![Node.js](https://img.shields.io/badge/Node.js-14.17.0-brightgreen.svg)
 ![React](https://img.shields.io/badge/React-17.0.2-blue.svg)
 
+</div>
+<div style="display: flex; flex-direction: row; justify-content: center; align-items: center; gap: 20px">
+    <h2><a href="https://www.starmoon.app">Homepage 🔗</a> </h2>
+    <h2><a href="https://www.starmoon.app/products">Buy the Starmoon AI device 🎮</a></h2>
 </div>
 
 ## Demo Highlights 🎥
@@ -32,6 +38,8 @@ If you can't see the video, you can watch it [here](https://www.youtube.com/watc
 -   **Open-source**: Fully open-source, you can deploy Starmoon locally and self-host to ensure the privacy of your data.
 -   **Compact device**: Only slightly larger than an Apple Watch, you can carry the device anywhere.
 -   **Reduced screen time**: A myriad of AI companions are screen-based, and our intention is to give your eyes a rest.
+
+[Check out our Roadmap](roadmap.md)
 
 ## Founding Team
 
