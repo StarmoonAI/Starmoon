@@ -10,12 +10,20 @@ from app.api.endpoints import (
     db_user,
     generate_token,
     starmoon,
+    create_friendly_slug,
+    hardware_auth,
 )
 from app.core.config import settings
 from dotenv import load_dotenv
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
+import nltk
+
+try:
+    nltk.data.find("tokenizers/punkt_tab")
+except LookupError:
+    nltk.download("punkt_tab")
 
 load_dotenv()
 
@@ -39,6 +47,8 @@ app = FastAPI()
 app.include_router(analyze_text.router, prefix="/api", tags=["LLM response"])
 app.include_router(db_user.router, prefix="/api", tags=["User"])
 app.include_router(generate_token.router, prefix="/api", tags=["Token"])
+app.include_router(create_friendly_slug.router, prefix="/api", tags=["Token"])
+app.include_router(hardware_auth.router, prefix="/api", tags=["Token"])
 app.include_router(starmoon.router, tags=["StarMoon WebSocket"])
 
 

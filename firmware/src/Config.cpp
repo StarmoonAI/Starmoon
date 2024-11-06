@@ -1,25 +1,30 @@
 #include "Config.h"
-#include <Arduino.h>
+#include <nvs_flash.h>
 
 // WiFi credentials
-// use this for enterprise networks
-const char *EAP_IDENTITY = "username@city.ac.uk";
-const char *EAP_USERNAME = "username@city.ac.uk";
+// use this for enterprise networksxx
+const char *EAP_IDENTITY = "junru.xiong.4@city.ac.uk";
+const char *EAP_USERNAME = "junru.xiong.4@city.ac.uk";
 const char *EAP_PASSWORD = "password";
 const char *ssid = "eduroam";
 // use this for personal networks
+// const char *ssid_peronal = "launchlab";
+// const char *password_personal = "LaunchLabRocks";
 const char *ssid_peronal = "SKYCFZHN-2.4G";
 const char *password_personal = "CFaxCbZ9Y6CQ";
 
 // WebSocket server details
-const char *websocket_server = "192.168.0.30";
-const uint16_t websocket_port = 8000;
+const char *backend_server = "192.168.2.179";
+const uint16_t backend_port = 8000;
+
 const char *websocket_path = "/starmoon";
-const char *auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNWFmNjJiMGUtM2RhNC00YzQ0LWFkZjctNWIxYjdjOWM0Y2I2IiwiZW1haWwiOiJhZG1pbkBzdGFybW9vbi5hcHAiLCJpYXQiOjE3Mjg4NTM2NDV9._rDGYrhDFn4GWLIT5MZtdOFNmDmAtZalKpI8wl_qYzs";
+const char *auth_token = "<your-STARMOON_API_KEY-here>";
+
+String authTokenGlobal;
 
 // I2S and Audio parameters
 const uint32_t SAMPLE_RATE = 16000;
-const int bufferCnt = 20;
+const int bufferCnt = 25;
 const int bufferLen = 1024;
 const int I2S_READ_LEN = 1024;
 int16_t sBuffer[bufferLen];
@@ -27,7 +32,9 @@ int16_t sBuffer[bufferLen];
 // ----------------- Pin Definitions -----------------
 
 #ifdef USE_NORMAL_ESP32
+
 // XIAO ESP32 pins
+const int LED_PIN = 2;
 const int I2S_SD = 13;
 const int I2S_WS = 5;
 const int I2S_SCK = 18;
@@ -39,10 +46,12 @@ const int I2S_DATA_OUT = 25;
 const i2s_port_t I2S_PORT_OUT = I2S_NUM_1;
 const int I2S_SD_OUT = -1;
 
-const int BUTTON_PIN = 26;
+#define BUTTON_PIN 0
 
 #elif defined(USE_XIAO_ESP32)
 // Normal ESP32 pins
+
+const int LED_PIN = D10;
 const int I2S_SD = D9;
 const int I2S_WS = D8;
 const int I2S_SCK = D7;
@@ -88,3 +97,74 @@ const char *rootCACertificate = "-----BEGIN CERTIFICATE-----\n"
                                 "uYkQ4omYCTX5ohy+knMjdOmdH9c7SpqEWBDC86fiNex+O0XOMEZSa8DA\n"
                                 "-----END CERTIFICATE-----\n"
                                 "";
+
+void clearNVS()
+{
+    // Initialize the NVS partition
+    esp_err_t err = nvs_flash_init();
+    if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND)
+    {
+        // If the flash was previously partitioned or the version was updated,
+        // erase all and retry initializing NVS
+        ESP_ERROR_CHECK(nvs_flash_erase());
+        err = nvs_flash_init();
+    }
+    ESP_ERROR_CHECK(err);
+
+    // Open NVS handle in read-write mode
+    nvs_handle_t nvsHandle;
+    err = nvs_open("storage", NVS_READWRITE, &nvsHandle);
+    if (err != ESP_OK)
+    {
+        Serial.printf("Error (%s) opening NVS handle!\n", esp_err_to_name(err));
+    }
+    else
+    {
+        Serial.println("NVS handle opened successfully");
+
+        // Erase all keys in the NVS
+        err = nvs_erase_all(nvsHandle);
+        if (err != ESP_OK)
+        {
+            Serial.printf("Error (%s) erasing NVS!\n", esp_err_to_name(err));
+        }
+        else
+        {
+            Serial.println("NVS erased successfully");
+        }
+
+        // Commit changes
+        err = nvs_commit(nvsHandle);
+        if (err != ESP_OK)
+        {
+            Serial.printf("Error (%s) committing NVS changes!\n", esp_err_to_name(err));
+        }
+        else
+        {
+            Serial.println("NVS commit successful");
+        }
+
+        // Close the NVS handle
+        nvs_close(nvsHandle);
+    }
+};
+
+void goToSleep()
+{
+    Serial.println("Preparing to enter deep sleep...");
+
+    // Small delay to avoid any button bounce
+    delay(100);
+
+    // Final check of button state
+    if (digitalRead(BUTTON_PIN) == HIGH) // Not pressed
+    {
+        Serial.println("Good night!");
+        vTaskDelay(50); // Allow serial to finish
+        esp_deep_sleep_start();
+    }
+    else
+    {
+        Serial.println("Cannot enter sleep - button still pressed");
+    }
+}

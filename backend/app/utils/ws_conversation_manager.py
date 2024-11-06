@@ -2,7 +2,7 @@ import asyncio
 import json
 import re
 import threading
-
+import nltk
 import emoji
 
 # import pyaudio
@@ -16,7 +16,6 @@ from app.services.tts import (
     create_emotion_detection_task,
 )
 
-# from app.services.tts import speech_stream_response
 from app.utils.transcription_collector import TranscriptCollector
 from fastapi import WebSocket, WebSocketDisconnect
 
@@ -24,30 +23,35 @@ transcript_collector = TranscriptCollector()
 client = Clients()
 # p = pyaudio.PyAudio()
 
+
 CLAUSE_BOUNDARIES = r"\.|\?|!|。|;"
 
 
 def chunk_text_by_clause(text):
-    # Find clause boundaries using regular expression
-    clause_boundaries = re.finditer(CLAUSE_BOUNDARIES, text)
-    boundaries_indices = [boundary.end() for boundary in clause_boundaries]
+    # # Find clause boundaries using regular expression
+    # clause_boundaries = re.finditer(CLAUSE_BOUNDARIES, text)
+    # boundaries_indices = [boundary.end() for boundary in clause_boundaries]
 
-    chunks = []
-    start = 0
-    for boundary_index in boundaries_indices:
-        chunks.append(text[start:boundary_index].strip())
-        start = boundary_index
-    # Append the remaining part of the text
-    if start < len(text):
-        chunks.append(text[start:].strip())
+    # chunks = []
+    # start = 0
+    # for boundary_index in boundaries_indices:
+    #     chunks.append(text[start:boundary_index].strip())
+    #     start = boundary_index
+    # # Append the remaining part of the text
+    # if start < len(text):
+    #     chunks.append(text[start:].strip())
 
-    return chunks
+    # if len(chunks) > 1:
+    #     chunks = nltk.sent_tokenize(text)
+
+    return nltk.sent_tokenize(text)
 
 
 class ConversationManager:
     def __init__(self):
         self.client_transcription = ""
         self.is_replying = False
+        self.is_end_of_sentence = True
         self.connection_open = True
         self.device = "web"
         self.is_interrupted = False
@@ -77,36 +81,49 @@ class ConversationManager:
         stop_event: threading.Event,
         task_id_queue: asyncio.Queue,
         bytes_queue: asyncio.Queue,
+        is_greeting=False,
     ):
-        messages.append({"role": "user", "content": utterance})
-        response = client.client_azure_4o.chat.completions.create(
-            model="gpt-4o",
-            messages=messages,
-            stream=True,
-        )
-        # send utterance to celery task
-        task_id = create_emotion_detection_task(
-            f"{previous_sentence}\n\n{utterance}", user, "user", session_id
-        )
-        if device == "web":
-            bytes_queue.put_nowait(
-                {
-                    "type": "json",
-                    "device": device,
-                    "data": {
-                        "type": "input",
-                        "audio_data": None,
-                        "text_data": utterance,
-                        "boundary": None,
-                        "task_id": task_id,
-                    },
-                }
+        # try:
+
+        if not is_greeting:
+            messages.append({"role": "user", "content": utterance})
+            response = client.client_azure_4o.chat.completions.create(
+                model="gpt-4o",
+                messages=messages,
+                stream=True,
             )
-            # add id to the queue
-            task_id_queue.put_nowait(task_id)
-            # task = asyncio.create_task(check_task_result_hardware(task_id, text_queue))
-            # # ! will check tasks in the main loop
-            # self.check_task_result_tasks.append(task)
+            # send utterance to celery task
+            task_id = create_emotion_detection_task(
+                f"{previous_sentence}\n\n{utterance}", user, "user", session_id
+            )
+            if device == "web":
+                bytes_queue.put_nowait(
+                    {
+                        "type": "json",
+                        "device": device,
+                        "data": {
+                            "type": "input",
+                            "audio_data": None,
+                            "text_data": utterance,
+                            "boundary": None,
+                            "task_id": task_id,
+                        },
+                    }
+                )
+                # add id to the queue
+                task_id_queue.put_nowait(task_id)
+                # task = asyncio.create_task(check_task_result_hardware(task_id, text_queue))
+                # # ! will check tasks in the main loop
+                # self.check_task_result_tasks.append(task)
+        else:
+            messages_ = messages.copy()
+            messages_.append({"role": "user", "content": utterance})
+            response = client.client_azure_4o.chat.completions.create(
+                model="gpt-4o",
+                messages=messages_,
+                stream=True,
+                temperature=1,
+            )
 
         accumulated_text = []
         response_text = ""
@@ -163,6 +180,15 @@ class ConversationManager:
                             # self.check_task_result_tasks.append(task)
                         previous_sentence = sentence
                         is_first_chunk = False
+
+                        bytes_queue.put_nowait(
+                            {
+                                "type": "info",
+                                "device": device,
+                                "data": "END_OF_SENTENCE",
+                            }
+                        )
+
                     accumulated_text = [sentences[-1]]
 
         if accumulated_text and (not self.is_interrupted or not stop_event.is_set()):
@@ -183,15 +209,40 @@ class ConversationManager:
             )
             if device == "web":
                 task_id_queue.put_nowait(task_id)
-            #     task = asyncio.create_task(
-            #         check_task_result_hardware(task_id, text_queue)
-            #     )
-            #     self.check_task_result_tasks.append(task)
             previous_sentence = accumulated_text_
 
-        bytes_queue.put_nowait({"type": "info", "device": device, "data": "END"})
+        bytes_queue.put_nowait(
+            {
+                "type": "info",
+                "device": device,
+                "data": "END_OF_SENTENCE",
+            }
+        )
 
+        bytes_queue.put_nowait({"type": "info", "device": device, "data": "END"})
         messages.append({"role": "assistant", "content": response_text})
+
+        # except Exception as e:
+        #     print(f"Error in speech_stream_response: {e}")
+        #     error_message = "Oops, it looks like we encountered some sensitive content, how about we talk about other topics?"
+        #     task_id = create_emotion_detection_task(
+        #         error_message, user, "assistant", session_id, is_sensitive=True
+        #     )
+
+        #     azure_tts(
+        #         error_message,
+        #         "end",
+        #         task_id,
+        #         user["toy_id"],
+        #         device,
+        #         bytes_queue,
+        #     )
+        #     if device == "web":
+        #         task_id_queue.put_nowait(task_id)
+        #     previous_sentence = error_message
+
+        #     bytes_queue.put_nowait({"type": "info", "device": device, "data": "END"})
+        #     messages.append({"role": "assistant", "content": error_message})
 
         return previous_sentence
 
@@ -265,15 +316,32 @@ class ConversationManager:
         # stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, output=True)
         speech_thread = None
         speech_thread_stop_event = None
-        text_queue = asyncio.Queue()
         task_id_queue = asyncio.Queue()
         bytes_queue = asyncio.Queue()
 
         # # send ws metadata
         # await self.send_message(websocket, json.dumps({"type": "metadata", "text_data": user["volume_control"]}))
 
+        greeding = True
+
         while True:
             try:
+                if greeding:
+                    self.speech_response(
+                        previous_sentence,
+                        "Given the above chat history, user information and your responsibilities and character persona, generate ONLY ONE short greeting sentence that conatain some basic user information, interests or open questions to user:",
+                        messages,
+                        user,
+                        user["most_recent_chat_group_id"],
+                        self.device,
+                        threading.Event(),
+                        task_id_queue,
+                        bytes_queue,
+                        is_greeting=True,
+                    )
+                    greeding = False
+                    self.is_replying = True
+
                 if not self.is_replying:
                     transcription_complete = asyncio.Event()
                     transcription_task = asyncio.create_task(
@@ -310,6 +378,7 @@ class ConversationManager:
                                         print("Received invalid JSON")
                                 elif "bytes" in message:
                                     data = message["bytes"]
+                                    # print("received bytes")
                                     await data_stream.put(data)
                                     # stream.write(data)
                         except WebSocketDisconnect:
@@ -378,6 +447,7 @@ class ConversationManager:
                         if message["type"] == "websocket.receive":
                             if "bytes" in message:
                                 data = message["bytes"]
+                                # stream.write(data)
                                 # Process incoming audio data if needed such as voice interruption
                             elif "text" in message:
                                 print("message----", message)
@@ -390,6 +460,7 @@ class ConversationManager:
 
                                     if data.get("is_replying") == False:
                                         #  wait 0.1s
+                                        # await asyncio.sleep(0.5)
                                         self.is_replying = False
                                         transcript_collector.reset()
                                     if data.get("is_interrupted") == True:
@@ -400,19 +471,17 @@ class ConversationManager:
                                         bytes_queue = asyncio.Queue()
                                         self.is_replying = False
                                         # transcription_complete = asyncio.Event()
+                                    if data.get("is_end_of_sentence") == True:
+                                        self.is_end_of_sentence = True
+
                                 except json.JSONDecodeError:
                                     print("Received invalid JSON")
 
                             if bytes_queue.qsize() > 0:
                                 response_data = bytes_queue.get_nowait()
                                 if response_data["type"] == "bytes":
-                                    if response_data["id"] == 0:
-                                        await websocket.send_bytes(
-                                            response_data["data"]
-                                        )
-                                        for i in range(
-                                            min(15, bytes_queue.qsize() - 1)
-                                        ):
+                                    if self.is_end_of_sentence:
+                                        for i in range(min(20, bytes_queue.qsize())):
                                             response_data = bytes_queue.get_nowait()
                                             if response_data["type"] == "bytes":
                                                 await websocket.send_bytes(
@@ -422,8 +491,11 @@ class ConversationManager:
                                                 await websocket.send_text(
                                                     response_data["data"]
                                                 )
+                                        self.is_end_of_sentence = False
                                     else:
-                                        await websocket.send_text(response_data["data"])
+                                        await websocket.send_bytes(
+                                            response_data["data"]
+                                        )
 
                                 elif response_data["type"] == "json":
                                     await websocket.send_json(
@@ -436,27 +508,6 @@ class ConversationManager:
                                 else:
                                     print("response_data-++++++++--")
                                     await websocket.send_text(response_data["data"])
-
-                                # # wait 0.1s
-                                # await asyncio.sleep(3)
-                                # self.is_replying = False
-                                # transcript_collector.reset()
-
-                            # if response_data["type"] == "bytes":
-                            #     await websocket.send_bytes(response_data["data"])
-                            #     print("response_data---")
-                            #     if bytes_queue.qsize() == 0:
-                            #         self.is_replying = False
-                            #         # wait 0.1s
-                            #         # await asyncio.sleep(0.2)
-                            #         transcript_collector.reset()
-                            # else:
-                            #     await websocket.send_json(
-                            #         json.dumps(response_data["data"])
-                            #     )
-                            #     if bytes_queue.qsize() == 0:
-                            #         #     self.is_replying = False
-                            #         transcript_collector.reset()
 
                     except WebSocketDisconnect:
                         self.connection_open = False

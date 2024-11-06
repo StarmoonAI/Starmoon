@@ -33,6 +33,8 @@ torch = "2.3.0"
 torchaudio = "2.3.0"
 colorama = "^0.4.6"
 emoji = "^2.12.1"
+petname = "^2.6"
+nltk = "^3.9.1"
 
 
 [build-system]
