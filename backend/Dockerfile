@@ -1,32 +1,38 @@
-FROM python:3.10-slim-bullseye
-# FROM --platform=linux/amd64 python:3.10-slim-bullseye
+# Stage 1: Build Environment
+FROM python:3.10-slim-bullseye AS builder
 
-RUN mkdir /app
-# Copy to app folder
-COPY . /app/
-# Change the working directory.
+# Set working directory and copy files
 WORKDIR /app
+COPY . .
 
-RUN apt-get update \
-    # dependencies for building Python packages
-    && apt-get install -y build-essential \
-    # install portaudio
-    && apt-get install -y portaudio19-dev python-all-dev \
-    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-    && rm -rf /var/lib/apt/lists/*
+# Install dependencies required to build other packages
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends build-essential portaudio19-dev && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install Poetry
 RUN pip install poetry
 
-# Install poetry dependencies
-RUN poetry install --only main
+# Install dependencies using Poetry
+RUN poetry config virtualenvs.create false && \
+    poetry install --only main --no-root
 
-# Install NLTK and download 'punkt'
-# RUN poetry run pip install nltk \
-#     && poetry run python -m nltk.downloader punkt_tab
+# Download NLTK 'punkt' model
+RUN poetry run python -m nltk.downloader punkt
+
+# Stage 2: Production Environment
+FROM python:3.10-slim-bullseye
+
+# Copy only the essential files from the builder stage
+WORKDIR /app
+COPY --from=builder /app /app
+COPY --from=builder /usr/local/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages
+COPY --from=builder /usr/local/bin/poetry /usr/local/bin/poetry
+
+# Final clean-up to reduce the image size
+RUN apt-get purge -y --auto-remove build-essential && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /root/.cache
 
 # Command to run the application
-# without debug
-# CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--ws-ping-interval", "600", "--ws-ping-timeout", "600"]
-# with debug
-# CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload", "--log-level", "debug", "--ws-ping-interval", "600", "--ws-ping-timeout", "600"]
+CMD ["poetry", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--ws-ping-interval", "600", "--ws-ping-timeout", "600"]
