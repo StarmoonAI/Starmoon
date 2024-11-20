@@ -126,7 +126,7 @@ If you can't see the video, you can watch it [here](https://www.youtube.com/watc
 
 -   **Step 2**: Update and WebSocket server details in `src/Config.cpp`
 
-    -   Find your WiFi ip adress (websocket_server_host) by command `ipconfig` (under `Default Gateway`) in Windows or `ifconfig` (under `inet xxx.x.x.x netmask 0xff000000`) in Linux/MacOS, or you can also follow the instructions [here](https://nordvpn.com/blog/find-router-ip-address/)
+    -   Find your WiFi IP address (websocket_server_host) by command `ipconfig` (under `Default Gateway`) in Windows or `ifconfig` (under `inet xxx.x.x.x netmask 0xff000000`) in Linux/MacOS, or you can also follow the instructions [here](https://nordvpn.com/blog/find-router-ip-address/)
 
         ```cpp
         const char *websocket_server = "<your-server-host-ip>"; // Wifi settings -> Your Wifi I.P.
