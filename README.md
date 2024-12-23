@@ -76,6 +76,9 @@ If you can't see the video, you can watch it [here](https://www.youtube.com/watc
 | LED Blue                   | N/A                           | GPIO 13      |
 | Button                     | D10                           | GPIO 2       |
 
+If you are using the Seeed Studio XIAO ESP32S3, then you can directly connect the lithium battery to the back of the ESP32.
+![alt text](battery.png)
+
 -   **Step 1**: If you use normal ESP32-S3 chip:
     - please go to [Config.h](firmware/src/Config.h) and uncomment the `USE_NORMAL_ESP32_S3` line and comment the `USE_XIAO_ESP32_DEVKIT` line.
 
