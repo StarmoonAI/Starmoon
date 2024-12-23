@@ -73,7 +73,7 @@ If you can't see the video, you can watch it [here](https://www.youtube.com/watc
 | **Others**                 |                               |              |
 | LED Red                    | N/A                           | GPIO 9       |
 | LED Green                  | N/A                           | GPIO 8       |
-| LED Blue                   | N/A                           | GPIO 13      |
+| LED Blue                   | D9                            | GPIO 13      |
 | Button                     | D10                           | GPIO 2       |
 
 If you are using the Seeed Studio XIAO ESP32S3, then you can directly connect the lithium battery to the back of the ESP32.
