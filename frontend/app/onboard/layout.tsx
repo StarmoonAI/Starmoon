@@ -1,5 +1,12 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
+import { Metadata } from "next";
+import { getOpenGraphMetadata } from "@/lib/utils";
+
+export const metadata: Metadata = {
+    title: "Onboard",
+    ...getOpenGraphMetadata("Onboard"),
+};
 
 export default async function RootLayout({
     children,

@@ -18,9 +18,8 @@ export type Database = {
           emotion_model: string | null
           is_sensitive: boolean | null
           metadata: Json | null
-          personality_id: string
+          personalities_translation_id: string | null
           role: string
-          toy_id: string
           user_id: string
         }
         Insert: {
@@ -31,9 +30,8 @@ export type Database = {
           emotion_model?: string | null
           is_sensitive?: boolean | null
           metadata?: Json | null
-          personality_id?: string
+          personalities_translation_id?: string | null
           role: string
-          toy_id?: string
           user_id?: string
         }
         Update: {
@@ -44,25 +42,17 @@ export type Database = {
           emotion_model?: string | null
           is_sensitive?: boolean | null
           metadata?: Json | null
-          personality_id?: string
+          personalities_translation_id?: string | null
           role?: string
-          toy_id?: string
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "conversations_personality_id_fkey"
-            columns: ["personality_id"]
+            foreignKeyName: "conversations_personalities_translation_id_fkey"
+            columns: ["personalities_translation_id"]
             isOneToOne: false
-            referencedRelation: "personalities"
-            referencedColumns: ["personality_id"]
-          },
-          {
-            foreignKeyName: "conversations_toy_id_fkey"
-            columns: ["toy_id"]
-            isOneToOne: false
-            referencedRelation: "toys"
-            referencedColumns: ["toy_id"]
+            referencedRelation: "personalities_translations"
+            referencedColumns: ["personalities_translation_id"]
           },
           {
             foreignKeyName: "conversations_user_id_fkey"
@@ -77,21 +67,21 @@ export type Database = {
         Row: {
           created_at: string
           device_id: string
-          mac_address: string
+          mac_address: string | null
           user_code: string
           user_id: string | null
         }
         Insert: {
           created_at?: string
           device_id?: string
-          mac_address: string
+          mac_address?: string | null
           user_code: string
           user_id?: string | null
         }
         Update: {
           created_at?: string
           device_id?: string
-          mac_address?: string
+          mac_address?: string | null
           user_code?: string
           user_id?: string | null
         }
@@ -161,65 +151,152 @@ export type Database = {
           },
         ]
       }
+      languages: {
+        Row: {
+          code: string
+          created_at: string
+          flag: string
+          language_id: string
+          name: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          flag: string
+          language_id?: string
+          name: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          flag?: string
+          language_id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       personalities: {
         Row: {
           created_at: string
-          emoji: string | null
+          is_doctor: boolean
+          key: string
           personality_id: string
-          subtitle: string
-          title: string
-          trait: string
         }
         Insert: {
           created_at?: string
-          emoji?: string | null
+          is_doctor?: boolean
+          key?: string
           personality_id?: string
-          subtitle: string
-          title: string
-          trait: string
         }
         Update: {
           created_at?: string
-          emoji?: string | null
+          is_doctor?: boolean
+          key?: string
           personality_id?: string
+        }
+        Relationships: []
+      }
+      personalities_translations: {
+        Row: {
+          created_at: string
+          language_code: string
+          personalities_translation_id: string
+          personality_key: string
+          subtitle: string
+          title: string
+          trait: string
+          trait_short_description: string
+          voice_name: string
+        }
+        Insert: {
+          created_at?: string
+          language_code: string
+          personalities_translation_id?: string
+          personality_key: string
+          subtitle: string
+          title: string
+          trait: string
+          trait_short_description: string
+          voice_name: string
+        }
+        Update: {
+          created_at?: string
+          language_code?: string
+          personalities_translation_id?: string
+          personality_key?: string
           subtitle?: string
           title?: string
           trait?: string
+          trait_short_description?: string
+          voice_name?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "personalities_translations_language_code_fkey"
+            columns: ["language_code"]
+            isOneToOne: false
+            referencedRelation: "languages"
+            referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "personalities_translations_personality_key_fkey"
+            columns: ["personality_key"]
+            isOneToOne: false
+            referencedRelation: "personalities"
+            referencedColumns: ["key"]
+          },
+          {
+            foreignKeyName: "personalities_translations_voice_name_fkey"
+            columns: ["voice_name"]
+            isOneToOne: false
+            referencedRelation: "toys"
+            referencedColumns: ["name"]
+          },
+        ]
       }
       toys: {
         Row: {
           created_at: string
-          expanded_prompt: string
-          hume_ai_config_id: string
           image_src: string
           name: string
           prompt: string
           third_person_prompt: string
           toy_id: string
+          tts_code: string
+          tts_language_code: string | null
+          tts_model: Database["public"]["Enums"]["tts_model_enum"] | null
         }
         Insert: {
           created_at?: string
-          expanded_prompt?: string
-          hume_ai_config_id?: string
           image_src?: string
           name: string
           prompt: string
           third_person_prompt?: string
           toy_id?: string
+          tts_code?: string
+          tts_language_code?: string | null
+          tts_model?: Database["public"]["Enums"]["tts_model_enum"] | null
         }
         Update: {
           created_at?: string
-          expanded_prompt?: string
-          hume_ai_config_id?: string
           image_src?: string
           name?: string
           prompt?: string
           third_person_prompt?: string
           toy_id?: string
+          tts_code?: string
+          tts_language_code?: string | null
+          tts_model?: Database["public"]["Enums"]["tts_model_enum"] | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "toys_language_code_fkey"
+            columns: ["tts_language_code"]
+            isOneToOne: false
+            referencedRelation: "languages"
+            referencedColumns: ["code"]
+          },
+        ]
       }
       users: {
         Row: {
@@ -227,6 +304,7 @@ export type Database = {
           created_at: string
           email: string
           is_premium: boolean
+          language_code: string
           modules: string[] | null
           most_recent_chat_group_id: string | null
           personality_id: string
@@ -235,7 +313,6 @@ export type Database = {
           supervisee_name: string
           supervisee_persona: string
           supervisor_name: string
-          toy_id: string | null
           toy_name: string | null
           user_id: string
           user_info: Json
@@ -246,6 +323,7 @@ export type Database = {
           created_at?: string
           email?: string
           is_premium?: boolean
+          language_code?: string
           modules?: string[] | null
           most_recent_chat_group_id?: string | null
           personality_id?: string
@@ -254,7 +332,6 @@ export type Database = {
           supervisee_name: string
           supervisee_persona?: string
           supervisor_name: string
-          toy_id?: string | null
           toy_name?: string | null
           user_id?: string
           user_info?: Json
@@ -265,6 +342,7 @@ export type Database = {
           created_at?: string
           email?: string
           is_premium?: boolean
+          language_code?: string
           modules?: string[] | null
           most_recent_chat_group_id?: string | null
           personality_id?: string
@@ -273,7 +351,6 @@ export type Database = {
           supervisee_name?: string
           supervisee_persona?: string
           supervisor_name?: string
-          toy_id?: string | null
           toy_name?: string | null
           user_id?: string
           user_info?: Json
@@ -281,18 +358,18 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "users_language_code_fkey"
+            columns: ["language_code"]
+            isOneToOne: false
+            referencedRelation: "languages"
+            referencedColumns: ["code"]
+          },
+          {
             foreignKeyName: "users_personality_id_fkey"
             columns: ["personality_id"]
             isOneToOne: false
             referencedRelation: "personalities"
             referencedColumns: ["personality_id"]
-          },
-          {
-            foreignKeyName: "users_toy_id_fkey"
-            columns: ["toy_id"]
-            isOneToOne: false
-            referencedRelation: "toys"
-            referencedColumns: ["toy_id"]
           },
         ]
       }
@@ -489,7 +566,7 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      tts_model_enum: "FISH" | "AZURE"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -577,4 +654,19 @@ export type Enums<
   ? Database[PublicEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : PublicEnumNameOrOptions extends keyof PublicSchema["Enums"]
     ? PublicSchema["Enums"][PublicEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof PublicSchema["CompositeTypes"]
+    | { schema: keyof Database },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof Database
+  }
+    ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends { schema: keyof Database }
+  ? Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof PublicSchema["CompositeTypes"]
+    ? PublicSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never

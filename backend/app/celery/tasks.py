@@ -39,18 +39,28 @@ def print_current_time(utterance: str, messages: list):
     print(f"Current time: {datetime.now()}")
 
 
+# todo (akashdeep): conversations should be added even if the emotion detection fails
 @celery_app.task(name="app.celery.tasks.emotion_detection")
 def emotion_detection(
-    text: str, user: dict, role: str, session_id: str, is_sensitive: bool = False
+    text: str,
+    user: dict,
+    personality_translation: dict,
+    role: str,
+    session_id: str,
+    is_sensitive: bool = False,
 ):
     HF_EMOTION_API_URL = settings.HF_EMOTION_API_URL
     token = settings.HF_ACCESS_TOKEN
     headers = {"Authorization": f"Bearer {token}"}
 
+    personalities_translation_id = personality_translation[
+        "personalities_translation_id"
+    ]
+
     response = requests.post(
         HF_EMOTION_API_URL,
         headers=headers,
-        json={"inputs": text, "parameters": {"top_k": 30}},
+        json={"inputs": text, "parameters": {"top_k": 15}},
     )
 
     res = response.json()
@@ -72,12 +82,9 @@ def emotion_detection(
         "scores": {res[i]["label"]: res[i]["score"] for i in range(len(res))}
     }
 
-    print(converted_data)
-
     # ! update the supabase emotion scores
     add_msg(
-        toy_id=user["toy_id"],
-        personality_id=user["personality_id"],
+        personalities_translation_id=personalities_translation_id,
         user_id=user["user_id"],
         role=role,
         content=text,

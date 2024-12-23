@@ -1,6 +1,7 @@
 import asyncio
 import os
 
+from app.utils.languages import get_deepgram_language_code
 from app.utils.transcription_collector import TranscriptCollector
 from deepgram import (
     DeepgramClient,
@@ -16,6 +17,7 @@ async def get_deepgram_transcript(
     data_stream: asyncio.Queue,
     transcription_complete: asyncio.Event,
     transcript_collector: TranscriptCollector,
+    language_code: str,
 ):
     try:
         config = DeepgramClientOptions(options={"keepalive": "true"})
@@ -68,16 +70,16 @@ async def get_deepgram_transcript(
         options = LiveOptions(
             model="nova-2",
             punctuate=True,
-            language="en-US",
+            language=get_deepgram_language_code(language_code),
             smart_format=True,
             encoding="linear16",
             # channels=1,
             multichannel=True,
             sample_rate=16000,
             interim_results=True,
-            utterance_end_ms="1500",
+            utterance_end_ms="1000",  # Modify timeout where it stops recording after a period of inactivity
             vad_events=True,
-            endpointing=300,
+            endpointing=500,
             filler_words=True,
             numerals=True,
             diarize=True,

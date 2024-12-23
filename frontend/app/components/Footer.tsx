@@ -1,3 +1,5 @@
+"use client";
+
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Mail } from "lucide-react";
@@ -5,14 +7,26 @@ import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Separator } from "@/components/ui/separator";
 import { FaDiscord, FaGithub } from "react-icons/fa";
 import Link from "next/link";
-import { discordInviteLink, githubPublicLink } from "@/lib/data";
+import { usePathname } from "next/navigation";
+import {
+    discordInviteLink,
+    githubPublicLink,
+    feedbackFormLink,
+} from "@/lib/data";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 export default function Footer() {
+    const pathname = usePathname();
+    const isHome = pathname.includes("/home");
+    const isMobile = useMediaQuery("(max-width: 768px)");
     return (
-        <footer className="w-full flex flex-col sm:flex-row items-center sm:justify-center border-t-[1px] border-gray-200 dark:border-gray-800 mx-auto text-center text-xs sm:gap-8 sm:py-1 py-2">
-            {/* <footer className="w-full flex items-center justify-center mx-auto text-center text-xs gap-8 py-1"> */}
+        <footer
+            className={`w-full ${
+                isHome ? "pb-16" : "pb-2"
+            } flex flex-col sm:flex-row items-center sm:justify-center border-t-[1px] border-gray-200 dark:border-gray-800 mx-auto text-center text-xs sm:gap-8 sm:py-1 py-2`}
+        >
             <div className="flex flex-row items-center gap-8">
-                <a href="https://forms.gle/2QmukEG2FXNwBdee7" target="_blank">
+                <a href={feedbackFormLink} target="_blank">
                     <Button
                         variant="link"
                         size="sm"
@@ -29,7 +43,11 @@ export default function Footer() {
                 </Label>
             </div>
             {/* <Separator orientation="vertical" /> */}
-            <div className="flex flex-row items-center gap-8">
+            <div
+                className={`flex-row items-center gap-8 ${
+                    isHome && isMobile ? "hidden" : "flex"
+                }`}
+            >
                 <div className="flex flex-row items-center gap-2">
                     <Link href={githubPublicLink} passHref>
                         <Button

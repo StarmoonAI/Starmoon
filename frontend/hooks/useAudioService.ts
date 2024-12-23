@@ -134,31 +134,81 @@ export const stopAudioPlayback = async (
   );
 };
 
+const base64ToFloat32Array = (
+  base64: string,
+  isLittleEndian: boolean,
+  isSigned: boolean
+): Float32Array => {
+  const binaryString = atob(base64);
+  const len = binaryString.length;
+  const buffer = new ArrayBuffer(len);
+  const view = new Uint8Array(buffer);
+
+  for (let i = 0; i < len; i++) {
+    view[i] = binaryString.charCodeAt(i);
+  }
+
+  const dataView = new DataView(buffer);
+  const length = len / 2; // Assuming 16-bit PCM
+  const floatArray = new Float32Array(length);
+
+  for (let i = 0; i < length; i++) {
+    let sample: number;
+
+    if (isSigned) {
+      // Read 16-bit signed integer
+      sample = dataView.getInt16(i * 2, isLittleEndian);
+    } else {
+      // Read 16-bit unsigned integer and convert to signed
+      sample = dataView.getUint16(i * 2, isLittleEndian) - 32768;
+    }
+
+    // Normalize the sample to -1.0 to 1.0
+    floatArray[i] = sample / 32768;
+  }
+
+  return floatArray;
+};
+
 export const playAudio = async (
   base64Audio: string,
   audioContextRef: React.MutableRefObject<AudioContext | null>,
-  setAudioBuffer: React.Dispatch<React.SetStateAction<AudioBuffer | null>>
-) => {
+  setAudioBuffer: React.Dispatch<React.SetStateAction<AudioBuffer | null>>,
+  isLittleEndian = true, // Set to false if data is big-endian
+  isSigned = true, // Set to false if data is unsigned
+  sampleRate = 16000, // Adjust to your actual sample rate
+  numChannels = 1 // Adjust to your actual number of channels
+): Promise<void> => {
   if (!audioContextRef.current) {
-    audioContextRef.current = new AudioContext({ sampleRate: 16000 });
+    audioContextRef.current = new AudioContext();
   }
 
   const audioContext = audioContextRef.current;
 
-  // Ensure the AudioContext is running
   if (audioContext.state === "suspended") {
     await audioContext.resume();
   }
 
   try {
-    const audioData = await fetch(`data:audio/wav;base64,${base64Audio}`).then(
-      (res) => res.arrayBuffer()
+    const pcmData = base64ToFloat32Array(base64Audio, isLittleEndian, isSigned);
+    const frameCount = pcmData.length / numChannels;
+    const audioBuffer = audioContext.createBuffer(
+      numChannels, // Number of channels
+      frameCount, // Length per channel
+      sampleRate // Sample rate
     );
-    const audioBuffer = await audioContext.decodeAudioData(audioData);
+
+    // Split the pcmData into channel data if necessary
+    for (let channel = 0; channel < numChannels; channel++) {
+      const channelData = audioBuffer.getChannelData(channel);
+      for (let i = 0; i < frameCount; i++) {
+        channelData[i] = pcmData[i * numChannels + channel];
+      }
+    }
 
     setAudioBuffer(audioBuffer);
 
-    return new Promise<void>((resolve) => {
+    return new Promise((resolve) => {
       const source = audioContext.createBufferSource();
       source.buffer = audioBuffer;
       source.connect(audioContext.destination);
@@ -166,6 +216,84 @@ export const playAudio = async (
       source.start();
     });
   } catch (error) {
-    console.error("Error decoding audio data", error);
+    console.error("Error creating audio buffer", error);
   }
 };
+
+// // Globals or component-level refs to store queued data
+// let audioQueue: Float32Array[] = [];
+// let totalSamples = 0;
+// let isPlaying = false;
+
+// export const playAudio = async (
+//   base64Audio: string,
+//   audioContextRef: React.MutableRefObject<AudioContext | null>,
+//   setAudioBuffer: React.Dispatch<React.SetStateAction<AudioBuffer | null>>,
+//   isLittleEndian = true, // Adjust if your data endianness differs
+//   isSigned = true, // Adjust if your data is unsigned 16-bit
+//   sampleRate = 16000, // Adjust to the actual sample rate of your audio
+//   numChannels = 1, // Adjust to the actual number of channels
+//   bufferThresholdSeconds = 0 // How many seconds to buffer before starting playback
+// ): Promise<void> => {
+//   if (!audioContextRef.current) {
+//     audioContextRef.current = new AudioContext();
+//   }
+
+//   const audioContext = audioContextRef.current;
+
+//   // Ensure the AudioContext is running
+//   if (audioContext.state === "suspended") {
+//     await audioContext.resume();
+//   }
+
+//   // Decode incoming chunk
+//   const pcmData = base64ToFloat32Array(base64Audio, isLittleEndian, isSigned);
+
+//   // Add new data to queue
+//   audioQueue.push(pcmData);
+//   totalSamples += pcmData.length;
+
+//   // Calculate how many seconds of audio we have
+//   const totalTime = totalSamples / sampleRate;
+
+//   // If we're not currently playing and we have enough buffered data, start playback
+//   if (!isPlaying && totalTime >= bufferThresholdSeconds) {
+//     isPlaying = true;
+
+//     // Combine all queued PCM data
+//     const combined = new Float32Array(totalSamples);
+//     let offset = 0;
+//     for (const chunk of audioQueue) {
+//       combined.set(chunk, offset);
+//       offset += chunk.length;
+//     }
+
+//     // Clear the queue since we've combined it
+//     audioQueue = [];
+
+//     // Create an AudioBuffer from the combined data
+//     const audioBuffer = audioContext.createBuffer(
+//       numChannels,
+//       combined.length,
+//       sampleRate
+//     );
+//     for (let channel = 0; channel < numChannels; channel++) {
+//       audioBuffer.copyToChannel(combined, channel);
+//     }
+
+//     // Store the buffer in state if desired (e.g., for visualization)
+//     setAudioBuffer(audioBuffer);
+
+//     return new Promise((resolve) => {
+//       const source = audioContext.createBufferSource();
+//       source.buffer = audioBuffer;
+//       source.connect(audioContext.destination);
+//       source.onended = () => {
+//         isPlaying = false;
+//         totalSamples = 0; // Reset sample count after playback
+//         resolve();
+//       };
+//       source.start();
+//     });
+//   }
+// };

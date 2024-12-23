@@ -8,6 +8,15 @@ declare global {
         type: "demo" | "preorder";
     }
 
+    interface ILanguage {
+        language_id: string;
+        code: string;
+        name: string;
+        flag: string;
+    }
+
+    type ProductColor = "black" | "white" | "gray";
+
     interface IUser {
         user_id: string;
         avatar_url: string;
@@ -17,15 +26,18 @@ declare global {
         supervisee_name: string;
         supervisee_persona: string;
         supervisee_age: number;
-        toy_id: string;
-        personality_id: string;
+        // language_id: string;
         volume_control: number;
-        toy?: IToy;
+        is_reset: boolean;
+        is_ota: boolean;
+        personality_id: string;
         personality?: IPersonality;
+        // language?: ILanguage;
         modules: Module[];
         most_recent_chat_group_id: string | null;
         session_time: number;
         user_info: UserInfo;
+        language_code: LanguageCodeType;
     }
 
     type UserInfo =
@@ -65,21 +77,39 @@ declare global {
         emotion_model: string;
     }
 
+    type LanguageCodeType = "en-US" | "de-DE" | "es-ES" | "es-AR" | "zh-CN";
+    type TTSModel = "FISH" | "AZURE";
+
+    // characters <-> personalities table
     interface IPersonality {
         personality_id: string;
-        title: string;
-        subtitle: string;
-        image_src: string;
-        emoji?: string;
+        is_doctor: boolean;
+        key: string;
+        personalities_translations: IPersonalitiesTranslation[];
     }
 
+    interface IPersonalitiesTranslation {
+        personalities_translation_id: string;
+        title: string;
+        subtitle: string;
+        trait_short_description: string;
+        personality_key: string;
+        personality?: IPersonality;
+        voice_name: string;
+        voice?: Partial<IToy>;
+        language_code: LanguageCodeType;
+        language?: ILanguage;
+    }
+
+    // voices <-> toys table
     interface IToy {
         toy_id: string;
         name: string;
-        prompt: string;
-        third_person_prompt: string;
-        expanded_prompt: string;
         image_src?: string;
+        tts_code: string;
+        tts_model: TTSModel;
+        tts_language_code: LanguageCodeType;
+        tts_language?: ILanguage;
     }
 
     interface InsightsConversation {

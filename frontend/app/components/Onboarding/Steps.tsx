@@ -142,7 +142,7 @@ const Steps: React.FC<{
             subHeading =
                 "With the following details we will be able to personalize your and your patients' Starmoon experience.";
         } else {
-            heading = "Hi there!";
+            heading = "Hello there!";
             subHeading =
                 "With the following details we will be able to personalize your Starmoon experience.";
         }

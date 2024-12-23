@@ -4,22 +4,26 @@ import { Button } from "@/components/ui/button";
 import { getCreditsRemaining } from "@/lib/utils";
 import { Sparkles } from "lucide-react";
 import AddCreditsModal from "./Upsell/AddCreditsModal";
-import Link from "next/link";
+import { tx } from "@/utils/i18n";
 
-const CreditsRemaining: React.FC<{ user: IUser }> = ({ user }) => {
+const CreditsRemaining: React.FC<{
+    user: IUser;
+    languageCode: LanguageCodeType;
+}> = ({ user, languageCode }) => {
+    const t = tx(languageCode);
     const creditsRemaining = getCreditsRemaining(user);
     const hasNoCredits = creditsRemaining <= 0;
 
-    if (user.user_info.user_type === "doctor") {
+    if (user.is_premium) {
         return null;
     }
 
     return (
         <div className="flex flex-row items-center gap-4">
             <p
-                className={`text-sm ${hasNoCredits ? "text-gray-400" : "text-gray-600"}`}
+                className={`text-sm ${hasNoCredits ? "text-gray-400" : "text-gray-400"}`}
             >
-                {creditsRemaining} credits remaining
+                {creditsRemaining} {t("credits remaining")}
             </p>
             {creditsRemaining <= 50 && (
                 <AddCreditsModal>
@@ -30,8 +34,8 @@ const CreditsRemaining: React.FC<{ user: IUser }> = ({ user }) => {
                     >
                         <Sparkles size={16} />
                         {hasNoCredits
-                            ? "Subscribe to continue"
-                            : "Get unlimited access"}
+                            ? t("Upgrade to continue")
+                            : t("Get unlimited access")}
                     </Button>
                 </AddCreditsModal>
             )}

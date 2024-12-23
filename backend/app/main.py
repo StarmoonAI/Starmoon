@@ -4,21 +4,22 @@ import threading
 from contextlib import asynccontextmanager
 from queue import Queue
 
+import nltk
 import uvicorn
 from app.api.endpoints import (
     analyze_text,
+    create_friendly_slug,
     db_user,
     generate_token,
-    starmoon,
-    create_friendly_slug,
     hardware_auth,
+    live,
+    starmoon,
 )
 from app.core.config import settings
 from dotenv import load_dotenv
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
-import nltk
 
 try:
     nltk.data.find("tokenizers/punkt_tab")
@@ -50,6 +51,7 @@ app.include_router(generate_token.router, prefix="/api", tags=["Token"])
 app.include_router(create_friendly_slug.router, prefix="/api", tags=["Token"])
 app.include_router(hardware_auth.router, prefix="/api", tags=["Token"])
 app.include_router(starmoon.router, tags=["StarMoon WebSocket"])
+app.include_router(live.router, tags=["Live WebSocket"])
 
 
 if __name__ == "__main__":

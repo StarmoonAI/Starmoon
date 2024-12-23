@@ -1,4 +1,11 @@
+import { getOpenGraphMetadata } from "@/lib/utils";
 import OurAddressSign from "../components/OurAddressSign";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Terms and Conditions",
+    ...getOpenGraphMetadata("Terms and Conditions"),
+};
 
 export default async function Index() {
     return (

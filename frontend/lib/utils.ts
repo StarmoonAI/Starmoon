@@ -8,6 +8,18 @@ import {
     SECONDS_PER_CREDIT,
 } from "./data";
 
+export const getOpenGraphMetadata = (title: string) => {
+    return {
+        openGraph: {
+            title: `${title} | Starmoon AI`,
+        },
+    };
+};
+
+export const getPersonalityImageSrc = (title: string) => {
+    return `/personality/${title.toLowerCase().replace(/\s+/g, "_")}.jpeg`;
+};
+
 export function removeEmojis(text: string): string {
     const emojiPattern: RegExp =
         /[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2702}-\u{27B0}\u{24C2}-\u{1F251}]/gu;
@@ -82,62 +94,13 @@ export const getCreditsRemaining = (user: IUser): number => {
     return Math.max(0, remainingCredits); // Ensure credits don't go below 0
 };
 
-export const constructUserPrompt = (
-    user: IUser,
-    toy: IToy,
-    convState: string | null
-) => {
-    const prompt = `<role>Your role is to serve as a conversational partner to the user,
-  offering mental health support and engaging in light-hearted
-  conversation. Avoid giving technical advice or answering factual
-  questions outside of your emotional support role: ${
-      toy.expanded_prompt
-  }</role>
-    
-    YOU ARE TALKING TO:
-    ${user.supervisee_name} who is ${
-        user.supervisee_age
-    } year old. Here is some more information on ${
-        user.supervisee_name
-    } set by their parent: ${
-        user.supervisee_persona
-    }. Use a friendly tone and talk to this child as if they are ${
-        user.supervisee_age
-    } years old.
-
-  Current time: ${new Date().toLocaleTimeString()}
-
-  This is a running summary of what you spoke of in the previous session:
-  ${convState ?? "No conversation history yet."}
-
-  <voice_only_response_format>
-  Everything you output will be spoken aloud with expressive
-  text-to-speech, so tailor all of your responses for voice-only
-  conversations. NEVER output text-specific formatting like markdown,
-  lists, or anything that is not normally said out loud. Always prefer
-  easily pronounced words. Seamlessly incorporate natural vocal
-  inflections like “oh wow” and discourse markers like “I mean” to
-  make your conversation human-like and to ease user comprehension.
-  </voice_only_response_format>
-
-    YOUR TOPICS:
-    You must be encouraging and foster a growth mindset in conversation. You must focus on these topics: ${(
-        user?.modules ?? []
-    ).join(", ")}.
-    `;
-
-    // // console.log(prompt);
-    return prompt;
-};
-
 export const getMessageRoleName = (
     role: string,
-    selectedUser: IUser,
-    selectedToy: IToy
+    selectedPersonalityTranslation: IPersonalitiesTranslation
 ) => {
     if (role === "input") {
-        return selectedUser.supervisee_name;
+        return "You";
     } else {
-        return selectedToy.name;
+        return selectedPersonalityTranslation.title;
     }
 };

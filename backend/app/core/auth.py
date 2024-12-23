@@ -19,7 +19,9 @@ async def get_token_from_query(websocket: WebSocket):
 
 async def get_user(user_id: str):
     supabase = create_supabase_client()
+    print(f"user_id: {user_id}")
     response = supabase.table("users").select("*").eq("user_id", user_id).execute()
+    print(f"response: {response}")
     if response.data:
         return response.data[0]
     return None
@@ -35,7 +37,7 @@ async def authenticate_user(
 ):
     try:
         payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=[ALGORITHM])
-        print(f"payload: {payload}")
+        # print(f"payload: {payload}")
 
         if not user_id:
             user_id = await get_user_id(payload)

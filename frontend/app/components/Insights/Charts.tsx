@@ -4,13 +4,10 @@ import { MyResponsiveBar } from "./BarChart";
 import { MyResponsivePie } from "./PieChart";
 import { MyResponsiveLine } from "./LineChart";
 import { processData } from "@/lib/processInsightsData";
-import { generateSuggestion } from "@/lib/azureOpenai";
 import { createClient } from "@/utils/supabase/server";
-import { Lightbulb } from "lucide-react";
 
 interface ChartsProps {
     user: IUser;
-    toy: IToy;
     filter: string;
 }
 
@@ -173,7 +170,7 @@ const Charts: React.FC<ChartsProps> = async ({ user, filter }) => {
 
         return (
             <div>
-                <h1>No user data is aviliable</h1>
+                <h1>No user data is available</h1>
             </div>
         );
     }

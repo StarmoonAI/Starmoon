@@ -1,18 +1,16 @@
-import { createToys, getAllToys, getToyById } from "@/db/toys";
 import { createClient } from "@/utils/supabase/server";
 import Illustration from "@/public/hero_section.svg";
-
-import { Button } from "@/components/ui/button";
-import CharacterPicker from "./components/CharacterPicker";
-import AnimatedText from "./components/AnimatedText";
-import Usecases from "./components/Usecases";
-import InsightsDemoSection from "./components/InsightsDemoSection";
-import FeaturesSection from "./components/FeaturesSection";
-import EndingSection from "./components/EndingSection";
-import Link from "next/link";
-import { Gamepad2, ShoppingCart } from "lucide-react";
+import FeaturesSection from "./components/LandingPage/FeaturesSection";
 import { getAllPersonalities } from "@/db/personalities";
-import StarmoonLogo from "./components/StarmoonLogo";
+import InsightsDemoSection from "./components/LandingPage/InsightsDemoSection";
+import EndingSection from "./components/LandingPage/EndingSection";
+import FrontPage from "./components/LandingPage/FrontPage";
+import Personalities from "./components/LandingPage/Personalities";
+import { Button } from "@/components/ui/button";
+import { Gamepad2 } from "lucide-react";
+import PreorderButton from "./components/PreorderButton";
+import Link from "next/link";
+import DeviceImage from "./components/LandingPage/DeviceImage";
 
 export default async function Index() {
     const supabase = createClient();
@@ -21,62 +19,93 @@ export default async function Index() {
         data: { user },
     } = await supabase.auth.getUser();
 
-    const allToys = (await getAllToys(supabase)) ?? [];
     const allPersonalities = await getAllPersonalities(supabase);
 
     return (
-        <main className="flex flex-1 flex-col mx-auto w-full gap-6 my-8">
+        <main className="flex flex-1 flex-col mx-auto w-full gap-10 sm:py-4 py-0">
             {/* Illustration */}
             <div className="relative w-full max-w-[1440px] mx-auto">
                 <div
-                    className="absolute -top-24 pointer-events-none -z-10 opacity-90 w-full h-[650px] bg-cover bg-center bg-no-repeat blur-2xl"
-                    style={{ backgroundImage: `url(${Illustration.src})` }}
+                    className="absolute top-8 pointer-events-none -z-10 opacity-95 w-full h-[650px] bg-cover bg-center bg-no-repeat blur-3xl"
+                    style={{
+                        backgroundImage: `url(${Illustration.src})`,
+                        transform: "scaleX(-1)",
+                    }}
                     aria-hidden="true"
                 ></div>
             </div>
 
-            <div className="max-w-4xl text-center mx-8 md:mx-auto">
-                <h1 className="text-4xl flex justify-center items-center flex-row gap-2 sm:hidden mb-5 font-semibold">
-                    Starmoon AI
-                </h1>
-                <h1
-                    className="font-inter-tight- text-3xl sm:text-4xl md:text-6xl font-semibold sm:mt-14 tracking-tight text-stone-900"
-                    style={{ lineHeight: "1.25" }}
-                >
-                    A compact, conversational, and open-source AI device for
+            <FrontPage
+                user={user ?? undefined}
+                allPersonalities={allPersonalities}
+            />
+
+            <div className="flex flex-row gap-4 items-center justify-center mt-8">
+                <PreorderButton
+                    size="lg"
+                    buttonText="Preorder Now"
+                    className="h-10"
+                />
+                <Link href={user ? "/home" : "/login"}>
+                    <Button className="flex flex-row items-center bg-white gap-2 font-medium text-base text-stone-800 leading-8 rounded-full border-2 border-stone-900 hover:bg-gray-100">
+                        <Gamepad2 size={20} />
+                        <span>Sign Up</span>
+                    </Button>
+                </Link>
+            </div>
+
+            <Personalities allPersonalities={allPersonalities} />
+
+            {/* <CharacterCarousel /> */}
+
+            {/* <div className="max-w-4xl text-center mx-8 mt-20 md:mx-auto">
+                <h1 className="text-lg font-normal text-gray-700 mb-2">
+                    With a character for every occasion including
                 </h1>
 
                 <AnimatedText />
             </div>
+            <Personalities allPersonalities={allPersonalities} /> */}
 
-            <div className="flex items-center justify-center gap-x-8 mt-10">
-                <Link href="/products" passHref>
-                    <Button className="flex flex-row items-center gap-2 font-medium text-base bg-stone-800 leading-8 rounded-full">
-                        <ShoppingCart size={20} />
-                        <span>Preorder</span>
-                    </Button>
-                </Link>
-                <Link href={user ? "/home" : "/login"}>
-                    <Button className="flex flex-row items-center bg-white gap-2 font-medium text-base text-stone-800 leading-8 rounded-full border-2 border-stone-900 hover:bg-gray-100">
-                        <Gamepad2 size={20} />
-                        <span>Try Online</span>
-                    </Button>
-                </Link>
-            </div>
-
-            <div className="max-w-4xl text-center mx-8 md:mx-auto">
-                <p className="font-light mt-14 text-lg sm:text-xl leading-8 text-stone-800">
-                    With a platform that supports real-time topic-controlled
-                    conversations for all ages, manages your AI characters, with
-                    long-term memory, empathic responses, and more.
-                </p>
-            </div>
-
-            <CharacterPicker
-                allToys={allToys}
-                allPersonalities={allPersonalities}
-            />
-            <Usecases />
+            {/* <InteractiveView /> */}
+            {/* <Demo /> */}
+            <section
+                id="how-it-works"
+                className="w-full max-w-screen-lg mx-auto py-12"
+            >
+                <div className="container px-4 md:px-6">
+                    <div className="flex flex-col-reverse sm:flex-row items-center gap-12">
+                        <DeviceImage />
+                        <div className="space-y-4 px-4">
+                            <h3 className="text-3xl font-semibold">
+                                1. Choose Your Character
+                            </h3>
+                            <p className="text-gray-500 dark:text-gray-400 font-normal text-lg">
+                                Select from a wide range of AI characters, each
+                                with unique personalities and knowledge bases.
+                            </p>
+                            <h3 className="text-3xl font-semibold">
+                                2. Connect Your Device
+                            </h3>
+                            <p className="text-gray-500 dark:text-gray-400">
+                                Easily set up your Starmoon device with your
+                                home Wi-Fi network or Personal hotspot.
+                            </p>
+                            <h3 className="text-3xl font-semibold">
+                                3. Start talking
+                            </h3>
+                            <p className="text-gray-500 dark:text-gray-400">
+                                Your characters are now always ready to chat.
+                                Talk to your device anytime and watch as they
+                                respond in real-time with personalized
+                                interactions.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            {/* <CharacterPicker allPersonalities={allPersonalities} /> */}
+            {/* <Usecases /> */}
             <InsightsDemoSection />
             <FeaturesSection />
             <EndingSection />

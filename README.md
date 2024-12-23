@@ -1,15 +1,14 @@
-# <span ><img style='vertical-align:middle; display:inline;' src="./logo.png"  width="5%" height="5%"><span style='vertical-align: middle; line-height: normal;'>&nbsp;Starmoon - An affordable, empathic, and conversational AI device</span></span>
+# <span ><img style='vertical-align:middle; display:inline;' src="./logo.png"  width="5%" height="5%"><span style='vertical-align: middle; line-height: normal;'>&nbsp;Starmoon - An affordable, empathic, and conversational AI companion</span></span>
 
-Starmoon is an affordable, compact AI-enabled companion device, you can take anywhere and converse with. It can understand your emotions and respond with empathy, offering supportive conversations and personalized learning assistance.
+Starmoon is an affordable, compact AI-enabled device, you can take anywhere and converse with. It can understand your emotions and respond with empathy, offering supportive conversations and personalized learning assistance.
+
+
+[Check our Roadmap](roadmap.md)
 
 <!-- Put on a toy, Hanging on the hand, put on the desktop near macbook -->
 
 <div align="center">
-<p align="center">
-  <img src="./frontend/public/images/decomposation_view.gif" alt="Starmoon-device" width="30%" />
-  <img src="./frontend/public/images/front_view.png" alt="Starmoon-device" width="70%" />
-</p>
-    <img src="./usecases.png" alt="Starmoon-logo" width="100%" style="padding-bottom: 20px"/>
+    <img src="./usecases.png" alt="Starmoon-logo" width="100%" padding-bottom: 20px"/>
 
 [![Discord Follow](https://dcbadge.vercel.app/api/server/KJWxDPBRUj?style=flat)](https://discord.gg/KJWxDPBRUj)
 ![GitHub forks](https://img.shields.io/github/forks/StarmoonAI/Starmoon.svg?style=social&label=Fork)
@@ -20,10 +19,6 @@ Starmoon is an affordable, compact AI-enabled companion device, you can take any
 ![React](https://img.shields.io/badge/React-17.0.2-blue.svg)
 
 </div>
-<h2 align="center">
-  <a href="https://www.starmoon.app">Homepage 🔗</a>&nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="https://www.starmoon.app/products">Buy the Starmoon AI device 🎮</a>
-</h2>
 
 ## Demo Highlights 🎥
 
@@ -39,21 +34,13 @@ If you can't see the video, you can watch it [here](https://www.youtube.com/watc
 -   **Compact device**: Only slightly larger than an Apple Watch, you can carry the device anywhere.
 -   **Reduced screen time**: A myriad of AI companions are screen-based, and our intention is to give your eyes a rest.
 
-[Check out our Roadmap](roadmap.md)
-
 ## Getting Started 🚀
 
 ### Prerequisites 📋
 
-1. API keys and services:
-
-    - [Docker](https://docs.docker.com/get-started/get-docker/)
-    - Supabase CLI: Follow the instructions [here](https://supabase.com/docs/guides/cli/getting-started) to install if you haven't installed
+1. Software:
     - Vscode and [PlatformIO](https://platformio.org/install/ide?install=vscode) plugin: For firmware burning
-    - [OpenAI API key](https://platform.openai.com/api-keys): For AI language models
-    - [Deepgram API key](https://developers.deepgram.com/docs/create-additional-api-keys): For speech-to-text
-    - [Azure speech API keys](https://vitalpbx.com/blog/how-to-create-microsoft-azure-tts-api-key/): For text-to-speech
-    - [Huggingface API key](https://huggingface.co/settings/tokens): For emotion intelligence
+    - Starmoon API key: Login to [Starmoon](https://www.starmoon.app/login) and go to settings page to get your API key
 
 2. Hardware list (Tax and shipping rates may vary by region)
     - [Seeed Studio Xiao ESP32S3](https://www.aliexpress.us/item/1005007341749305.html)
@@ -66,74 +53,62 @@ If you can't see the video, you can watch it [here](https://www.youtube.com/watc
     - [3D printed case](case_model.stl)
     - Tools: [28AWG wires](https://www.aliexpress.us/item/3256801511896966.html) + [soldering toolset](https://www.aliexpress.com/item/1005007010143403.html) + [flux](https://www.aliexpress.com/item/1005007003481283.html)
 
-### Software setup 🖥️
-
--   **Step 0**: Clone the repository:
-
-    ```bash
-    git clone https://github.com/StarmoonAI/Starmoon.git && cd Starmoon
-    ```
-
--   **Step 1**: Set up Supabase:
-
-    ```bash
-    supabase start
-    ```
-
-    ```bash
-    supabase db reset
-    ```
-
--   **Step 2**: Copy the `.env.example` files
-
-    ```bash
-    cp .env.example .env
-    ```
-
--   **Step 3**: Update tokens in the `.env` file
-    -   For local set up, you only need to update `OPENAI_API_KEY`, `MS_SPEECH_ENDPOINTY`, `SPEECH_KEY`, `SPEECH_REGION`, `DG_API_KEY`, `HF_ACCESS_TOKEN`
--   **Step 4**: Launch the project
-
-    -   If you have a Mac, go to Docker Desktop > Settings > General and check that the "file sharing implementation" is set to `VirtioFS`.
-
-        ```bash
-        docker compose pull
-        docker compose up
-        ```
-
-        If you are a **developer**, you can run the project in development mode with the following command: `docker compose -f docker-compose.yml up --build`
-
--   **Step 5**: Login to the app
-
-    -   You can now sign in to the app with `admin@starmoon.app` & `admin`. You can access the Starmoon webapp at [http://localhost:3000/login](http://localhost:3000/login) and sign up an account
-
-    -   You can access Starmoon backend API at [http://localhost:8000/docs](http://localhost:8000/docs)
-
-    -   You can access Supabase dashboard at [http://localhost:54323](http://localhost:54323)
-
-    -   You can access Celery Flower background task dashboard at [http://localhost:5555](http://localhost:5555) (`admin` & `admin`)
 
 ### Hardware setup 🧰
 
--   **Step 0 (Optional)**: Build the device yourself (alternatively, the [Starmoon DIY Dev Kit](https://www.starmoon.app/products) comes pre-assembled so you can focus on working with your own frontend + backend)
+-   **Step 0**: Follow the below Pin Configuration to set up the the ESP32 device
+<!-- -   Build the device yourself (alternatively, the [Starmoon DIY Dev Kit](https://www.starmoon.app/products) comes pre-assembled so you can focus on working with your own frontend + backend) -->
 
-    -   Follow the instructions [here](firmware/README.md) in Pin Configuration section for more details on assembly
+    | **Component**              | **Seeed Studio XIAO ESP32S3** | **ESP32-S3** |
+    | -------------------------- | ----------------------------- | ------------ |
+    | **I2S Input (Microphone)** |                               |              |
+    | SD                         | D0                            | GPIO 13      |
+    | WS                         | D1                            | GPIO 1       |
+    | SCK                        | D2                            | GPIO 4       |
+    | **I2S Output (Speaker)**   |                               |              |
+    | WS                         | D5                            | GPIO 5       |
+    | BCK                        | D6                            | GPIO 6       |
+    | DATA                       | D4                            | GPIO 7       |
+    | SD (shutdown)              | D3                            | N/A          |
+    | **Others**                 |                               |              |
+    | LED Red                    | N/A                           | GPIO 9       |
+    | LED Green                  | N/A                           | GPIO 8       |
+    | LED Blue                   | N/A                           | GPIO 13      |
+    | Button                     | D10                           | GPIO 2       |
 
--   **Step 1**: Click PlatformIO Icon in VScode left sidebar
+-   **Step 1**: If you use normal ESP32-S3 chip:
+    - please go to [Config.h](firmware/src/Config.h) and uncomment the `USE_NORMAL_ESP32_S3` line and comment the `USE_XIAO_ESP32_DEVKIT` line.
+
+        ```cpp
+        // ----------------- Pin Definitions -----------------
+        // Define which board you are using (uncomment one)
+        #define USE_NORMAL_ESP32_S3
+        // #define USE_XIAO_ESP32_DEVKIT
+        // #define USE_XIAO_ESP32
+        // #define USE_NORMAL_ESP32
+        // #define USE_ESP32_S3_WHITE_CASE
+        ```
+
+    - Then, go to [platformio.ini](firmware/platformio.ini) and uncomment the `[env:esp32-s3-devkitm-1]` block and comment the `[env:seeed_xiao_esp32s3]` line.
+
+        ```cpp
+        ; [env:seeed_xiao_esp32s3]
+        ; platform = espressif32
+        ; board = seeed_xiao_esp32s3
+        ; framework = arduino
+        ; monitor_speed = 115200
+
+        [env:esp32-s3-devkitm-1]
+        platform = espressif32
+        board = esp32-s3-devkitm-1
+        framework = arduino
+        monitor_speed = 115200
+
+-   **Step 2**: Click PlatformIO Icon in VScode left sidebar
 
     -   Click "Pick a folder"
     -   Select the location of the `firmware` folder in the current project.
 
--   **Step 2**: Update and WebSocket server details in `src/Config.cpp`
-
-    -   Find your WiFi ip adress (websocket_server_host) by command `ipconfig` (under `Default Gateway`) in Windows or `ifconfig` (under `inet xxx.x.x.x netmask 0xff000000`) in Linux/MacOS, or you can also follow the instructions [here](https://nordvpn.com/blog/find-router-ip-address/)
-
-        ```cpp
-        const char *websocket_server = "<your-server-host-ip>"; // Wifi settings -> Your Wifi I.P.
-        const uint16_t websocket_port = 8000;
-        const char *websocket_path = "/starmoon";
-        const char *auth_token = "<your-STARMOON_API_KEY-here>"; // generate your STARMOON_API_KEY in your starmoon account settings page
-        ```
 
 -   **Step 3**: Build the firmware
 
@@ -144,46 +119,15 @@ If you can't see the video, you can watch it [here](https://www.youtube.com/watc
     -   Click the `Upload` button to run the upload task, or `Upload and Monitor` button to run the upload task and monitor the device.
 -   **Step 5**: Hardware usage
 
-    -   Power the device -> Use your phone/tablet/pc to connect "Starmoon device" WiFi and follow the instructions to set up internet connection (only support 2.4Ghz WiFi).
-    -   Once the software and firmware are set up, you can push the button to power on the ESP32 device and start talking to the device.
+    -   Turn on the device by main button and wait for the LED to turn on.
+    -   Use your phone/tablet/pc to connect "Starmoon-xxx" WiFi and follow the instructions to set up internet connection (only support 2.4Ghz WiFi).
+        -   Connect the wifi by your credentials
+        -   Use your Starmoon API key and email to set up the device
 
         <!-- -   The LED indicates the current status:
             -   Off: Not connected
             -   Solid On: Connected and listening on microphone
             -   Pulsing: Streaming audio output (receiving from server) -->
-
-## Updating Starmoon App 🚀
-
--   **Step 1**: Pull the latest changes
-
-    ```bash
-    git pull
-    ```
-
--   **Step 2**: Update the migration
-
-    ```bash
-    supabase migration up
-    ```
-
-## Founding Team
-
-<div align="left">
-  <table>
-    <tr>
-          <td align="center">
-        <img src="https://i.ibb.co/YB9ZTqG/junru.jpg" width="100" height="100" style="border-radius: 50%;" alt="Junru Xiong"/>
-        <br /><strong>Junru Xiong</strong><br/>
-      </td>
-      <td align="center">
-        <img src="https://i.ibb.co/dDbdM8p/Screenshot-2024-10-29-at-10-14-12-AM.png" width="100" height="100" style="border-radius: 50%;" alt="Akashdeep Deb"/>
-        <br /><strong>Akashdeep Deb</strong><br/>
-      </td>
-    </tr>
-  </table>
-</div>
-
-Junru and Akash bring together a shared passion for AI-driven, personalized user experiences. With backgrounds in design and engineering, they are on a mission to make interactive, customizable AI characters accessible to everyone.
 
 ## License
 

@@ -2,27 +2,25 @@ import { defaultPersonalityId } from "@/lib/data";
 import { SupabaseClient } from "@supabase/supabase-js";
 
 export const getAllPersonalities = async (supabase: SupabaseClient) => {
-    const { data, error } = await supabase.from("personalities").select("*");
-
+    const { data, error } = await supabase.from("personalities").select(
+        `
+        personality_id,
+        is_doctor,
+        key,
+        personalities_translations (
+          personalities_translation_id,
+          personality_key,
+          title,
+          subtitle,
+          trait_short_description,
+          language_code
+        )
+        `
+    );
     if (error) {
-        // console.log("error getAllPersonalities", error);
+        console.log("error getAllPersonalities", error);
         return [];
     }
 
-    // Filter out the default personality
-    const defaultPersonality = data.find(
-        (personality: IPersonality) =>
-            personality.personality_id === defaultPersonalityId
-    );
-    const otherPersonalities = data.filter(
-        (personality: IPersonality) =>
-            personality.personality_id !== defaultPersonalityId
-    );
-
-    // Place the default personality at the 0th index
-    const sortedData = defaultPersonality
-        ? [defaultPersonality, ...otherPersonalities]
-        : otherPersonalities;
-
-    return sortedData as IPersonality[];
+    return data as IPersonality[];
 };

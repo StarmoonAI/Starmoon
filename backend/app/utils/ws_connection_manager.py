@@ -29,13 +29,29 @@ class ConnectionManager:
         print(f"Connection closed. Total connections: {len(self.active_connections)}")
 
     async def process_audio(self, audio_data):
-        # Process the audio data here (e.g., speech recognition)
-        # For this example, we'll just echo back the audio data
-        # print("Received audio data from client")
+        data_int16 = np.frombuffer(audio_data, dtype=np.int16)
+        data_float32 = data_int16.astype(np.float32) / 32768.0
 
-        # Convert bytes to float32 numpy array
-        audio_np = np.frombuffer(audio_data, dtype=np.float32)
-        speech_prob = self.vad_iterator(audio_np, 16000)
-        print(f"Speech probability: {speech_prob}")
+        # Convert numpy array to torch tensor
+        audio_tensor = torch.from_numpy(data_float32)
+
+        # Add batch and channel dimensions if needed
+        if audio_tensor.dim() == 1:
+            audio_tensor = audio_tensor.unsqueeze(0)  # Add batch dimension
+
+        # Process with VAD iterator
+        speech_dict = self.vad_iterator(audio_tensor, return_seconds=True)
+
+        # Process with main VAD model
+        try:
+            speech_prob = model(audio_tensor, 16000).item()
+            print(f"Speech probability: {speech_prob}")
+            if speech_dict:
+
+                print(f"Speech dict: {speech_dict}")
+        except Exception as e:
+            print(f"Error processing audio with VAD model: {str(e)}")
+
+        # only the threshold is over 0,5 and the volume is over the current volume
 
         return audio_data
