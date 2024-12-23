@@ -59,22 +59,22 @@ If you can't see the video, you can watch it [here](https://www.youtube.com/watc
 -   **Step 0**: Follow the below Pin Configuration to set up the the ESP32 device
 <!-- -   Build the device yourself (alternatively, the [Starmoon DIY Dev Kit](https://www.starmoon.app/products) comes pre-assembled so you can focus on working with your own frontend + backend) -->
 
-    | **Component**              | **Seeed Studio XIAO ESP32S3** | **ESP32-S3** |
-    | -------------------------- | ----------------------------- | ------------ |
-    | **I2S Input (Microphone)** |                               |              |
-    | SD                         | D0                            | GPIO 13      |
-    | WS                         | D1                            | GPIO 1       |
-    | SCK                        | D2                            | GPIO 4       |
-    | **I2S Output (Speaker)**   |                               |              |
-    | WS                         | D5                            | GPIO 5       |
-    | BCK                        | D6                            | GPIO 6       |
-    | DATA                       | D4                            | GPIO 7       |
-    | SD (shutdown)              | D3                            | N/A          |
-    | **Others**                 |                               |              |
-    | LED Red                    | N/A                           | GPIO 9       |
-    | LED Green                  | N/A                           | GPIO 8       |
-    | LED Blue                   | N/A                           | GPIO 13      |
-    | Button                     | D10                           | GPIO 2       |
+| **Component**              | **Seeed Studio XIAO ESP32S3** | **ESP32-S3** |
+| -------------------------- | ----------------------------- | ------------ |
+| **I2S Input (Microphone)** |                               |              |
+| SD                         | D0                            | GPIO 13      |
+| WS                         | D1                            | GPIO 1       |
+| SCK                        | D2                            | GPIO 4       |
+| **I2S Output (Speaker)**   |                               |              |
+| WS                         | D5                            | GPIO 5       |
+| BCK                        | D6                            | GPIO 6       |
+| DATA                       | D4                            | GPIO 7       |
+| SD (shutdown)              | D3                            | N/A          |
+| **Others**                 |                               |              |
+| LED Red                    | N/A                           | GPIO 9       |
+| LED Green                  | N/A                           | GPIO 8       |
+| LED Blue                   | N/A                           | GPIO 13      |
+| Button                     | D10                           | GPIO 2       |
 
 -   **Step 1**: If you use normal ESP32-S3 chip:
     - please go to [Config.h](firmware/src/Config.h) and uncomment the `USE_NORMAL_ESP32_S3` line and comment the `USE_XIAO_ESP32_DEVKIT` line.
