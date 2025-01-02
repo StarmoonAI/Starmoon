@@ -82,84 +82,93 @@ const GeneralUserForm: React.FC<GeneralUserFormProps> = ({
                 className="flex flex-col gap-8 mb-4"
             >
                 {heading}
-                <FormField
-                    control={form.control}
-                    name="supervisee_name"
-                    render={({ field }) => (
-                        <FormItem className="w-full rounded-md">
-                            <FormLabel className="flex flex-row gap-4 items-center">
-                                {"Your name"}
-                            </FormLabel>
-                            <FormControl>
-                                <Input
-                                    // autoFocus
-                                    required
-                                    placeholder="e.g. John Doe"
-                                    {...field}
-                                    className="max-w-screen-sm h-10 bg-white"
-                                    autoComplete="on"
-                                    style={{
-                                        fontSize: 16,
-                                    }}
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                {/* for child age */}
-                <FormField
-                    control={form.control}
-                    name="supervisee_age"
-                    render={({ field }) => (
-                        <FormItem className="w-full rounded-md">
-                            <FormLabel className="flex flex-row gap-4 items-center">
-                                {userFormAgeLabel}
-                            </FormLabel>
-                            <FormDescription>
-                                {userFormAgeDescription}
-                            </FormDescription>
-                            <FormControl>
-                                <Input
-                                    // autoFocus
-                                    required
-                                    placeholder="e.g. 8"
-                                    {...field}
-                                    className="max-w-screen-sm h-10 bg-white"
-                                    autoComplete="on"
-                                    style={{
-                                        fontSize: 16,
-                                    }}
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="supervisee_persona"
-                    render={({ field }) => (
-                        <FormItem className="w-full rounded-md">
-                            <FormLabel className="flex flex-row gap-4 items-center">
-                                {userFormPersonaLabel}
-                            </FormLabel>
-                            <FormControl>
-                                <Textarea
-                                    rows={6}
-                                    placeholder={userFormPersonaPlaceholder}
-                                    {...field}
-                                    className="max-w-screen-sm bg-white"
-                                    autoComplete="on"
-                                    style={{
-                                        fontSize: 16,
-                                    }}
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                <section className="space-y-4 max-w-screen-sm">
+                    <h2 className="text-lg font-semibold border-b border-gray-200 pb-2">
+                        Basic Info
+                    </h2>
+                    <div className="flex flex-col gap-6">
+                        <FormField
+                            control={form.control}
+                            name="supervisee_name"
+                            render={({ field }) => (
+                                <FormItem className="w-full rounded-md">
+                                    <FormLabel className="text-sm font-medium text-gray-700">
+                                        {"Your Name"}
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            // autoFocus
+                                            required
+                                            placeholder="e.g. John Doe"
+                                            {...field}
+                                            // className="max-w-screen-sm h-10 bg-white"
+                                            // autoComplete="on"
+                                            // style={{
+                                            //     fontSize: 16,
+                                            // }}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        {/* for child age */}
+                        <FormField
+                            control={form.control}
+                            name="supervisee_age"
+                            render={({ field }) => (
+                                <FormItem className="w-full rounded-md">
+                                    <FormLabel className="text-sm font-medium text-gray-700">
+                                        {userFormAgeLabel}
+                                    </FormLabel>
+                                    <FormDescription>
+                                        {userFormAgeDescription}
+                                    </FormDescription>
+                                    <FormControl>
+                                        <Input
+                                            // autoFocus
+                                            required
+                                            placeholder="e.g. 8"
+                                            {...field}
+                                            // className="max-w-screen-sm h-10 bg-white"
+                                            // autoComplete="on"
+                                            // style={{
+                                            //     fontSize: 16,
+                                            // }}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="supervisee_persona"
+                            render={({ field }) => (
+                                <FormItem className="w-full rounded-md">
+                                    <FormLabel className="text-sm font-medium text-gray-700">
+                                        {userFormPersonaLabel}
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Textarea
+                                            rows={6}
+                                            placeholder={
+                                                userFormPersonaPlaceholder
+                                            }
+                                            {...field}
+                                            // className="max-w-screen-sm bg-white"
+                                            // autoComplete="on"
+                                            // style={{
+                                            //     fontSize: 16,
+                                            // }}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+                </section>
             </form>
         </Form>
     );

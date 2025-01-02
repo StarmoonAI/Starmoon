@@ -1,7 +1,6 @@
 import os
 from typing import Union
 
-from app.core.config import settings
 from dotenv import load_dotenv
 from openai import AsyncAzureOpenAI, AsyncOpenAI, AzureOpenAI, OpenAI
 

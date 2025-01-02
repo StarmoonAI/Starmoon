@@ -22,3 +22,4 @@ frontend_auth
 !**/.env.example
 
 backend2
+firmware-idf

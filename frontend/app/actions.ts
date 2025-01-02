@@ -6,6 +6,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createAccessToken } from "@/lib/utils";
 import { addUserToDevice, dbCheckUserCode } from "@/db/devices";
+import { getSimpleUserById } from "@/db/users";
 
 export const signUpAction = async (formData: FormData) => {
     const email = formData.get("email")?.toString();
@@ -164,4 +165,52 @@ export const connectUserToDevice = async (
         userId
     );
     return successfullyAdded;
+};
+
+export const fetchGithubStars = async (repo: string) => {
+    try {
+        const response = await fetch(`https://api.github.com/repos/${repo}`, {
+            headers: {
+                Accept: "application/vnd.github.v3+json",
+            },
+            next: {
+                revalidate: 3600,
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`GitHub API error: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        return {
+            stars: data.stargazers_count,
+            error: null,
+        };
+    } catch (error) {
+        console.error("Error fetching GitHub stats:", error);
+        return {
+            stars: null,
+            error: "Failed to load GitHub stats",
+        };
+    }
+};
+
+export const isPremiumUser = async (userId: string) => {
+    const supabase = createClient();
+    const dbUser = await getSimpleUserById(supabase, userId);
+    return dbUser?.is_premium;
+};
+
+export const setDeviceReset = async (userId: string) => {
+    const supabase = createClient();
+    await supabase
+        .from("users")
+        .update({ is_reset: true })
+        .eq("user_id", userId);
+};
+
+export const setDeviceOta = async (userId: string) => {
+    const supabase = createClient();
+    await supabase.from("users").update({ is_ota: true }).eq("user_id", userId);
 };

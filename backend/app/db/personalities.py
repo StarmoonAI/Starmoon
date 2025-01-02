@@ -6,10 +6,10 @@ async def get_personality(personality_id: str):
     try:
         personality = (
             supabase.table("personalities")
-            .select("*")
+            .select("*, voice:toys(toy_id, name, image_src)")
             .eq("personality_id", personality_id)
             .single().execute()
         )
-        return personality
+        return personality.data
     except Exception as e:
         return {"error": str(e)}

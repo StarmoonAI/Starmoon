@@ -16,7 +16,6 @@ export const createUser = async (
             supervisee_name: "",
             supervisee_age: 14,
             supervisee_persona: "",
-            toy_id: userProps.toy_id, // selecting default toy
             personality_id: userProps.personality_id, // selecting default personality
             most_recent_chat_group_id: null,
             modules: ["general_trivia"],
@@ -32,18 +31,60 @@ export const createUser = async (
     }
 };
 
-export const getUserById = async (supabase: SupabaseClient, id: string) => {
+export const getSimpleUserById = async (
+    supabase: SupabaseClient,
+    id: string
+) => {
     const { data, error } = await supabase
         .from("users")
-        .select("*, toy:toy_id(*), personality:personality_id(*)")
+        .select("*")
         .eq("user_id", id)
         .single();
 
     if (error) {
-        // console.log("error", error);
+        console.log("error", error);
     }
 
     return data as IUser | undefined;
+};
+
+export const getUserById = async (supabase: SupabaseClient, id: string) => {
+    const { data, error } = await supabase
+        .from("users")
+        .select(
+            `*, personality:personality_id(*, personalities_translations (
+          personalities_translation_id,
+          personality_key,
+          title,
+          subtitle,
+          trait_short_description
+        ))`
+        )
+        .eq("user_id", id)
+        .single();
+
+    if (error) {
+        console.log("error", error);
+    }
+
+    return data as IUser | undefined;
+};
+
+export const doesUserExist = async (
+    supabase: SupabaseClient,
+    authUser: User
+) => {
+    const { data: user, error } = await supabase
+        .from("users")
+        .select("*")
+        .eq("user_id", authUser.id)
+        .single();
+
+    if (error) {
+        console.log("error", error);
+    }
+
+    return !!user;
 };
 
 export const updateUser = async (
@@ -55,25 +96,7 @@ export const updateUser = async (
         .from("users")
         .update(user)
         .eq("user_id", userId);
-
     if (error) {
         // console.log("error", error);
     }
-};
-
-export const doesUserExist = async (
-    supabase: SupabaseClient,
-    authUser: User
-) => {
-    const { data: user, error } = await supabase
-        .from("users")
-        .select("*")
-        .eq("email", authUser.email)
-        .single();
-
-    if (error) {
-        // console.log("error", error);
-    }
-
-    return !!user;
 };

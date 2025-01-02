@@ -1,6 +1,13 @@
 // export const dynamic = "force-dynamic";
 
+import { getOpenGraphMetadata } from "@/lib/utils";
 import OurAddressSign from "../components/OurAddressSign";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Privacy Policy",
+    ...getOpenGraphMetadata("Privacy Policy"),
+};
 
 export default async function Index() {
     return (

@@ -1,7 +1,13 @@
 import SettingsDashboard from "@/app/components/Settings/SettingsDashboard";
 import { getUserById } from "@/db/users";
-import { createAccessToken } from "@/lib/utils";
+import { getOpenGraphMetadata } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/server";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: "Settings",
+    ...getOpenGraphMetadata("Settings"),
+};
 
 export default async function Home() {
     const supabase = createClient();

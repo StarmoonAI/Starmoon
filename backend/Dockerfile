@@ -7,23 +7,20 @@ COPY . /app/
 # Change the working directory.
 WORKDIR /app
 
+# Install system dependencies and clean up to reduce image size
 RUN apt-get update \
-    # dependencies for building Python packages
-    && apt-get install -y build-essential \
-    # install portaudio
-    && apt-get install -y portaudio19-dev python-all-dev \
+    && apt-get install -y --no-install-recommends \
+    build-essential \
+    portaudio19-dev \
+    python3-dev \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Poetry
-RUN pip install poetry
+RUN pip install --no-cache-dir poetry
 
-# Install poetry dependencies
-RUN poetry install --only main
-
-# Install NLTK and download 'punkt'
-# RUN poetry run pip install nltk \
-#     && poetry run python -m nltk.downloader punkt_tab
+# Install Poetry dependencies
+RUN poetry install --only main --no-root
 
 # Command to run the application
 # without debug

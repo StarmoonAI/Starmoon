@@ -6,14 +6,14 @@ import {
   stopAudioPlayback,
   playAudio,
 } from "./useAudioService";
-import { updateUser } from "@/db/users";
-import { createClient } from "@/utils/supabase/client";
-import _, { delay } from "lodash";
+import _ from "lodash";
 import { generateStarmoonAuthKey } from "@/app/actions";
 
 export const useWebSocketHandler = (selectedUser: IUser) => {
-  const supabase = createClient();
   const [socketUrl, setSocketUrl] = useState<string | null>(null);
+  const [personalityTranslationId, setPersonalityTranslationId] = useState<
+    string | null
+  >(null);
   const [messageHistory, setMessageHistory] = useState<MessageHistoryType[]>(
     []
   );
@@ -42,6 +42,7 @@ export const useWebSocketHandler = (selectedUser: IUser) => {
       token: accessToken,
       device: "web",
       user_id: selectedUser.user_id,
+      personality_translation_id: personalityTranslationId,
     });
     connectionStartTimeRef.current = new Date();
   };
@@ -50,36 +51,16 @@ export const useWebSocketHandler = (selectedUser: IUser) => {
     const accessToken = await generateStarmoonAuthKey(selectedUser);
     await onOpenAuth(accessToken);
     setConnectionStatus("Open");
-    startRecording(
-      setMicrophoneStream,
-      streamRef,
-      audioContextRef,
-      audioWorkletNodeRef,
-      sendMessage
-    );
+    // startRecording(
+    //   setMicrophoneStream,
+    //   streamRef,
+    //   audioContextRef,
+    //   audioWorkletNodeRef,
+    //   sendMessage
+    // );
   };
 
-  const setDurationOnClose = async () => {
-    const connectionEndTime = new Date();
-    if (connectionStartTimeRef.current) {
-      const connectionDuration = Math.round(
-        (connectionEndTime.getTime() -
-          connectionStartTimeRef.current.getTime()) /
-          1000
-      );
-      connectionDurationRef.current = connectionDuration;
-      await updateUser(
-        supabase,
-        {
-          ..._.omit(selectedUser, ["toy", "personality"]),
-          session_time: selectedUser.session_time + connectionDuration,
-        },
-        selectedUser.user_id
-      );
-    }
-  };
-
-  const { sendMessage, sendJsonMessage, lastJsonMessage, readyState } =
+  const { sendMessage, sendJsonMessage, lastMessage, readyState } =
     useWebSocket(socketUrl, {
       onOpen,
       onClose: async () => {
@@ -93,9 +74,6 @@ export const useWebSocketHandler = (selectedUser: IUser) => {
           audioQueueRef,
           isPlayingRef
         );
-        // clear the audio queue
-        // audioQueueRef.current = [];
-        setDurationOnClose();
         setMessageHistory([]);
       },
       onError: () => {
@@ -109,74 +87,204 @@ export const useWebSocketHandler = (selectedUser: IUser) => {
           audioQueueRef,
           isPlayingRef
         );
-        setDurationOnClose();
       },
     });
 
-  // // console.log("lastJsonMessage", lastJsonMessage);
-
   useEffect(() => {
-    if (lastJsonMessage !== null) {
-      if (typeof lastJsonMessage === "string") {
-        const typedMessage = JSON.parse(lastJsonMessage) as LastJsonMessageType;
+    if (lastMessage && lastMessage.data) {
+      const jsonData = JSON.parse(lastMessage.data) as LastJsonMessageType;
+      console.log("lastMessage", jsonData);
 
-        if (typedMessage.type === "input" && typedMessage.text_data) {
-          setMessageHistory((prev) =>
-            prev.concat({
-              type: typedMessage.type,
-              text_data: typedMessage.text_data,
-              task_id: typedMessage.task_id,
-            })
-          );
-        }
+      if (jsonData.type === "input" && jsonData.text_data) {
+        setMessageHistory((prev) =>
+          prev.concat({
+            type: jsonData.type,
+            text_data: jsonData.text_data,
+            task_id: jsonData.task_id,
+          })
+        );
+      }
 
-        if (typedMessage.type === "response" && typedMessage.audio_data) {
-          if (typedMessage.text_data) {
-            setMessageHistory((prev) =>
-              prev.concat({
-                type: typedMessage.type,
-                text_data: typedMessage.text_data,
-                task_id: typedMessage.task_id,
-              })
-            );
-          }
-          addToAudioQueue(typedMessage.audio_data, typedMessage.boundary);
-        }
+      if (
+        jsonData.type === "response" &&
+        jsonData.audio_data &&
+        jsonData.text_data
+      ) {
+        setMessageHistory((prev) =>
+          prev.concat({
+            type: jsonData.type,
+            text_data: jsonData.text_data,
+            task_id: jsonData.task_id,
+          })
+        );
 
-        if (typedMessage.type === "task") {
-          let parsedData: any;
-          if (typeof typedMessage.text_data === "string") {
-            parsedData = JSON.parse(typedMessage.text_data);
-          } else {
-            parsedData = typedMessage.text_data;
-          }
-          setEmotionDictionary((prev) => ({
-            ...prev,
-            [typedMessage.task_id]: parsedData,
-          }));
-        }
+        addToAudioQueue(jsonData.audio_data, jsonData.boundary);
+      }
 
-        if (
-          typedMessage.type === "warning" &&
-          typedMessage.text_data === "OFF"
-        ) {
-          // console.log("Connection closed by server");
-          setConnectionStatus("Closed");
-          setSocketUrl(null);
-          stopRecording(
-            streamRef,
+      if (
+        jsonData.type === "response" &&
+        !jsonData.audio_data &&
+        jsonData.text_data
+      ) {
+        setMessageHistory((prev) =>
+          prev.concat({
+            type: jsonData.type,
+            text_data: jsonData.text_data,
+            task_id: jsonData.task_id,
+          })
+        );
+      }
+
+      if (
+        jsonData.type === "response" &&
+        jsonData.audio_data &&
+        !jsonData.text_data
+      ) {
+        addToAudioQueue(jsonData.audio_data, jsonData.boundary);
+      }
+
+      if (jsonData.type === "info") {
+        if (jsonData.text_data === "INTERRUPT") {
+          stopAudioPlayback(
             setMicrophoneStream,
-            audioWorkletNodeRef,
+            streamRef,
             audioContextRef,
+            audioWorkletNodeRef,
+            sendMessage,
             audioQueueRef,
-            isPlayingRef
+            isPlayingRef,
+            setAudioBuffer
           );
         }
+      }
 
-        // // console.log("text_data", typedMessage);
+      if (jsonData.type === "auth_success") {
+        startRecording(
+          setMicrophoneStream,
+          streamRef,
+          audioContextRef,
+          audioWorkletNodeRef,
+          sendMessage
+        );
+      }
+
+      if (jsonData.type === "task") {
+        let parsedData: any;
+        if (typeof jsonData.text_data === "string") {
+          parsedData = JSON.parse(jsonData.text_data);
+        } else {
+          parsedData = jsonData.text_data;
+        }
+        setEmotionDictionary((prev) => ({
+          ...prev,
+          [jsonData.task_id]: parsedData,
+        }));
+      }
+
+      if (jsonData.type === "warning" && jsonData.text_data === "TIMEOUT") {
+        setConnectionStatus("Closed");
+        setSocketUrl(null);
+        stopRecording(
+          streamRef,
+          setMicrophoneStream,
+          audioWorkletNodeRef,
+          audioContextRef,
+          audioQueueRef,
+          isPlayingRef
+        );
+      }
+
+      if (jsonData.type === "credits_warning") {
+        setConnectionStatus("Closed");
+        setSocketUrl(null);
+        stopRecording(
+          streamRef,
+          setMicrophoneStream,
+          audioWorkletNodeRef,
+          audioContextRef,
+          audioQueueRef,
+          isPlayingRef
+        );
       }
     }
-  }, [lastJsonMessage]);
+  }, [lastMessage]);
+
+  // useEffect(() => {
+  //   if (lastJsonMessage !== null) {
+  //     if (typeof lastJsonMessage === "string") {
+  //       const typedMessage = JSON.parse(lastJsonMessage) as LastJsonMessageType;
+
+  //       if (typedMessage.type === "input" && typedMessage.text_data) {
+  //         setMessageHistory((prev) =>
+  //           prev.concat({
+  //             type: typedMessage.type,
+  //             text_data: typedMessage.text_data,
+  //             task_id: typedMessage.task_id,
+  //           })
+  //         );
+  //       }
+
+  //       if (typedMessage.type === "response" && typedMessage.audio_data) {
+  //         if (typedMessage.text_data) {
+  //           setMessageHistory((prev) =>
+  //             prev.concat({
+  //               type: typedMessage.type,
+  //               text_data: typedMessage.text_data,
+  //               task_id: typedMessage.task_id,
+  //             })
+  //           );
+  //         }
+  //         addToAudioQueue(typedMessage.audio_data, typedMessage.boundary);
+  //       }
+
+  //       if (typedMessage.type === "task") {
+  //         let parsedData: any;
+  //         if (typeof typedMessage.text_data === "string") {
+  //           parsedData = JSON.parse(typedMessage.text_data);
+  //         } else {
+  //           parsedData = typedMessage.text_data;
+  //         }
+  //         setEmotionDictionary((prev) => ({
+  //           ...prev,
+  //           [typedMessage.task_id]: parsedData,
+  //         }));
+  //       }
+
+  //       if (
+  //         typedMessage.type === "warning" &&
+  //         typedMessage.text_data === "OFF"
+  //       ) {
+  //         // console.log("Connection closed by server");
+  //         setConnectionStatus("Closed");
+  //         setSocketUrl(null);
+  //         stopRecording(
+  //           streamRef,
+  //           setMicrophoneStream,
+  //           audioWorkletNodeRef,
+  //           audioContextRef,
+  //           audioQueueRef,
+  //           isPlayingRef
+  //         );
+  //       }
+
+  //       if (typedMessage.type === "credits_warning") {
+  //         // console.log("Connection closed by server");
+  //         setConnectionStatus("Closed");
+  //         setSocketUrl(null);
+  //         stopRecording(
+  //           streamRef,
+  //           setMicrophoneStream,
+  //           audioWorkletNodeRef,
+  //           audioContextRef,
+  //           audioQueueRef,
+  //           isPlayingRef
+  //         );
+  //       }
+
+  //       // // console.log("text_data", typedMessage);
+  //     }
+  //   }
+  // }, [lastJsonMessage]);
 
   const addToAudioQueue = (base64Audio: string, boundary: string | null) => {
     audioQueueRef.current.push({ audio: base64Audio, boundary });
@@ -251,15 +359,18 @@ export const useWebSocketHandler = (selectedUser: IUser) => {
     );
   }, []);
 
-  const handleClickOpenConnection = useCallback(() => {
-    const wsUrl =
-      process.env.NEXT_PUBLIC_VERCEL_ENV === "production"
-        ? "wss://api.starmoon.app/starmoon"
-        : "ws://localhost:8000/starmoon";
-    // // console.log("opening ws connection", wsUrl);
-    setSocketUrl(wsUrl);
-    // setSocketUrl("wss://api.starmoon.app/starmoon");
-  }, []);
+  const handleClickOpenConnection = useCallback(
+    (personalityTranslationId: string) => {
+      const wsUrl =
+        process.env.NEXT_PUBLIC_VERCEL_ENV === "production"
+          ? "wss://api.starmoon.app/live"
+          : "ws://localhost:8000/live";
+      // // console.log("opening ws connection", wsUrl);
+      setSocketUrl(wsUrl);
+      setPersonalityTranslationId(personalityTranslationId); // setSocketUrl("wss://api.starmoon.app/starmoon");
+    },
+    []
+  );
 
   useEffect(() => {
     const status = {

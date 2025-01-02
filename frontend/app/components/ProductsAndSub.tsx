@@ -7,16 +7,9 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import {
-    Popover,
-    PopoverTrigger,
-    PopoverContent,
-} from "@/components/ui/popover";
-import { Bird, CheckCircle, Info, Sparkles, Truck } from "lucide-react";
+import { Bird, CheckCircle, Truck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import StripePricingTable from "../components/PricingTable";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 interface Product {
     title: string;
@@ -53,7 +46,8 @@ const products: Product[] = [
         components: ["The Starmoon AI device", "USB-C cable"],
         originalPrice: 89,
         price: 57.99,
-        paymentLink: "https://buy.stripe.com/eVa3cfb5E9TJ3cs6ou",
+        // paymentLink: "https://buy.stripe.com/5kAg0q8dg9SUcCceUU",
+        paymentLink: "/products",
         shadow: "0 4px 6px rgba(255, 215, 0, 0.2), 0 8px 24px rgba(218, 165, 32, 0.5) !important;",
     },
     {
@@ -80,7 +74,8 @@ const products: Product[] = [
         ],
         originalPrice: 69,
         price: 45.99,
-        paymentLink: "https://buy.stripe.com/3cs6ora1A2rheVa3cj",
+        // paymentLink: "https://buy.stripe.com/eVaeWmdxAc12fOo145",
+        paymentLink: "/products",
         shadow: "0 4px 6px rgba(135, 206, 235, 0.2), 0 8px 24px rgba(70, 130, 180, 0.5) !important;",
     },
 ];
@@ -95,32 +90,14 @@ const ProductsAndSub = () => {
             <div className="flex flex-col gap-2">
                 <h1 className="text-3xl font-medium">Products</h1>
                 <p className="text-md text-gray-600 inline-block">
-                    Choose the product that fits your needs.{" "}
-                    <Popover>
-                        <PopoverTrigger asChild>
-                            <Button
-                                size="icon"
-                                variant="ghost"
-                                className="w-6 h-6"
-                            >
-                                <Info size={14} />
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="p-3">
-                            <p className="text-xs p-0">
-                                All receipts will reflect Starmoon AI, operating
-                                as HeyHaddock, Inc. (DBA). Thank you for your
-                                understanding.
-                            </p>
-                        </PopoverContent>
-                    </Popover>
+                    Choose the product that best fits your needs.
                 </p>
             </div>
             <div className="flex flex-col gap-10">
                 {products.map((product, index) => (
                     <Card
                         key={`productCard-${index}`}
-                        className={`w-full rounded-3xl max-w-2xl overflow-hidden transition-all duration-300 shadow-md`}
+                        className={`w-full rounded-3xl max-w-2xl overflow-hidden transition-all duration-300 shadow-none`}
                     >
                         <CardHeader className="p-0">
                             <div className="w-full">
@@ -130,8 +107,9 @@ const ProductsAndSub = () => {
                                     width={600} // Specify desired width
                                     height={400} // Specify desired height
                                     layout="responsive" // Use responsive layout
-                                    objectFit="contain" // Ensure the image fits without cropping
-                                    // className="px-4"
+                                    style={{
+                                        objectFit: "contain",
+                                    }}
                                 />
                             </div>
                         </CardHeader>
@@ -161,7 +139,8 @@ const ProductsAndSub = () => {
                                     variant="secondary"
                                     className="text-sm font-medium rounded-lg text-center flex flex-row items-center gap-1"
                                 >
-                                    <Truck size={16} /> {"FREE Shipping"}
+                                    <Truck size={16} />{" "}
+                                    {"FREE Shipping over $100"}
                                 </Badge>
                                 <Badge
                                     variant="secondary"

@@ -4,22 +4,32 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include <driver/i2s.h>
+#include <WebSocketsClient.h>
+#include <Preferences.h>
+
+// define preferences
+extern Preferences preferences;
+
+// OTA status
+extern bool ota_status;
 
 // WiFi credentials
 extern const char *EAP_IDENTITY;
 extern const char *EAP_USERNAME;
 extern const char *EAP_PASSWORD;
-extern const char *ssid;
+
+extern WebSocketsClient webSocket;
 
 extern const char *ssid_peronal;
 extern const char *password_personal;
-
-extern String authTokenGlobal;
 
 // WebSocket server details
 extern const char *backend_server;
 extern const uint16_t backend_port;
 extern const char *websocket_path;
+
+// auth credentials
+extern String authTokenGlobal;
 extern const char *auth_token;
 
 // I2S and Audio parameters
@@ -31,11 +41,18 @@ extern int16_t sBuffer[];
 
 // ----------------- Pin Definitions -----------------
 // Define which board you are using (uncomment one)
-#define USE_XIAO_ESP32
+// #define USE_NORMAL_ESP32_S3
+#define USE_XIAO_ESP32_DEVKIT
+// #define USE_XIAO_ESP32
 // #define USE_NORMAL_ESP32
+// #define USE_ESP32_S3_WHITE_CASE
 
-extern const int LED_PIN;
-extern const int BUTTON_PIN;
+extern const gpio_num_t BUTTON_PIN;
+
+// LED pins
+extern const int RED_LED_PIN;
+extern const int GREEN_LED_PIN;
+extern const int BLUE_LED_PIN;
 
 // I2S Microphone pins
 extern const int I2S_SD;

@@ -9,7 +9,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Copy } from "lucide-react";
+import { Copy, Key } from "lucide-react";
 import { generateStarmoonAuthKey } from "../actions";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
@@ -27,12 +27,14 @@ const AuthTokenModal: React.FC<AuthTokenModalProps> = ({ user }) => {
             <DialogTrigger asChild>
                 <Button
                     size="sm"
-                    variant="secondary"
+                    variant="outline"
+                    className="font-normal flex flex-row items-center gap-2"
                     onClick={async () => {
                         setApiKey(await generateStarmoonAuthKey(user));
                     }}
                 >
-                    Generate API Key
+                    <Key size={16} />
+                    <span>Generate Key</span>
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">

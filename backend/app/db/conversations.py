@@ -1,9 +1,7 @@
-from email import message
-
 from app.db.supabase import create_supabase_client
 
 
-async def get_msgs(user_id: str, toy_id: str):
+async def get_msgs(user_id: str, personality_translation_id: str):
     supabase = create_supabase_client()
     # get last 30 messages from database from last 10 messages
     try:
@@ -11,7 +9,7 @@ async def get_msgs(user_id: str, toy_id: str):
             supabase.table("conversations")
             .select("*")
             .eq("user_id", user_id)
-            .eq("toy_id", toy_id)
+            .eq("personalities_translation_id", personality_translation_id)
             .order("created_at", desc=True)
             .limit(30)
             .execute()
@@ -22,8 +20,7 @@ async def get_msgs(user_id: str, toy_id: str):
 
 
 def add_msg(
-    toy_id: str,
-    personality_id: str,
+    personalities_translation_id: str,
     user_id: str,
     role: str,
     content: str,
@@ -36,8 +33,7 @@ def add_msg(
     try:
         supabase.table("conversations").insert(
             {
-                "toy_id": toy_id,
-                "personality_id": personality_id,
+                "personalities_translation_id": personalities_translation_id,
                 "user_id": user_id,
                 "role": role,
                 "content": content,

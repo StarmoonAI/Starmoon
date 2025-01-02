@@ -20,10 +20,10 @@
 #include "Audio.h"
 
 // Define I2S connections
-#define I2S_LRC D0
-#define I2S_BCLK D1
-#define I2S_DOUT D2
-#define I2S_SD_OUT D3
+#define I2S_LRC GPIO_NUM_26
+#define I2S_BCLK GPIO_NUM_27
+#define I2S_DOUT GPIO_NUM_25
+#define I2S_SD_OUT GPIO_NUM_21
 
 // #define I2S_LRC 18
 // #define I2S_BCLK 21
@@ -31,10 +31,6 @@
 
 // Create audio object
 Audio audio;
-
-// // Wifi Credentials
-String ssid = "<wifi>";   // replace your WiFi name
-String password = "<pw>"; // replace your WiFi password
 
 void setup()
 {
@@ -46,7 +42,7 @@ void setup()
     // Setup WiFi in Station mode
     WiFi.disconnect();
     WiFi.mode(WIFI_STA);
-    WiFi.begin(ssid.c_str(), password.c_str());
+    WiFi.begin("launchlab", "LaunchLabRocks");
 
     // Set SD_PIN as output and initialize to HIGH (unmuted)
     pinMode(I2S_SD_OUT, OUTPUT);

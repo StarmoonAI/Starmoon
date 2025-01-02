@@ -52,6 +52,8 @@ async def hardware_auth(device_code: str, email: str, mac_address: str, expire_d
     if not user_response or not user_response.data or len(user_response.data) == 0:
         raise HTTPException(status_code=401, detail="Invalid user or email")
 
+    device_code = device_code.lower()
+
     # check if device with deviceCode exists
     device_response = (
         supabase.table("devices")

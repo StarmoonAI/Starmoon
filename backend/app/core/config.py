@@ -66,6 +66,7 @@ class Settings(BaseSettings):
     )
     SPEECH_KEY: str = Field(default_factory=lambda: os.getenv("SPEECH_KEY", ""))
     SPEECH_REGION: str = Field(default_factory=lambda: os.getenv("SPEECH_REGION", ""))
+    FISH_API_KEY: str = Field(default_factory=lambda: os.getenv("FISH_API_KEY", ""))
 
     # Analytics
     HF_ACCESS_TOKEN: str = Field(
