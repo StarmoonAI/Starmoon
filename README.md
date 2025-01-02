@@ -1,4 +1,4 @@
-# <span ><img style='vertical-align:middle; display:inline;' src="./logo.png"  width="5%" height="5%"><span style='vertical-align: middle; line-height: normal;'>&nbsp;Starmoon - An affordable, empathic, and conversational AI device</span></span>
+# <span ><img style='vertical-align:middle; display:inline;' src="./logo.png"  width="5%" height="5%"><span style='vertical-align: middle; line-height: normal;'>&nbsp;Starmoon - A compact, affordable, conversational AI device to chat with custom AI characters</span></span>
 
 Starmoon is an affordable, compact AI-enabled companion device, you can take anywhere and converse with. It can understand your emotions and respond with empathy, offering supportive conversations and personalized learning assistance.
 
