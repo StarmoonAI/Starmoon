@@ -23,7 +23,7 @@ Starmoon is an affordable, compact AI-enabled device, you can take anywhere and 
 
 ### Video Demo
 
-Uploading DecemberDemo.mp4…
+https://github.com/user-attachments/assets/99a45810-0322-4945-b363-716e75d1c4dd
 
 If you can't see the video, you can watch it [here](https://youtu.be/sL6wH5F_ERE)
 
