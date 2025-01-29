@@ -55,6 +55,7 @@ If you can't see the video, you can watch it [here](https://youtu.be/sL6wH5F_ERE
 
     - Vscode and [PlatformIO](https://platformio.org/install/ide?install=vscode) plugin: For firmware burning
     - Starmoon API key: Login to [Starmoon](https://www.starmoon.app/login) and go to settings page to get your API key
+    - Clone the repository: `git clone https://github.com/StarmoonAI/Starmoon.git`
 
 2. Hardware list (Tax and shipping rates may vary by region)
     - [Seeed Studio Xiao ESP32S3](https://www.aliexpress.us/item/1005007341749305.html)
@@ -75,7 +76,7 @@ If you can't see the video, you can watch it [here](https://youtu.be/sL6wH5F_ERE
 | **Component**              | **Seeed Studio XIAO ESP32S3** | **ESP32-S3** |
 | -------------------------- | ----------------------------- | ------------ |
 | **I2S Input (Microphone)** |                               |              |
-| SD                         | D0                            | GPIO 13      |
+| SD                         | D0                            | GPIO 14      |
 | WS                         | D1                            | GPIO 1       |
 | SCK                        | D2                            | GPIO 4       |
 | **I2S Output (Speaker)**   |                               |              |

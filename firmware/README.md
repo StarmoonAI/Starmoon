@@ -6,20 +6,21 @@ This firmware turns your Seed Studio XIAO ESP32-S3 (or general ESP32 WROOM Dev m
 
 <!-- ### For Seeed Studio XIAO ESP32S3 -->
 
-| **Component**              | **Seeed Studio XIAO ESP32S3** | **General ESP32 Dev Board** |
+| **Component**              | **Seeed Studio XIAO ESP32S3** | **ESP32-S3 Dev Board** |
 | -------------------------- | ----------------------------- | --------------------------- |
 | **I2S Input (Microphone)** |                               |                             |
-| SD                         | D9                            | GPIO 13                     |
-| WS                         | D7                            | GPIO 5                      |
-| SCK                        | GD8                           | GPIO 18                     |
+| SD                         | D9                            | GPIO 14                     |
+| WS                         | D7                            | GPIO 4                      |
+| SCK                        | D8                           | GPIO 1                     |
 | **I2S Output (Speaker)**   |                               |                             |
-| WS                         | D0                            | GPIO 32                     |
-| BCK                        | D1                            | GPIO 33                     |
-| DATA                       | D2                            | GPIO 25                     |
+| WS                         | D0                            | GPIO 5                     |
+| BCK                        | D1                            | GPIO 6                     |
+| DATA                       | D2                            | GPIO 7                     |
 | SD (shutdown)              | D3                            | N/A                         |
 | **Others**                 |                               |                             |
-| LED                        | D4                            | GPIO 2                      |
-| Button                     | D5                            | GPIO 26                     |
+| Single LED                        | D4                            | Any GPIO
+| RGB LED | x | GPIO 13, 8, and 9                      |
+| Button                     | D5                            | GPIO 2                     |
 
 <!-- 
           I2S Input (Microphone)
@@ -102,7 +103,20 @@ This firmware turns your Seed Studio XIAO ESP32-S3 (or general ESP32 WROOM Dev m
            gilmaimon/ArduinoWebsockets @ ^0.5.3
            bblanchon/ArduinoJson @ ^7.1.0
        ```
-       
+
+    - For ESP32-S3 Dev Board
+        ```ini
+        [env:esp32-s3-devkitm-1]
+        platform = espressif32
+        board = esp32-s3-devkitm-1
+        framework = arduino
+        monitor_speed = 115200
+        lib_deps =
+            https://github.com/tzapu/WiFiManager.git
+            gilmaimon/ArduinoWebsockets @ ^0.5.3
+            bblanchon/ArduinoJson @ ^7.1.0
+        ```
+
 5. Update the WebSocket server details in the code:
 
     - Find the following lines in the code and update them with your information:
