@@ -869,8 +869,8 @@ void connectToWiFiAndWebSocketWithPassword()
 
 /**
  * 2. Wifi connection with AP (LOCAL)
- * 1. Create a Device in the `devices` table in supabase with a unique `user_code`
- * 2. When clicking on AP to connect to wifi, enter email `admin@starmoon.app` and the user_code you created above 
+ * 1. Create a Device in the `devices` table in supabase with a unique `device_code`
+ * 2. When clicking on AP to connect to wifi, enter email `admin@starmoon.app` and the `device_code` you created above 
  * 3. The device MAC address will be registered and the auth token will be stored in the device
  * 4. The device will connect to the WebSocket server and start responding
  */
