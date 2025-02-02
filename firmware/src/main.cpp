@@ -849,6 +849,31 @@ void websocketSetup(String server_domain, int port, String path)
     webSocket.setReconnectInterval(1000);
 }
 
+/**
+ * 1. Very simple Wifi connection (LOCAL)
+ * With hardcoded Auth Token available on the Settings page running locally
+ */
+void connectToWiFiAndWebSocketWithPassword()
+{
+    if (!connectToWiFi())
+    {
+        Serial.println("Failed to connect to Wi-Fi. Good night!");
+        enterSleep();
+        return;
+    }
+
+    // Connect to WebSocket if successfully registered
+    Serial.println("Connecting to WebSocket server...");
+    websocketSetup(backend_server, backend_port, websocket_path);
+}
+
+/**
+ * 2. Wifi connection with AP (LOCAL)
+ * 1. Create a Device in the `devices` table in supabase with a unique `user_code`
+ * 2. When clicking on AP to connect to wifi, enter email `admin@starmoon.app` and the user_code you created above 
+ * 3. The device MAC address will be registered and the auth token will be stored in the device
+ * 4. The device will connect to the WebSocket server and start responding
+ */
 void connectToWifiAndWebSocket()
 {
     int result = wifiConnect();
@@ -901,7 +926,8 @@ void connectToWifiAndWebSocket()
 void getAuthTokenFromNVS()
 {
     preferences.begin("auth", false);
-    authTokenGlobal = preferences.getString("auth_token", "");
+    // authTokenGlobal = preferences.getString("auth_token", ""); // Wifi connection with AP
+    authTokenGlobal = auth_token; // Simple Wifi connection
     Serial.print("authTokenGlobal: ");
     Serial.println(authTokenGlobal);
     preferences.end();
@@ -947,7 +973,8 @@ void setup()
         deviceState = STATE_CONNECTING;
     }
 
-    connectToWifiAndWebSocket();
+    connectToWiFiAndWebSocketWithPassword(); // Simple Wifi connection
+    // connectToWifiAndWebSocket(); // Wifi connection with AP
 
     i2s_install_speaker();
     i2s_setpin_speaker();
