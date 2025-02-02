@@ -19,8 +19,11 @@ const char *EAP_PASSWORD = "password";
 // const char *password_personal = "password";
 
 // ! WebSocket server details
-const char *backend_server = "51.8.202.78";
-const uint16_t backend_port = 80;
+const char *backend_server = "<IP address of your server>";
+const uint16_t backend_port = 8000;
+
+const char *websocket_path = "/live";
+const char *auth_token = "<your-STARMOON_API_KEY-here>";
 // ! WebSocket local server
 // const char *backend_server = "your wifi ip address";
 // const uint16_t backend_port = 8000;
