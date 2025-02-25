@@ -12,78 +12,91 @@ import { usePathname } from "next/navigation";
 import GetInTouchButton from "../GetInTouch";
 
 interface NavbarButtonsProps {
-        user: User | null;
-        stars: number | null;
-        isHome: boolean;
+                user: User | null;
+                stars: number | null;
+                isHome: boolean;
 }
 
 const NavbarButtons: React.FC<NavbarButtonsProps> = ({
-        user,
-        stars,
-        isHome,
+                user,
+                stars,
+                isHome,
 }) => {
-        const isMobile = useMediaQuery("(max-width: 768px)");
-        const isHealthcare = usePathname().includes("/healthcare");
+                const isMobile = useMediaQuery("(max-width: 768px)");
+                const isHealthcare = usePathname().includes("/healthcare");
 
-        return (
-                <div
-                        className={`flex flex-row sm:gap-2 ${
-                                isHome ? "gap-2" : ""
-                        } items-center font-bold text-sm `}
-                >
-                        {isHome && user && (
-                                <div className="mr-2">
-                                        <PremiumBadge currentUserId={user.id} />
-                                </div>
-                        )}
-                        {isHealthcare ? (
-                                <GetInTouchButton
-                                        size="sm"
-                                        iconOnMobile={isMobile}
-                                />
-                        ) : (
-                                <PreorderButton
-                                        size="sm"
-                                        buttonText="Preorder"
-                                        iconOnMobile
-                                />
-                        )}
-                        {!isHome && (
-                                <Link
-                                        href={githubPublicLink}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        title="Visit our GitHub"
-                                        className="ml-4"
-                                        // className="bg-nav-bar rounded-full px-3"
+                return (
+                                <div
+                                                className={`flex flex-row sm:gap-2 ${
+                                                                isHome
+                                                                                ? "gap-2"
+                                                                                : ""
+                                                } items-center font-bold text-sm `}
                                 >
-                                        <Button
-                                                size="sm"
-                                                variant={
-                                                        isMobile
-                                                                ? "ghost"
-                                                                : "outline"
-                                                }
-                                                className="flex bg-nav-bar border-0 sm:mr-2 sm:border flex-row gap-2 items-center rounded-full"
-                                        >
-                                                <FaGithub className="text-xl" />
-                                                <p className="hidden sm:flex font-normal">
-                                                        GitHub
-                                                </p>
-                                                <Separator
-                                                        orientation="vertical"
-                                                        className="hidden sm:flex"
+                                                {isHome && user && (
+                                                                <div className="mr-2">
+                                                                                <PremiumBadge
+                                                                                                currentUserId={
+                                                                                                                user.id
+                                                                                                }
+                                                                                />
+                                                                </div>
+                                                )}
+                                                {isHealthcare ? (
+                                                                <GetInTouchButton
+                                                                                size="sm"
+                                                                                iconOnMobile={
+                                                                                                isMobile
+                                                                                }
+                                                                />
+                                                ) : (
+                                                                <PreorderButton
+                                                                                size="sm"
+                                                                                buttonText="Preorder"
+                                                                                iconOnMobile
+                                                                />
+                                                )}
+                                                {!isHome && (
+                                                                <Link
+                                                                                href={
+                                                                                                githubPublicLink
+                                                                                }
+                                                                                target="_blank"
+                                                                                rel="noopener noreferrer"
+                                                                                title="Visit our GitHub"
+                                                                                className="ml-4"
+                                                                                // className="bg-nav-bar rounded-full px-3"
+                                                                >
+                                                                                <Button
+                                                                                                size="sm"
+                                                                                                variant={
+                                                                                                                isMobile
+                                                                                                                                ? "ghost"
+                                                                                                                                : "outline"
+                                                                                                }
+                                                                                                className="flex bg-nav-bar border-0 sm:mr-2 sm:border flex-row gap-2 items-center rounded-full"
+                                                                                >
+                                                                                                <FaGithub className="text-xl" />
+                                                                                                <p className="hidden sm:flex font-normal">
+                                                                                                                GitHub
+                                                                                                </p>
+                                                                                                <Separator
+                                                                                                                orientation="vertical"
+                                                                                                                className="hidden sm:flex"
+                                                                                                />
+                                                                                                <p className="hidden sm:flex text-xs font-normal">
+                                                                                                                {stars?.toLocaleString() ??
+                                                                                                                                430}
+                                                                                                </p>
+                                                                                </Button>
+                                                                </Link>
+                                                )}
+                                                <NavbarDropdownMenu
+                                                                user={user}
+                                                                stars={stars}
                                                 />
-                                                <p className="hidden sm:flex text-xs font-normal">
-                                                        {stars?.toLocaleString() ??
-                                                                430}
-                                                </p>
-                                        </Button>
-                                </Link>
-                        )}
-                        <NavbarDropdownMenu user={user} stars={stars} />
-                </div>
-        );
+                                </div>
+                );
 };
 
 export default NavbarButtons;
