@@ -11,15 +11,14 @@ pip install poetry
 poetry install
 ```
 
-### Install packages in macOS
+### Install packages in macOS (for audio)
 
 ```bash
 brew install portaudio
 brew install ffmpeg
-# brew install chardet
 ```
 
-## - Run locally
+## Run locally
 
 ### Run redis in docker
   
@@ -37,7 +36,7 @@ poetry run celery -A app.celery.worker.celery_app flower --port=5555
 poetry run celery -A app.celery.worker.celery_app beat --loglevel=info
 ```
 
-### Run client
+### Run the test server
 
 ```bash
 poetry run python test/main.py
