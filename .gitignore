@@ -7,6 +7,7 @@ __pycache__
 .prettierrc.json
 .prettierrc
 frontend_auth
+node_modules/
 .env
 .env.starmoon
 
