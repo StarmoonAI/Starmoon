@@ -6,7 +6,7 @@ The backend is a Python application that uses FastAPI and Redis. We also use Cel
 
 ### Install poetry
 
-create a new virtual environment (Python 3.11)
+Create a new virtual environment (Python 3.11)
 
 ```bash
 pip install poetry
