@@ -124,7 +124,7 @@ This firmware turns your Seed Studio XIAO ESP32-S3 (or general ESP32 WROOM Dev m
         const char *websocket_server_host = "<your-server-host>"; // this is your WiFi I.P. Address
         const uint16_t websocket_server_port = 8000;
         const char *websocket_server_path = "/starmoon";
-        const char *auth_token = "<your-auth-token-here>"; // generate auth-token in your starmoon web-app in Settings
+        const char *auth_token = "<your-auth-token-here>"; // generate auth-token in your starmoon web app in Settings
         ```
 
 6. Build the project:
