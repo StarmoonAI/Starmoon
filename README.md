@@ -58,11 +58,11 @@ If you can't see the video, you can watch it [here](https://youtu.be/sL6wH5F_ERE
     - Clone the repository: `git clone https://github.com/StarmoonAI/Starmoon.git`
 
 2. Hardware list (Tax and shipping rates may vary by region)
-    - [Seeed Studio Xiao ESP32S3](https://www.aliexpress.us/item/1005007341749305.html)
+    - [Seeed Studio Xiao ESP32S3](https://www.aliexpress.us/item/1005007341749305.html) (or any other ESP32-S3 board)
     - [Microphone (INMP441)](https://www.aliexpress.us/item/3256806674485209.html)
     - [Amplifier (MAX98357A)](https://www.aliexpress.us/item/3256806524695775.html)
-    - [Speaker (3525)](https://www.aliexpress.us/item/3256805515112434.html)
-    - [LED light](https://www.aliexpress.us/item/3256805384408000.html)
+    - [Speaker (3525)](https://www.aliexpress.us/item/3256805515112434.html) (or any compatible microspeaker)
+    - [LED light](https://www.aliexpress.us/item/3256805384408000.html) (RGB LED recommended)
     - [Button](https://www.aliexpress.us/item/3256803815119722.html)
     - [PCB prototype board](https://www.aliexpress.com/item/1005005038301414.html) or [custom PCB](https://www.aliexpress.com/item/1005005038301414.html)
     - [3D printed case](case_model.stl)
@@ -85,8 +85,8 @@ If you can't see the video, you can watch it [here](https://youtu.be/sL6wH5F_ERE
 | DATA                       | D4                            | GPIO 7       |
 | SD (shutdown)              | D3                            | N/A          |
 | **Others**                 |                               |              |
-| LED Red                    | N/A                           | GPIO 9       |
-| LED Green                  | N/A                           | GPIO 8       |
+| LED Red                    | D7                            | GPIO 9       |
+| LED Green                  | D8                            | GPIO 8       |
 | LED Blue                   | D9                            | GPIO 13      |
 | Button                     | D10                           | GPIO 2       |
 
