@@ -17,7 +17,7 @@ const LandingPagePersonalityCard = ({
     return (
         <Card
             className={cn(
-                "p-0 sm:rounded-3xl rounded-xl cursor-pointer min-w-[180px] border-none shadow-none bg-transparent transition-all hover:scale-103 flex flex-col"
+                "p-0 sm:rounded-3xl rounded-xl cursor-pointer min-w-[180px] border-none shadow-none bg-transparent transition-all hover:scale-103 flex flex-col",
             )}
             // onClick={() => onPersonalityPicked(personality)}
         >

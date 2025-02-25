@@ -42,7 +42,7 @@ const ToyPicker: React.FC<ToyPickerProps> = ({ imageSize, buttonText }) => {
 
     const [playing, setPlaying] = useState<string | null>(null);
     const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(
-        null
+        null,
     );
 
     const playAudio = (personality: IDoctorPersonality) => {

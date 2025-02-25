@@ -3,7 +3,7 @@ import { type SupabaseClient, type User } from "@supabase/supabase-js";
 export const createUser = async (
     supabase: SupabaseClient,
     user: User,
-    userProps: Partial<IUser>
+    userProps: Partial<IUser>,
 ) => {
     // console.log("creating user", user, userProps);
 
@@ -33,7 +33,7 @@ export const createUser = async (
 
 export const getSimpleUserById = async (
     supabase: SupabaseClient,
-    id: string
+    id: string,
 ) => {
     const { data, error } = await supabase
         .from("users")
@@ -58,7 +58,7 @@ export const getUserById = async (supabase: SupabaseClient, id: string) => {
           title,
           subtitle,
           trait_short_description
-        ))`
+        ))`,
         )
         .eq("user_id", id)
         .single();
@@ -72,7 +72,7 @@ export const getUserById = async (supabase: SupabaseClient, id: string) => {
 
 export const doesUserExist = async (
     supabase: SupabaseClient,
-    authUser: User
+    authUser: User,
 ) => {
     const { data: user, error } = await supabase
         .from("users")
@@ -90,7 +90,7 @@ export const doesUserExist = async (
 export const updateUser = async (
     supabase: SupabaseClient,
     user: Partial<IUser>,
-    userId: string
+    userId: string,
 ) => {
     const { error } = await supabase
         .from("users")

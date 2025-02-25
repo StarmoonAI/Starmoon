@@ -2,7 +2,7 @@ import { SupabaseClient } from "@supabase/supabase-js";
 
 export const createInbound = async (
     supabase: SupabaseClient,
-    inbound: IInbound
+    inbound: IInbound,
 ) => {
     const { error } = await supabase
         .from("inbound")

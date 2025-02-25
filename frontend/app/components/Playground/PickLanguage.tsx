@@ -24,7 +24,7 @@ const PickLanguage: React.FC<PickLanguageProps> = ({
 }) => {
     const isMobile = useMediaQuery("(max-width: 768px)");
     const languageSelected = allLanguages.find(
-        (language) => language.code === languageState
+        (language) => language.code === languageState,
     );
 
     const FlagComponent = ({ flag }: { flag: string | undefined }) => {

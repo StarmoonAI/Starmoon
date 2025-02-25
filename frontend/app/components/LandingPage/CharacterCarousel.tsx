@@ -71,7 +71,7 @@ interface CharacterCarouselCardProps {
 const CharacterCarouselCard = ({ personality }: CharacterCarouselCardProps) => {
     const [playing, setPlaying] = useState<string | null>(null);
     const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(
-        null
+        null,
     );
 
     const playAudio = (personality: LandingPagePersonality) => {

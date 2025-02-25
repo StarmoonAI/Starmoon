@@ -23,7 +23,7 @@ const GetInTouchButton = ({
                 className={cn(
                     "flex flex-row items-center gap-4 font-medium text-base bg-stone-800 leading-8 rounded-full",
                     iconOnMobile ? "px-3" : "px-4",
-                    className
+                    className,
                 )}
                 size={size}
             >

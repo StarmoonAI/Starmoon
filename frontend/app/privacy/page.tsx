@@ -96,7 +96,8 @@ export default async function Index() {
                     <li>
                         {" "}
                         <strong>To Communicate with You:</strong> Sending
-                        updates, security alerts, and administrative messages.{" "}
+                        updates, security alerts, and administrative
+                        messages.{" "}
                     </li>{" "}
                     <li>
                         {" "}
@@ -104,7 +105,8 @@ export default async function Index() {
                             To Support Open-Source Collaboration:
                         </strong>{" "}
                         Managing and showcasing contributions to our open-source
-                        projects, including attributing work to contributors.{" "}
+                        projects, including attributing work to
+                        contributors.{" "}
                     </li>{" "}
                     <li>
                         {" "}

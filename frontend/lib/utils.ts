@@ -53,7 +53,7 @@ interface TokenPayload {
 export const createAccessToken = (
     jwtSecretKey: string,
     data: TokenPayload,
-    expireDays?: number | null
+    expireDays?: number | null,
 ): string => {
     // console.log(jwtSecretKey);
     const toEncode = { ...data };
@@ -96,7 +96,7 @@ export const getCreditsRemaining = (user: IUser): number => {
 
 export const getMessageRoleName = (
     role: string,
-    selectedPersonalityTranslation: IPersonalitiesTranslation
+    selectedPersonalityTranslation: IPersonalitiesTranslation,
 ) => {
     if (role === "input") {
         return "You";

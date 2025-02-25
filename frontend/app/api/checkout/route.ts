@@ -345,7 +345,7 @@ export async function POST(req: Request) {
             JSON.stringify({ error: (error as Error).message }),
             {
                 status: 500,
-            }
+            },
         );
     }
 }

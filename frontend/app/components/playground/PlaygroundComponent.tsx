@@ -19,16 +19,17 @@ import { tx } from "@/utils/i18n";
 
 const sortPersonalities = (
     personalities: IPersonality[],
-    currentPersonalityId: string
+    currentPersonalityId: string,
 ) => {
     // place default personality at the 0th index
     const defaultPersonality = personalities.find(
-        (personality) => personality.personality_id === currentPersonalityId
+        (personality) => personality.personality_id === currentPersonalityId,
     );
     return [
         defaultPersonality,
         ...personalities.filter(
-            (personality) => personality.personality_id !== currentPersonalityId
+            (personality) =>
+                personality.personality_id !== currentPersonalityId,
         ),
     ] as IPersonality[];
 };
@@ -62,10 +63,10 @@ const Playground: React.FC<PlaygroundProps> = ({
 
     // Remove userState entirely and just use personalityState
     const [personalityIdState, setPersonalityIdState] = useState<string>(
-        currentUser.personality!.personality_id // Initial value from props
+        currentUser.personality!.personality_id, // Initial value from props
     );
     const [languageState, setLanguageState] = useState<LanguageCodeType>(
-        currentUser.language_code! // Initial value from props
+        currentUser.language_code!, // Initial value from props
     );
 
     const t = tx(languageState);
@@ -78,7 +79,7 @@ const Playground: React.FC<PlaygroundProps> = ({
 
     const sortedPersonalities = React.useMemo(
         () => sortPersonalities(allPersonalities, personalityIdState),
-        [allPersonalities, personalityIdState]
+        [allPersonalities, personalityIdState],
     );
 
     const onPersonalityPicked = async (personalityIdPicked: string) => {
@@ -89,7 +90,7 @@ const Playground: React.FC<PlaygroundProps> = ({
             {
                 personality_id: personalityIdPicked,
             },
-            currentUser.user_id
+            currentUser.user_id,
         );
     };
 
@@ -100,7 +101,7 @@ const Playground: React.FC<PlaygroundProps> = ({
             {
                 language_code: languagePicked,
             },
-            currentUser.user_id
+            currentUser.user_id,
         );
     };
 
@@ -109,26 +110,27 @@ const Playground: React.FC<PlaygroundProps> = ({
             const personalityInLanguage = allPersonalities
                 .find(
                     (personality) =>
-                        personality.personality_id === personalityId
+                        personality.personality_id === personalityId,
                 )!
                 .personalities_translations.find(
-                    (translation) => translation.language_code === languageState
+                    (translation) =>
+                        translation.language_code === languageState,
                 )!;
             handleClickOpenConnection(
-                personalityInLanguage.personalities_translation_id
+                personalityInLanguage.personalities_translation_id,
             );
         },
-        [languageState, allPersonalities, handleClickOpenConnection]
+        [languageState, allPersonalities, handleClickOpenConnection],
     );
 
     const personalityTranslation =
         allPersonalities
             .find(
                 (personality) =>
-                    personality.personality_id === personalityIdState
+                    personality.personality_id === personalityIdState,
             )
             ?.personalities_translations.find(
-                (translation) => translation.language_code === languageState
+                (translation) => translation.language_code === languageState,
             ) ?? undefined;
 
     return (

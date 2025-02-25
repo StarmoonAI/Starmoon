@@ -15,7 +15,7 @@ export const getAllPersonalities = async (supabase: SupabaseClient) => {
           trait_short_description,
           language_code
         )
-        `
+        `,
     );
     if (error) {
         console.log("error getAllPersonalities", error);

@@ -192,7 +192,7 @@ const ProductsAndSub = () => {
                                                             {index + 1}.{" "}
                                                             {components}
                                                         </span>
-                                                    )
+                                                    ),
                                                 )}
                                             </span>
                                         </li>
@@ -214,7 +214,7 @@ const ProductsAndSub = () => {
                                                         {feature}
                                                     </span>
                                                 </li>
-                                            )
+                                            ),
                                         )}
                                     </ul>
                                 </div>

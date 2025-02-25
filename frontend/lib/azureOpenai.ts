@@ -9,7 +9,7 @@ export const generateSuggestion = async (
     cardData: CardData | null,
     barData: BarData[],
     lineData: LineData[],
-    pieData: PieData[]
+    pieData: PieData[],
 ): Promise<string | undefined> => {
     // You will need to set these environment variables or edit the following values
     // if OPENAI_API_KEY exists, use it, otherwise use AZURE_OPENAI_API_KEY

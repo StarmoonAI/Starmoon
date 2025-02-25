@@ -2,7 +2,7 @@ import { SupabaseClient } from "@supabase/supabase-js";
 
 export const dbCheckUserCode = async (
     supabase: SupabaseClient,
-    userCode: string
+    userCode: string,
 ) => {
     const { data, error } = await supabase
         .from("devices")
@@ -19,7 +19,7 @@ export const dbCheckUserCode = async (
 export const addUserToDevice = async (
     supabase: SupabaseClient,
     userCode: string,
-    userId: string
+    userId: string,
 ) => {
     const { error } = await supabase
         .from("devices")
@@ -35,7 +35,7 @@ export const addUserToDevice = async (
 
 export const doesUserHaveADevice = async (
     supabase: SupabaseClient,
-    userId: string
+    userId: string,
 ) => {
     const { data, error } = await supabase
         .from("devices")

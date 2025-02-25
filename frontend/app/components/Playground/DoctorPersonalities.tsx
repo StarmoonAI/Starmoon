@@ -20,12 +20,12 @@ const DoctorPersonalities: React.FC<DoctorPersonalitiesProps> = ({
     const doctorPersonalitiesTranslations = allPersonalities.filter(
         (personality) => {
             return personality.is_doctor;
-        }
+        },
     );
     const nonDoctorPersonalitiesTranslations = allPersonalities.filter(
         (personality) => {
             return !personality.is_doctor;
-        }
+        },
     );
     return (
         <div className="flex flex-col gap-8 w-full">

@@ -37,7 +37,7 @@ const ModifyCharacterSheet: React.FC<ModifyCharacterSheetProps> = ({
 
     const lang_specific_personality =
         openPersonality.personalities_translations.find(
-            (translation) => translation.language_code === languageState
+            (translation) => translation.language_code === languageState,
         )!;
 
     const isDesktop = useMediaQuery("(min-width: 768px)");

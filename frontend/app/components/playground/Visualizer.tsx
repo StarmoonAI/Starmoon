@@ -3,12 +3,12 @@ import React, { useEffect, useRef } from "react";
 const interpolateColor = (
     startColor: number[],
     endColor: number[],
-    factor: number
+    factor: number,
 ): number[] => {
     const result = [];
     for (let i = 0; i < startColor.length; i++) {
         result[i] = Math.round(
-            startColor[i] + factor * (endColor[i] - startColor[i])
+            startColor[i] + factor * (endColor[i] - startColor[i]),
         );
     }
     return result;
@@ -94,7 +94,7 @@ const Visualizer: React.FC<VisualizerProps> = ({ stream, audioBuffer }) => {
         canvas.height = height;
 
         const barWidth = Math.floor(
-            (width / analyserRef.current.frequencyBinCount) * 2
+            (width / analyserRef.current.frequencyBinCount) * 2,
         );
         const barGap = 6; // Adjust this value to increase the gap between bars
         let x = 0;
@@ -121,7 +121,7 @@ const Visualizer: React.FC<VisualizerProps> = ({ stream, audioBuffer }) => {
             const color = interpolateColor(
                 startColor,
                 endColor,
-                interpolationFactor
+                interpolationFactor,
             );
 
             context.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, 0.8)`;
@@ -135,7 +135,7 @@ const Visualizer: React.FC<VisualizerProps> = ({ stream, audioBuffer }) => {
                     centerY,
                     pointRadius,
                     0,
-                    Math.PI * 2
+                    Math.PI * 2,
                 );
                 context.closePath();
                 context.fill();
@@ -147,7 +147,7 @@ const Visualizer: React.FC<VisualizerProps> = ({ stream, audioBuffer }) => {
                     centerY,
                     barHeight,
                     0,
-                    Math.PI * 2
+                    Math.PI * 2,
                 );
                 context.closePath();
                 context.fill();
@@ -160,34 +160,34 @@ const Visualizer: React.FC<VisualizerProps> = ({ stream, audioBuffer }) => {
                     x,
                     centerY - barHeight,
                     x + cornerRadius,
-                    centerY - barHeight
+                    centerY - barHeight,
                 );
                 context.lineTo(
                     x + barWidth - cornerRadius,
-                    centerY - barHeight
+                    centerY - barHeight,
                 );
                 context.quadraticCurveTo(
                     x + barWidth,
                     centerY - barHeight,
                     x + barWidth,
-                    centerY - barHeight + cornerRadius
+                    centerY - barHeight + cornerRadius,
                 );
                 context.lineTo(
                     x + barWidth,
-                    centerY + barHeight - cornerRadius
+                    centerY + barHeight - cornerRadius,
                 );
                 context.quadraticCurveTo(
                     x + barWidth,
                     centerY + barHeight,
                     x + barWidth - cornerRadius,
-                    centerY + barHeight
+                    centerY + barHeight,
                 );
                 context.lineTo(x + cornerRadius, centerY + barHeight);
                 context.quadraticCurveTo(
                     x,
                     centerY + barHeight,
                     x,
-                    centerY + barHeight - cornerRadius
+                    centerY + barHeight - cornerRadius,
                 );
                 context.lineTo(x, centerY - barHeight);
                 context.closePath();

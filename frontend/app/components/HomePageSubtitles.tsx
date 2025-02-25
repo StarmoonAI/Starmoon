@@ -18,7 +18,7 @@ const HomePageSubtitles: React.FC<HomePageSubtitlesProps> = ({
             return (
                 <p className="text-sm text-gray-600">
                     {t(
-                        "Use this playground or your device to engage your patients"
+                        "Use this playground or your device to engage your patients",
                     )}
                 </p>
             );

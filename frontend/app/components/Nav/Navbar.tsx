@@ -25,7 +25,7 @@ export function Navbar({
             const handleScroll = () => {
                 const currentScrollY = window.scrollY;
                 setIsVisible(
-                    currentScrollY <= 0 || currentScrollY < lastScrollY
+                    currentScrollY <= 0 || currentScrollY < lastScrollY,
                 );
                 setLastScrollY(currentScrollY);
             };

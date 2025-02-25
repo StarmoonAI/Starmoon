@@ -25,7 +25,7 @@ const AppSettings: React.FC<AppSettingsProps> = ({ selectedUser, heading }) => {
     React.useEffect(() => {
         const checkIfUserHasDevice = async () => {
             setIsConnected(
-                await doesUserHaveADevice(supabase, selectedUser.user_id)
+                await doesUserHaveADevice(supabase, selectedUser.user_id),
             );
         };
         checkIfUserHasDevice();
@@ -41,7 +41,7 @@ const AppSettings: React.FC<AppSettingsProps> = ({ selectedUser, heading }) => {
         await updateUser(
             supabase,
             { volume_control: volume[0] },
-            selectedUser.user_id
+            selectedUser.user_id,
         );
     }, 1000); // Adjust the debounce delay as needed
 
@@ -127,7 +127,7 @@ const AppSettings: React.FC<AppSettingsProps> = ({ selectedUser, heading }) => {
                                     onClick={async () => {
                                         setIsOta(true);
                                         await setDeviceOta(
-                                            selectedUser.user_id
+                                            selectedUser.user_id,
                                         );
                                     }}
                                     disabled={isOta}
@@ -159,7 +159,7 @@ const AppSettings: React.FC<AppSettingsProps> = ({ selectedUser, heading }) => {
                                     onClick={async () => {
                                         setIsReset(true);
                                         await setDeviceReset(
-                                            selectedUser.user_id
+                                            selectedUser.user_id,
                                         );
                                     }}
                                     disabled={isReset}

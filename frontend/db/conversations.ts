@@ -2,7 +2,7 @@ import { SupabaseClient } from "@supabase/supabase-js";
 
 export const dbInsertConversation = async (
     supabase: SupabaseClient,
-    data: IConversation
+    data: IConversation,
 ) => {
     const { error } = await supabase.from("conversations").insert([data]);
     if (error) {
@@ -12,7 +12,7 @@ export const dbInsertConversation = async (
 
 export const dbGetConversation = async (
     supabase: SupabaseClient,
-    userId: string
+    userId: string,
 ) => {
     // Get the date 7 days ago from today
     const sevenDaysAgo = new Date();
@@ -38,7 +38,7 @@ export const dbGetRecentMessages = async (
     supabase: SupabaseClient,
     userId: string,
     toyId: string,
-    personalityId: string
+    personalityId: string,
 ) => {
     const { data, error } = await supabase
         .from("conversations")

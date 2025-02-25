@@ -1,3 +1,3 @@
 interface Window {
-  webkitAudioContext: typeof AudioContext;
+    webkitAudioContext: typeof AudioContext;
 }

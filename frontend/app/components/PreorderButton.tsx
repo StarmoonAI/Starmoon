@@ -25,7 +25,7 @@ const PreorderButton = ({
                 className={cn(
                     "flex flex-row items-center gap-2 font-medium text-base bg-stone-800 leading-8 rounded-full px-4",
                     iconOnMobile ? "p-2 sm:p-4" : "",
-                    className
+                    className,
                 )}
                 size={size}
             >

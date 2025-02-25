@@ -12,7 +12,7 @@ interface GoogleLoginButtonProps {
 
 export const loginWithGoogle = async (
     toy_id: string,
-    personality_id: string
+    personality_id: string,
 ) => {
     const supabase = createClient();
 
@@ -41,7 +41,7 @@ export default function GoogleLoginButton({
             onClick={() =>
                 loginWithGoogle(
                     toy_id ?? defaultToyId,
-                    personality_id ?? defaultPersonalityId
+                    personality_id ?? defaultPersonalityId,
                 )
             }
         >

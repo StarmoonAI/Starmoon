@@ -28,7 +28,7 @@ const SheetWrapper: React.FC<SheetWrapperProps> = ({
     disableButtons,
 }) => {
     const personality_translation = personality.personalities_translations.find(
-        (translation) => translation.language_code === languageState
+        (translation) => translation.language_code === languageState,
     );
 
     if (!personality_translation) {
@@ -52,7 +52,7 @@ const SheetWrapper: React.FC<SheetWrapperProps> = ({
                     "p-0 rounded-3xl cursor-pointer shadow-lg transition-all hover:scale-103 flex flex-col",
                     personalityIdState === personality.personality_id
                         ? "border-primary border-2"
-                        : "hover:border-primary/50"
+                        : "hover:border-primary/50",
                 )}
                 // onClick={() => onPersonalityPicked(personality)}
             >

@@ -65,7 +65,7 @@ const DoctorForm: React.FC<DoctorFormProps> = ({
                     user_metadata: values,
                 },
             },
-            selectedUser!.user_id
+            selectedUser!.user_id,
         );
         toast({
             description: "Your prefereces have been saved. Have a good day!",
