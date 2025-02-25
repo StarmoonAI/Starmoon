@@ -19,11 +19,11 @@ import AnimatedText from "./AnimatedText";
 
 const HeaderText = "An open source, real-time talk-to-AI device";
 const SubHeaderText =
-    "With Starmoon, you can talk to natural-sounding AI characters for every occasion including";
+        "With Starmoon, you can talk to natural-sounding AI characters for every occasion including";
 
 interface FrontPageProps {
-    user?: User;
-    allPersonalities: IPersonality[];
+        user?: User;
+        allPersonalities: IPersonality[];
 }
 
 // const getRandomPersonalities = (
@@ -60,39 +60,39 @@ interface FrontPageProps {
 // };
 
 const FrontPage = ({ user }: FrontPageProps) => {
-    return (
-        <div className="flex flex-col items-center text-center max-w-screen-md px-4 md:px-6 mx-auto justify-center gap-8">
-            <div className="flex flex-col gap-12">
-                {/* <Badge
+        return (
+                <div className="flex flex-col items-center text-center max-w-screen-md px-4 md:px-6 mx-auto justify-center gap-8">
+                        <div className="flex flex-col gap-12">
+                                {/* <Badge
                         className="w-fit flex flex-row gap-2 shadow-md items-center text-sm"
                         variant="secondary"
                     >
                         <Sparkle fill="currentColor" size={12} /> Now Available
                         for Preorder
                     </Badge> */}
-                <h1 className="font-semibold tracking-tight text-5xl/tight sm:text-6xl/tight">
-                    {HeaderText}
-                </h1>
+                                <h1 className="font-semibold tracking-tight text-5xl/tight sm:text-6xl/tight">
+                                        {HeaderText}
+                                </h1>
 
-                <div className="max-w-4xl text-center mx-8 md:mx-auto flex flex-col gap-4">
-                    <h1 className="text-xl font-normal text-gray-700 mb-2">
-                        {SubHeaderText}
-                    </h1>
+                                <div className="max-w-4xl text-center mx-8 md:mx-auto flex flex-col gap-4">
+                                        <h1 className="text-xl font-normal text-gray-700 mb-2">
+                                                {SubHeaderText}
+                                        </h1>
 
-                    <AnimatedText />
-                </div>
-            </div>
-            {/* <div className="flex flex-col gap-4">
+                                        <AnimatedText />
+                                </div>
+                        </div>
+                        {/* <div className="flex flex-col gap-4">
                 <DeviceImage />
             </div> */}
-        </div>
-    );
+                </div>
+        );
 };
 
 export default FrontPage;
 
 {
-    /* <TbArrowWaveRightUp
+        /* <TbArrowWaveRightUp
                         size={64}
                         strokeWidth={1.5}
                         className="absolute bottom-10 left-16 transform -translate-x-1/2 -rotate-30 text-gray-600"
