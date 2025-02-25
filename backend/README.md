@@ -1,6 +1,6 @@
 # Backend
 
-## - Install
+## Installation
 
 ### Install poetry
 
