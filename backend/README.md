@@ -1,5 +1,7 @@
 # Backend
 
+The backend is a Python application that uses FastAPI and Redis. We also use Celery for background tasks and Hugging Face for emotion detection.
+
 ## Installation
 
 ### Install poetry
