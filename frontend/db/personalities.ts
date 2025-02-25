@@ -2,10 +2,8 @@ import { defaultPersonalityId } from "@/lib/data";
 import { SupabaseClient } from "@supabase/supabase-js";
 
 export const getAllPersonalities = async (supabase: SupabaseClient) => {
-                const { data, error } = await supabase
-                                .from("personalities")
-                                .select(
-                                                `
+        const { data, error } = await supabase.from("personalities").select(
+                `
         personality_id,
         is_doctor,
         key,
@@ -18,11 +16,11 @@ export const getAllPersonalities = async (supabase: SupabaseClient) => {
           language_code
         )
         `,
-                                );
-                if (error) {
-                                console.log("error getAllPersonalities", error);
-                                return [];
-                }
+        );
+        if (error) {
+                console.log("error getAllPersonalities", error);
+                return [];
+        }
 
-                return data as IPersonality[];
+        return data as IPersonality[];
 };
