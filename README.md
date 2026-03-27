@@ -1,3 +1,13 @@
+### ⚠️ Project Status: Deprecated
+
+Starmoon is no longer actively maintained. If you're looking to run realtime, multimodal voice AI on ESP32 and local devices, this work has continued under:
+
+👉 **ElatoAI**: https://github.com/akdeb/ElatoAI
+
+ElatoAI builds on many of the ideas explored in Starmoon, with improved WiFi and 2-way voice AI audio reliability, global availability, and production-ready architecture.
+
+---
+
 # <span ><img style='vertical-align:middle; display:inline;' src="./logo.png"  width="5%" height="5%"><span style='vertical-align: middle; line-height: normal;'>&nbsp;Starmoon - A fully open-source, compact, conversational AI device to chat with custom AI characters</span></span>
 
 Starmoon is an affordable, compact AI-enabled device, you can take anywhere and converse with. It can understand your emotions and respond with empathy, offering supportive conversations and personalized learning assistance.
