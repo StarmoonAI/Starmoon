@@ -67,6 +67,12 @@ class Settings(BaseSettings):
     SPEECH_KEY: str = Field(default_factory=lambda: os.getenv("SPEECH_KEY", ""))
     SPEECH_REGION: str = Field(default_factory=lambda: os.getenv("SPEECH_REGION", ""))
     FISH_API_KEY: str = Field(default_factory=lambda: os.getenv("FISH_API_KEY", ""))
+    SIXTYDB_API_KEY: str = Field(
+        default_factory=lambda: os.getenv("SIXTYDB_API_KEY", "")
+    )
+    SIXTYDB_API_URL: str = Field(
+        default_factory=lambda: os.getenv("SIXTYDB_API_URL", "https://api.60db.ai")
+    )
 
     # Analytics
     HF_ACCESS_TOKEN: str = Field(

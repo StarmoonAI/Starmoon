@@ -206,7 +206,7 @@ async def websocket_endpoint(websocket: WebSocket):
             language_code, title=title, subtitle=subtitle, trait=trait
         )
 
-        if tts_model == "AZURE":
+        if tts_model in ("AZURE", "SIXTYDB"):
             content += get_language_spoken_prompt_prefix(language_code)
         else:
             content += get_user_native_language_prompt_prefix(language_code)
