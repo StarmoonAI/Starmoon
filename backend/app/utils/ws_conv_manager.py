@@ -20,6 +20,7 @@ from app.services.tts import (
     check_task_result,
     create_emotion_detection_task,
     fish_tts,
+    sixtydb_tts,
     text_to_speech_stream,
 )
 from app.utils.enqueue import enqueue_bytes, enqueue_task
@@ -304,6 +305,39 @@ class ConvManager:
         # Reset the event after interrupting
         self.interrupt_event.clear()
 
+    def _dispatch_tts(
+        self,
+        sentence,
+        is_start,
+        task_id_queue,
+        voice_id,
+        bytes_queue,
+        user,
+        personality_translation,
+    ):
+        """Route a sentence to the TTS engine selected by self.tts_model.
+
+        Engines share the same signature and output contract (16kHz mono PCM
+        chunked onto bytes_queue), so adding one is just another branch here.
+        """
+        if self.tts_model == "AZURE":
+            engine = azure_tts
+        elif self.tts_model == "SIXTYDB":
+            engine = sixtydb_tts
+        else:
+            engine = fish_tts
+
+        engine(
+            sentence,
+            is_start,
+            task_id_queue,
+            voice_id,
+            self.device,
+            bytes_queue,
+            user,
+            personality_translation,
+        )
+
     def chat_completion(
         self,
         messages: list,
@@ -341,28 +375,15 @@ class ConvManager:
 
                     if len(sentences) > 1:
                         for sentence in sentences[:-1]:
-                            if self.tts_model == "AZURE":
-                                azure_tts(
-                                    sentence,
-                                    is_start,
-                                    task_id_queue,
-                                    voice_id,
-                                    self.device,
-                                    bytes_queue,
-                                    user,
-                                    personality_translation,
-                                )
-                            else:
-                                fish_tts(
-                                    sentence,
-                                    is_start,
-                                    task_id_queue,
-                                    voice_id,
-                                    self.device,
-                                    bytes_queue,
-                                    user,
-                                    personality_translation,
-                                )
+                            self._dispatch_tts(
+                                sentence,
+                                is_start,
+                                task_id_queue,
+                                voice_id,
+                                bytes_queue,
+                                user,
+                                personality_translation,
+                            )
 
                             if is_start == True:
                                 is_start = False
@@ -372,54 +393,28 @@ class ConvManager:
             if accumulated_text:
                 accumulated_text_ = "".join(accumulated_text)
                 print("Sentence:", accumulated_text_)
-                if self.tts_model == "AZURE":
-                    azure_tts(
-                        accumulated_text_,
-                        is_start,
-                        task_id_queue,
-                        voice_id,
-                        self.device,
-                        bytes_queue,
-                        user,
-                        personality_translation,
-                    )
-                else:
-                    fish_tts(
-                        accumulated_text_,
-                        is_start,
-                        task_id_queue,
-                        voice_id,
-                        self.device,
-                        bytes_queue,
-                        user,
-                        personality_translation,
-                    )
+                self._dispatch_tts(
+                    accumulated_text_,
+                    is_start,
+                    task_id_queue,
+                    voice_id,
+                    bytes_queue,
+                    user,
+                    personality_translation,
+                )
 
         except Exception as e:
             print("Error in chat_completion:", e)
             response_text = get_error_prompt_prefix(self.language_code)
-            if self.tts_model == "AZURE":
-                azure_tts(
-                    response_text,
-                    is_start,
-                    task_id_queue,
-                    voice_id,
-                    self.device,
-                    bytes_queue,
-                    user,
-                    personality_translation,
-                )
-            else:
-                fish_tts(
-                    response_text,
-                    is_start,
-                    task_id_queue,
-                    voice_id,
-                    self.device,
-                    bytes_queue,
-                    user,
-                    personality_translation,
-                )
+            self._dispatch_tts(
+                response_text,
+                is_start,
+                task_id_queue,
+                voice_id,
+                bytes_queue,
+                user,
+                personality_translation,
+            )
 
         enqueue_bytes(bytes_queue, self.device, "info", None, "END", "END")
 

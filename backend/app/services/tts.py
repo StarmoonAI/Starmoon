@@ -11,6 +11,7 @@ import azure.cognitiveservices.speech as speechsdk
 import emoji
 import nltk
 import ormsgpack
+import requests
 import websockets
 from app.celery.tasks import emotion_detection
 from app.core.config import settings
@@ -313,6 +314,85 @@ def fish_tts(
         #     audio_data = audio_data[100:]
         # else:
         #     audio_data = audio_data
+        for i in range(0, len(audio_data), chunk_size):
+            chunk = audio_data[i : i + chunk_size]
+            if i % 500 == 0:
+                enqueue_bytes(bytes_queue, device, "gap", None, None, None, None)
+
+            enqueue_bytes(
+                bytes_queue, device, "response", chunk, sentence, None, task_id
+            )
+
+
+def sixtydb_tts(
+    sentence: str,
+    is_start: bool,
+    task_id_queue: asyncio.Queue,
+    tts_code: str,
+    device: str,
+    bytes_queue: asyncio.Queue,
+    user: dict,
+    personality_translation: dict,
+):
+    """60dB (api.60db.ai) text-to-speech.
+
+    Mirrors azure_tts / fish_tts: a blocking, per-sentence synthesis that
+    resamples to the device format (16kHz, 16-bit, mono PCM) and chunks the
+    audio onto bytes_queue with the same START / gap / response control flow.
+    """
+
+    task_id = create_emotion_detection_task(
+        f"{sentence}",
+        user,
+        personality_translation,
+        "assistant",
+        user["most_recent_chat_group_id"],
+    )
+
+    # POST /tts-synthesize -> JSON { success, audio_base64, sample_rate, ... }
+    # We request wav so pydub can read the header and resample reliably.
+    response = requests.post(
+        f"{settings.SIXTYDB_API_URL}/tts-synthesize",
+        headers={
+            "Authorization": f"Bearer {settings.SIXTYDB_API_KEY}",
+            "Content-Type": "application/json",
+        },
+        json={
+            "text": sentence.strip(),
+            "voice_id": tts_code,
+            "output_format": "wav",
+            "speed": 1,
+            "stability": 50,
+            "similarity": 75,
+            "enhance": True,
+        },
+        timeout=30,
+    )
+    response.raise_for_status()
+    result = response.json()
+
+    if not result.get("success") or not result.get("audio_base64"):
+        print("60dB TTS error:", result.get("message"))
+        return
+
+    audio_bytes = base64.b64decode(result["audio_base64"])
+
+    # Normalise to 16kHz mono PCM, the format the ESP32 / web client expect.
+    audio_segment = AudioSegment.from_file(BytesIO(audio_bytes), format="wav")
+    audio_segment = audio_segment.set_channels(1).set_frame_rate(16000)
+    audio_data = audio_segment.raw_data
+
+    if is_start:
+        enqueue_bytes(bytes_queue, device, "info", None, "START", "START")
+
+    if device == "web":
+        base64_audio = base64.b64encode(audio_data).decode("utf-8")
+        enqueue_bytes(
+            bytes_queue, device, "response", base64_audio, sentence, None, task_id
+        )
+        enqueue_task(task_id_queue, task_id)
+    else:
+        chunk_size = 1024  # Adjust this value based on your needs
         for i in range(0, len(audio_data), chunk_size):
             chunk = audio_data[i : i + chunk_size]
             if i % 500 == 0:
